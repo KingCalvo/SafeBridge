@@ -1,16 +1,12 @@
 import React from "react";
-import { FaHome, FaUser, FaWifi, FaFingerprint, FaCog } from "react-icons/fa";
+import { FaHome, FaUserNurse } from "react-icons/fa";
 import { FaCircleUser } from "react-icons/fa6";
 import { MdCrisisAlert } from "react-icons/md";
-import { HiOutlineSignal } from "react-icons/hi2";
 
 const Sidebar = () => {
   const menuItems = [
     { label: "Inicio", icon: <FaHome /> },
-    { label: "Gestión de Usuario", icon: <FaUser /> },
-    { label: "Monitoreo de Sensores", icon: <HiOutlineSignal /> },
-    { label: "Alertas y Eventos", icon: <MdCrisisAlert /> },
-    { label: "Configuración del Sistema", icon: <FaCog /> },
+    { label: "Alertas", icon: <MdCrisisAlert /> },
   ];
 
   return (
@@ -25,10 +21,12 @@ const Sidebar = () => {
       {/* Rol de usuario */}
       <div className="px-6 mb-8 flex items-center justify-between">
         <div>
-          <p className="text-xl font-semibold text-black-700">Administrador</p>
+          <p className="text-xl font-semibold text-black-700">
+            Protección Civil
+          </p>
           <p className="text-xl text-gray-900">Menú</p>
         </div>
-        <FaCircleUser className="text-5xl text-gray-500" />
+        <FaUserNurse className="text-5xl text-black-500" />
       </div>
 
       {/* Opciones */}

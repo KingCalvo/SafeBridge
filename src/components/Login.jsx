@@ -1,11 +1,22 @@
 import React from "react";
 import { FaRegUser, FaUserGroup } from "react-icons/fa6";
 import { IoLockClosedOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    navigate("/admin_inicio");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 space-y-6">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 space-y-6"
+      >
         <div className="flex justify-center mb-4">
           <img
             src="/src/assets/logo.png"
@@ -24,6 +35,7 @@ const Login = () => {
               type="text"
               placeholder="NOMBRE DE USUARIO"
               className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+              required
             />
           </div>
           {/* Contraseña */}
@@ -35,6 +47,7 @@ const Login = () => {
               type="password"
               placeholder="CONTRASEÑA"
               className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+              required
             />
           </div>
         </div>
@@ -42,7 +55,7 @@ const Login = () => {
         {/* Iniciar sesión */}
         <button
           type="submit"
-          className="w-full bg-white text-orange-400 font-medium py-2 rounded-lg shadow hover:shadow-md transition"
+          className="w-full bg-white text-orange-400 font-medium py-2 rounded-lg shadow hover:shadow-md transition cursor-pointer"
         >
           INICIAR SESIÓN
         </button>
@@ -59,7 +72,7 @@ const Login = () => {
             Regístrate aquí
           </a>
         </div>
-      </div>
+      </form>
 
       {/* Botón continuar como invitado */}
       <button

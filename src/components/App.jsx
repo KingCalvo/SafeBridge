@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./Login.jsx";
-import AdminInicio from "../pages/Administrador/admin_inicio.jsx";
+import AdminInicio from "../pages/Administrador/inicioAdm.jsx";
 
 const App = () => {
   return (

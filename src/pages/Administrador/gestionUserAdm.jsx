@@ -1,0 +1,351 @@
+import React, { useEffect, useState } from "react";
+import { IoSearch } from "react-icons/io5";
+import { CiFilter } from "react-icons/ci";
+import { FaUserPlus } from "react-icons/fa6";
+import { FaUserEdit, FaUserTimes } from "react-icons/fa";
+import { supabase } from "../../supabase/client";
+import Modal from "../../components/Modal";
+import Sidebar from "../../components/SidebarAdmin";
+
+const GestionUserAdm = () => {
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [roles, setRoles] = useState([]);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [formData, setFormData] = useState({
+    id_rol: "",
+    nombre: "",
+    apellido_paterno: "",
+    apellido_materno: "",
+    curp: "",
+    tel: "",
+    correo: "",
+  });
+
+  useEffect(() => {
+    fetchRoles();
+    fetchUsers();
+  }, []);
+
+  const fetchRoles = async () => {
+    const { data, error } = await supabase
+      .from("catalogo_roles")
+      .select("id_rol, nombre, status")
+      .eq("status", true);
+    if (!error) setRoles(data);
+  };
+
+  const fetchUsers = async () => {
+    const { data, error } = await supabase.from("usuario").select(
+      `id_usuario, id_rol, nombre, apellido_paterno, apellido_materno, curp, tel, correo, 
+         catalogo_roles ( nombre, status )`
+    );
+    if (!error) {
+      setUsers(data);
+      setFilteredUsers(data);
+    }
+  };
+
+  useEffect(() => {
+    let temp = [...users];
+    if (filterRole)
+      temp = temp.filter((u) => u.id_rol === parseInt(filterRole, 10));
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      temp = temp.filter(
+        (u) =>
+          u.nombre.toLowerCase().includes(term) ||
+          u.apellido_paterno.toLowerCase().includes(term) ||
+          u.apellido_materno.toLowerCase().includes(term) ||
+          u.correo.toLowerCase().includes(term)
+      );
+    }
+    setFilteredUsers(temp);
+  }, [searchTerm, filterRole, users]);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro quieres eliminar este usuario?")) return;
+    const { error } = await supabase
+      .from("usuario")
+      .delete()
+      .eq("id_usuario", id);
+    if (!error) fetchUsers();
+  };
+
+  const openAddModal = () => {
+    setEditingUser(null);
+    setFormData({
+      id_rol: "",
+      nombre: "",
+      apellido_paterno: "",
+      apellido_materno: "",
+      curp: "",
+      tel: "",
+      correo: "",
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (user) => {
+    setEditingUser(user.id_usuario);
+    setFormData({
+      id_rol: user.id_rol,
+      nombre: user.nombre,
+      apellido_paterno: user.apellido_paterno,
+      apellido_materno: user.apellido_materno,
+      curp: user.curp,
+      tel: user.tel,
+      correo: user.correo,
+    });
+    setShowModal(true);
+  };
+
+  const handleModalSubmit = async () => {
+    const payload = { ...formData };
+    let error;
+    if (editingUser) {
+      ({ error } = await supabase
+        .from("usuario")
+        .update(payload)
+        .eq("id_usuario", editingUser));
+    } else {
+      ({ error } = await supabase.from("usuario").insert([payload]));
+    }
+    if (!error) {
+      setShowModal(false);
+      fetchUsers();
+    }
+  };
+
+  return (
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1 p-6 overflow-x-auto">
+        <main className="flex-1 p-6 bg-gray-50">
+          <h1 className="text-2xl font-bold mb-4 text-center w-full">
+            Lista de Usuarios
+          </h1>
+
+          {/* Controles: búsqueda, filtro, agregar */}
+          <div className="flex items-center justify-center space-x-4 mb-4">
+            <div className="relative flex-1">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                <IoSearch />
+              </span>
+              <input
+                type="text"
+                placeholder="Buscar Usuarios"
+                className="w-64 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <CiFilter className="text-2xl text-gray-600" />
+            <select
+              className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+              value={filterRole}
+              onChange={(e) => setFilterRole(e.target.value)}
+            >
+              <option value="">Todos</option>
+              {roles.map((r) => (
+                <option key={r.id_rol} value={r.id_rol}>
+                  {r.nombre}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={openAddModal}
+              className="p-2 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition"
+            >
+              <FaUserPlus />
+            </button>
+          </div>
+
+          {/* Tabla de usuarios */}
+          <div className="overflow-x-auto bg-white rounded-lg shadow">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#2C2B2B] text-white">
+                <tr>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    ID
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    Rol
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    Nombre
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    Apellido Paterno
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    Apellido Materno
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    CURP
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    Tel.
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    Correo
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                    Status
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredUsers.map((user) => (
+                  <tr key={user.id_usuario}>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.id_usuario}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.catalogo_roles?.nombre || "—"}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.nombre}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.apellido_paterno}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.apellido_materno}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.curp}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.tel}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {user.correo}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {roles.find((r) => r.id_rol === user.id_rol)?.status
+                        ? "Activo"
+                        : "Inactivo"}
+                    </td>
+                    <td className="px-4 py-2 text-center space-x-2 flex justify-center">
+                      <button
+                        onClick={() => openEditModal(user)}
+                        className="p-1 hover:text-blue-600"
+                      >
+                        <FaUserEdit />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id_usuario)}
+                        className="p-1 hover:text-red-600"
+                      >
+                        <FaUserTimes />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Modal */}
+          {showModal && (
+            <Modal
+              onClose={() => setShowModal(false)}
+              onSubmit={handleModalSubmit}
+            >
+              <h2 className="text-xl font-semibold mb-4">
+                {editingUser ? "Editar Usuario" : "Agregar Usuario"}
+              </h2>
+              <div className="space-y-3">
+                <select
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  value={formData.id_rol}
+                  onChange={(e) =>
+                    setFormData({ ...formData, id_rol: e.target.value })
+                  }
+                >
+                  <option value="">Selecciona Rol</option>
+                  {roles.map((r) => (
+                    <option key={r.id_rol} value={r.id_rol}>
+                      {r.nombre}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  value={formData.nombre}
+                  onChange={(e) =>
+                    setFormData({ ...formData, nombre: e.target.value })
+                  }
+                />
+                <input
+                  type="text"
+                  placeholder="Apellido Paterno"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  value={formData.apellido_paterno}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      apellido_paterno: e.target.value,
+                    })
+                  }
+                />
+                <input
+                  type="text"
+                  placeholder="Apellido Materno"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  value={formData.apellido_materno}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      apellido_materno: e.target.value,
+                    })
+                  }
+                />
+                <input
+                  type="text"
+                  placeholder="CURP"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  value={formData.curp}
+                  onChange={(e) =>
+                    setFormData({ ...formData, curp: e.target.value })
+                  }
+                />
+                <input
+                  type="text"
+                  placeholder="Teléfono"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  value={formData.tel}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tel: e.target.value })
+                  }
+                />
+                <input
+                  type="email"
+                  placeholder="Correo"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  value={formData.correo}
+                  onChange={(e) =>
+                    setFormData({ ...formData, correo: e.target.value })
+                  }
+                />
+              </div>
+            </Modal>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default GestionUserAdm;

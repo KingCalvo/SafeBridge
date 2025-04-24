@@ -3,13 +3,67 @@ import { FaUserGroup } from "react-icons/fa6";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { CiMail } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { supabase } from "../supabase/client.js";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate("/admin_inicio");
+
+    // 1) Autenticación
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (authError) {
+      alert("Correo o contraseña incorrectos");
+      console.error(authError);
+      return;
+    }
+
+    /*     // 2) DEBUG: lista todos los correos que realmente tiene tu tabla
+    const { data: allUsers, error: allErr } = await supabase
+      .from("usuario")
+      .select("correo, id_rol");
+    console.log("ALL USERS:", allUsers, "ERR:", allErr); */
+
+    // 3) Normalizar y buscar case-insensitive
+    const normalizedEmail = email.trim().toLowerCase();
+    const { data: userData, error: userError } = await supabase
+      .from("usuario")
+      .select("id_rol")
+      .ilike("correo", normalizedEmail)
+      .maybeSingle();
+
+    if (userError) {
+      alert("Error al consultar la base de datos");
+      console.error(userError);
+      return;
+    }
+    if (!userData) {
+      alert(`Usuario no encontrado en la base de datos:\n${normalizedEmail}`);
+      console.warn(`No existe usuario con correo ${normalizedEmail}`);
+      return;
+    }
+
+    // 4) Redirigir según rol
+    switch (userData.id_rol) {
+      case 1:
+        navigate("/admin_inicio");
+        break;
+      case 2:
+        navigate("/operador_inicio");
+        break;
+      case 3:
+        navigate("/pc_inicio");
+        break;
+      default:
+        alert("Rol no válido");
+    }
   };
 
   return (
@@ -36,6 +90,8 @@ const Login = () => {
               type="text"
               placeholder="CORREO"
               className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -49,6 +105,8 @@ const Login = () => {
               placeholder="CONTRASEÑA"
               className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
         </div>

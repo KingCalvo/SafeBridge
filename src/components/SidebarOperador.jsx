@@ -3,13 +3,22 @@ import { FaHome, FaFileSignature } from "react-icons/fa";
 import { MdCrisisAlert } from "react-icons/md";
 import { HiOutlineSignal } from "react-icons/hi2";
 import { PiUserCircleGearFill } from "react-icons/pi";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const menuItems = [
-    { label: "Inicio", icon: <FaHome /> },
-    { label: "Monitoreo de Sensores", icon: <HiOutlineSignal /> },
-    { label: "Eventos", icon: <MdCrisisAlert /> },
-    { label: "Generar Reportes", icon: <FaFileSignature /> },
+    { label: "Inicio", icon: <FaHome />, path: "/inicioOpe" },
+    {
+      label: "Monitoreo de Sensores",
+      icon: <HiOutlineSignal />,
+      path: "/monitoreoSensoresOpe",
+    },
+    { label: "Eventos", icon: <MdCrisisAlert />, path: "/eventosOpe" },
+    {
+      label: "Generar Reportes",
+      icon: <FaFileSignature />,
+      path: "/reportesOpe",
+    },
   ];
 
   return (
@@ -32,17 +41,19 @@ const Sidebar = () => {
 
       {/* Opciones */}
       <nav className="flex-1 px-2 space-y-1">
-        {menuItems.map(({ label, icon }, idx) => (
-          <button
+        {menuItems.map(({ label, icon, path }, idx) => (
+          <NavLink
             key={idx}
-            className={`
+            to={path}
+            className={({ isActive }) => `
               w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
               rounded-lg hover:bg-gray-100 transition
+              ${isActive ? "bg-gray-100 font-semibold" : ""}
             `}
           >
             <span className="text-lg mr-3">{icon}</span>
             {label}
-          </button>
+          </NavLink>
         ))}
       </nav>
     </aside>

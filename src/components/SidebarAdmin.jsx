@@ -2,14 +2,31 @@ import React from "react";
 import { FaHome, FaUser, FaCog, FaUserLock } from "react-icons/fa";
 import { MdCrisisAlert } from "react-icons/md";
 import { HiOutlineSignal } from "react-icons/hi2";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const menuItems = [
-    { label: "Inicio", icon: <FaHome /> },
-    { label: "Gestión de Usuario", icon: <FaUser /> },
-    { label: "Monitoreo de Sensores", icon: <HiOutlineSignal /> },
-    { label: "Alertas y Eventos", icon: <MdCrisisAlert /> },
-    { label: "Configuración del Sistema", icon: <FaCog /> },
+    { label: "Inicio", icon: <FaHome />, path: "/inicioAdm" },
+    {
+      label: "Gestión de Usuario",
+      icon: <FaUser />,
+      path: "/gestionUserAdm",
+    },
+    {
+      label: "Monitoreo de Sensores",
+      icon: <HiOutlineSignal />,
+      path: "/monitoreoSensoresAdm",
+    },
+    {
+      label: "Alertas y Eventos",
+      icon: <MdCrisisAlert />,
+      path: "/alertasEventosAdm",
+    },
+    {
+      label: "Configuración del Sistema",
+      icon: <FaCog />,
+      path: "/configuracionAdm",
+    },
   ];
 
   return (
@@ -32,17 +49,19 @@ const Sidebar = () => {
 
       {/* Opciones */}
       <nav className="flex-1 px-2 space-y-1">
-        {menuItems.map(({ label, icon }, idx) => (
-          <button
+        {menuItems.map(({ label, icon, path }, idx) => (
+          <NavLink
             key={idx}
-            className={`
+            to={path}
+            className={({ isActive }) => `
               w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
               rounded-lg hover:bg-gray-100 transition
+              ${isActive ? "bg-gray-100 font-semibold" : ""}
             `}
           >
             <span className="text-lg mr-3">{icon}</span>
             {label}
-          </button>
+          </NavLink>
         ))}
       </nav>
     </aside>

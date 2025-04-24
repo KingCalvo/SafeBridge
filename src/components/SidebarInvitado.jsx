@@ -1,19 +1,23 @@
 import React from "react";
-import { FaCircleUser, FaBridgeWater } from "react-icons/fa6";
+import { FaBridgeWater } from "react-icons/fa6";
 import { MdCrisisAlert } from "react-icons/md";
 import { SiSoundcharts } from "react-icons/si";
 import { FaUserClock } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const menuItems = [
-    { label: "Graficos", icon: <SiSoundcharts /> },
-    { label: "Puentes", icon: <FaBridgeWater /> },
-    { label: "Alertas recientes", icon: <MdCrisisAlert /> },
+    { label: "Graficos", icon: <SiSoundcharts />, path: "/graficosInv" },
+    { label: "Puentes", icon: <FaBridgeWater />, path: "/puentesInv" },
+    {
+      label: "Alertas recientes",
+      icon: <MdCrisisAlert />,
+      path: "/alertasInv",
+    },
   ];
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
-      {/* Logo y título */}
       <div className="px-6 py-8 flex items-center space-x-2">
         <span className="text-4xl font-bold">
           <span className="text-orange-400">Safe</span>Bridge
@@ -31,17 +35,19 @@ const Sidebar = () => {
 
       {/* Opciones */}
       <nav className="flex-1 px-2 space-y-1">
-        {menuItems.map(({ label, icon }, idx) => (
-          <button
+        {menuItems.map(({ label, icon, path }, idx) => (
+          <NavLink
             key={idx}
-            className={`
-              w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
-              rounded-lg hover:bg-gray-100 transition
-            `}
+            to={path}
+            className={({ isActive }) => `
+                    w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
+                    rounded-lg hover:bg-gray-100 transition
+                    ${isActive ? "bg-gray-100 font-semibold" : ""}
+                  `}
           >
             <span className="text-lg mr-3">{icon}</span>
             {label}
-          </button>
+          </NavLink>
         ))}
       </nav>
     </aside>

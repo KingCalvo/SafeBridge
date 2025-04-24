@@ -53,13 +53,13 @@ const Login = () => {
     // 4) Redirigir según rol
     switch (userData.id_rol) {
       case 1:
-        navigate("/admin_inicio");
+        navigate("/inicioAdm");
         break;
       case 2:
-        navigate("/operador_inicio");
+        navigate("/inicioOpe");
         break;
       case 3:
-        navigate("/pc_inicio");
+        navigate("/inicioPC");
         break;
       default:
         alert("Rol no válido");

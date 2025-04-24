@@ -1,12 +1,12 @@
 import React from "react";
 import { FaHome, FaUserNurse } from "react-icons/fa";
-import { FaCircleUser } from "react-icons/fa6";
 import { MdCrisisAlert } from "react-icons/md";
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const menuItems = [
-    { label: "Inicio", icon: <FaHome /> },
-    { label: "Alertas", icon: <MdCrisisAlert /> },
+    { label: "Inicio", icon: <FaHome />, path: "/inicioPC" },
+    { label: "Alertas", icon: <MdCrisisAlert />, path: "/alertasPC" },
   ];
 
   return (
@@ -31,17 +31,19 @@ const Sidebar = () => {
 
       {/* Opciones */}
       <nav className="flex-1 px-2 space-y-1">
-        {menuItems.map(({ label, icon }, idx) => (
-          <button
+        {menuItems.map(({ label, icon, path }, idx) => (
+          <NavLink
             key={idx}
-            className={`
+            to={path}
+            className={({ isActive }) => `
               w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
               rounded-lg hover:bg-gray-100 transition
+              ${isActive ? "bg-gray-100 font-semibold" : ""}
             `}
           >
             <span className="text-lg mr-3">{icon}</span>
             {label}
-          </button>
+          </NavLink>
         ))}
       </nav>
     </aside>

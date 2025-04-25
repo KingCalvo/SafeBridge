@@ -122,6 +122,19 @@ const GestionUserAdm = () => {
     }
   };
 
+  const getRowColor = (rol) => {
+    switch (rol) {
+      case "Administrador":
+        return "bg-[#e28000]";
+      case "Operador":
+        return "bg-[#ffc340]";
+      case "Proteccion Civil":
+        return "bg-[#ffff9a]";
+      default:
+        return "bg-white";
+    }
+  };
+
   return (
     <div className="flex">
       <Sidebar />
@@ -131,9 +144,8 @@ const GestionUserAdm = () => {
             Lista de Usuarios
           </h1>
 
-          {/* Controles: búsqueda, filtro, agregar */}
           <div className="flex items-center justify-center space-x-4 mb-4">
-            <div className="relative flex-1">
+            <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
               </span>
@@ -145,19 +157,21 @@ const GestionUserAdm = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <CiFilter className="text-2xl text-gray-600" />
-            <select
-              className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-            >
-              <option value="">Todos</option>
-              {roles.map((r) => (
-                <option key={r.id_rol} value={r.id_rol}>
-                  {r.nombre}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                className="border border-gray-300 rounded-lg px-6 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                value={filterRole}
+                onChange={(e) => setFilterRole(e.target.value)}
+              >
+                <option value="">Todos</option>
+                {roles.map((r) => (
+                  <option key={r.id_rol} value={r.id_rol}>
+                    {r.nombre}
+                  </option>
+                ))}
+              </select>
+              <CiFilter className="absolute left-0.5 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
+            </div>
             <button
               onClick={openAddModal}
               className="p-2 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition"
@@ -166,36 +180,35 @@ const GestionUserAdm = () => {
             </button>
           </div>
 
-          {/* Tabla de usuarios */}
           <div className="overflow-x-auto bg-white rounded-lg shadow">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     ID
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Rol
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Nombre
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Apellido Paterno
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Apellido Materno
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     CURP
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Tel.
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Correo
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Status
                   </th>
                   <th className="px-4 py-2 text-center text-xs font-medium uppercase">
@@ -203,66 +216,69 @@ const GestionUserAdm = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
-                  <tr key={user.id_usuario}>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.id_usuario}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.catalogo_roles?.nombre || "—"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.apellido_paterno}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.apellido_materno}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.curp}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.tel}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {user.correo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {roles.find((r) => r.id_rol === user.id_rol)?.status
-                        ? "Activo"
-                        : "Inactivo"}
-                    </td>
-                    <td className="px-4 py-2 text-center space-x-2 flex justify-center">
-                      <button
-                        onClick={() => openEditModal(user)}
-                        className="p-1 hover:text-blue-600"
-                      >
-                        <FaUserEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user.id_usuario)}
-                        className="p-1 hover:text-red-600"
-                      >
-                        <FaUserTimes />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-gray-200">
+                {filteredUsers.map((user) => {
+                  const rol = user.catalogo_roles?.nombre;
+                  const rowColor = getRowColor(rol);
+                  return (
+                    <tr key={user.id_usuario} className={rowColor}>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {user.id_usuario}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {rol || "—"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {user.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {user.apellido_paterno}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {user.apellido_materno}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {user.curp}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {user.tel}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {user.correo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {roles.find((r) => r.id_rol === user.id_rol)?.status
+                          ? "Activo"
+                          : "Inactivo"}
+                      </td>
+                      <td className="px-4 py-2 text-center space-x-2 flex justify-center">
+                        <button
+                          onClick={() => openEditModal(user)}
+                          className="p-1 hover:text-blue-600"
+                        >
+                          <FaUserEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user.id_usuario)}
+                          className="p-1 hover:text-red-600"
+                        >
+                          <FaUserTimes />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
-          {/* Modal */}
           {showModal && (
             <Modal
               onClose={() => setShowModal(false)}
               onSubmit={handleModalSubmit}
             >
-              <h2 className="text-xl font-semibold mb-4">
-                {editingUser ? "Editar Usuario" : "Agregar Usuario"}
+              <h2 className="text-2xl font-semibold mb-4 text-center">
+                {editingUser ? "EDITAR USUARIO" : "AGREGAR USUARIO"}
               </h2>
               <div className="space-y-3">
                 <select

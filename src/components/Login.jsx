@@ -14,7 +14,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // 1) Autenticación
+    //Autenticación
     const { error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -25,13 +25,13 @@ const Login = () => {
       return;
     }
 
-    /*     // 2) DEBUG: lista todos los correos que realmente tiene tu tabla
+    /*     //DEBUG: lista todos los correos que realmente tiene tu tabla
     const { data: allUsers, error: allErr } = await supabase
       .from("usuario")
       .select("correo, id_rol");
     console.log("ALL USERS:", allUsers, "ERR:", allErr); */
 
-    // 3) Normalizar y buscar case-insensitive
+    //Normalizar y buscar case-insensitive
     const normalizedEmail = email.trim().toLowerCase();
     const { data: userData, error: userError } = await supabase
       .from("usuario")
@@ -50,7 +50,7 @@ const Login = () => {
       return;
     }
 
-    // 4) Redirigir según rol
+    //Redirigir según rol
     switch (userData.id_rol) {
       case 1:
         navigate("/inicioAdm");
@@ -65,14 +65,17 @@ const Login = () => {
         alert("Rol no válido");
     }
   };
+  const handleGuestAccess = () => {
+    navigate("/graficosInv");
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
       <form
         onSubmit={handleLogin}
-        className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 space-y-6"
+        className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 mt-0 space-y-6"
       >
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-3">
           <img
             src="/src/assets/logo.png"
             alt="SafeBridge logo"
@@ -114,7 +117,7 @@ const Login = () => {
         {/* Iniciar sesión */}
         <button
           type="submit"
-          className="w-full bg-white text-orange-400 font-medium py-2 rounded-lg shadow hover:shadow-md transition cursor-pointer"
+          className="w-full bg-white text-orange-400 font-medium py-2 rounded-lg shadow hover:shadow-md transition cursor-pointer border border-gray-300"
         >
           INICIAR SESIÓN
         </button>
@@ -131,18 +134,18 @@ const Login = () => {
             Regístrate aquí
           </a>
         </div>
+        {/* Botón continuar como invitado */}
+        <button
+          onClick={handleGuestAccess}
+          type="button"
+          className="mt-6 bg-white rounded-2xl shadow-lg flex items-center justify-center space-x-2 px-6 py-3 w-full max-w-sm hover:shadow-md transition cursor-pointer border border-gray-300"
+        >
+          <FaUserGroup className="text-gray-500" />
+          <span className="text-gray-700 font-medium">
+            CONTINUAR COMO INVITADO
+          </span>
+        </button>
       </form>
-
-      {/* Botón continuar como invitado */}
-      <button
-        type="button"
-        className="mt-6 bg-white rounded-2xl shadow-lg flex items-center justify-center space-x-2 px-6 py-3 w-full max-w-sm hover:shadow-md transition"
-      >
-        <FaUserGroup className="text-gray-500" />
-        <span className="text-gray-700 font-medium">
-          CONTINUAR COMO INVITADO
-        </span>
-      </button>
     </div>
   );
 };

@@ -132,7 +132,11 @@ const AlertasEventosAdm = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
+        </div>
+        <div className="flex justify-center items-center gap-4 mb-4">
+          <h2 className="text-2xl font-bold text-center text-gray-800">
+            Alertas
+          </h2>
           <div className="relative">
             <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
             <select
@@ -148,10 +152,6 @@ const AlertasEventosAdm = () => {
             </select>
           </div>
         </div>
-
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-          Alertas
-        </h2>
 
         {/* Tabla de Alertas */}
         <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[400px] overflow-y-auto">

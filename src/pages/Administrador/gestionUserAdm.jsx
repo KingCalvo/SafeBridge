@@ -161,7 +161,7 @@ const GestionUserAdm = () => {
             </div>
             <button
               onClick={openAddModal}
-              className="p-2 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition"
+              className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
             >
               <FaUserPlus className="text-2xl" />
             </button>
@@ -262,13 +262,13 @@ const GestionUserAdm = () => {
                       <td className="px-4 py-2 text-center space-x-2 flex justify-center">
                         <button
                           onClick={() => openEditModal(user)}
-                          className="p-1 hover:text-blue-600"
+                          className="p-1 text-green-500 hover:text-green-700 cursor-pointer"
                         >
                           <FaUserEdit className="text-2xl" />
                         </button>
                         <button
                           onClick={() => handleDelete(user.id_usuario)}
-                          className="p-1 hover:text-red-600"
+                          className="p-1 text-red-500 hover:text-red-700 cursor-pointer"
                         >
                           <FaUserTimes className="text-2xl" />
                         </button>

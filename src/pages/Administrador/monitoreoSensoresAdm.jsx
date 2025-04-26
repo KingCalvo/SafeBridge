@@ -212,7 +212,7 @@ const MonitoreoSensoresAdm = () => {
                   <td className="px-4 py-2 text-center">
                     <button
                       onClick={() => handleInfo(est)}
-                      className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition"
+                      className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
                     >
                       <FaRegEdit className="mr-1" /> Info
                     </button>
@@ -232,13 +232,13 @@ const MonitoreoSensoresAdm = () => {
                   <td className="px-4 py-2 text-center space-x-2">
                     <button
                       onClick={() => handleEdit(est)}
-                      className="p-2 bg-[#e28000] text-white rounded-lg hover:bg-[#BA4A00] transition"
+                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
                     >
                       <FaRegEdit />
                     </button>
                     <button
                       onClick={() => handleDelete(est.id_estaciones)}
-                      className="p-2 bg-[#BA4A00] text-white rounded-lg hover:bg-[#e28000] transition"
+                      className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
                     >
                       <FaDeleteLeft />
                     </button>

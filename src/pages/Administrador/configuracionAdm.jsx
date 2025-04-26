@@ -216,13 +216,13 @@ const ConfiguracionAdm = () => {
                   <td className="px-4 py-2 text-center space-x-2">
                     <button
                       onClick={() => openEditModal(p, "puente")}
-                      className="p-2 bg-[#e28000] text-white rounded-lg hover:bg-[#BA4A00] transition"
+                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
                     >
                       <FaRegEdit />
                     </button>
                     <button
                       onClick={() => handleDelete(p.id_puente, "puente")}
-                      className="p-2 bg-[#BA4A00] text-white rounded-lg hover:bg-[#e28000] transition"
+                      className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
                     >
                       <FaDeleteLeft />
                     </button>
@@ -308,13 +308,13 @@ const ConfiguracionAdm = () => {
                   <td className="px-4 py-2 text-center space-x-2">
                     <button
                       onClick={() => openEditModal(n, "nivel")}
-                      className="p-2 bg-[#e28000] text-white rounded-lg hover:bg-[#BA4A00] transition"
+                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
                     >
                       <FaRegEdit />
                     </button>
                     <button
                       onClick={() => handleDelete(n.id_nivel, "nivel")}
-                      className="p-2 bg-[#BA4A00] text-white rounded-lg hover:bg-[#e28000] transition"
+                      className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
                     >
                       <FaDeleteLeft />
                     </button>

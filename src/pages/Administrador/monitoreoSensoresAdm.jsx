@@ -24,13 +24,15 @@ const MonitoreoSensoresAdm = () => {
 
   const fetchEstaciones = async () => {
     const { data, error } = await supabase.from("catalogo_estaciones").select(`
-        id_estaciones,
-        nombre,
-        tipo_estacion,
-        ubicacion,
-        id_puente,
-        catalogo_puentes ( nombre )
-      `);
+      id_estaciones,
+      nombre,
+      tipo_estacion,
+      ubicacion,
+      id_puente,
+      id_sensor,
+      catalogo_puentes ( nombre ),
+      sensores ( status )
+    `);
     if (error) console.error("Error al cargar estaciones:", error);
     else setEstaciones(data);
   };
@@ -215,7 +217,18 @@ const MonitoreoSensoresAdm = () => {
                       <FaRegEdit className="mr-1" /> Info
                     </button>
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">Activo</td>
+                  <td className="px-4 py-2 text-sm text-center">
+                    <span
+                      className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
+                        est.sensores?.status === "Activo"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      }`}
+                    >
+                      {est.sensores?.status || "Desconocido"}
+                    </span>
+                  </td>
+
                   <td className="px-4 py-2 text-center space-x-2">
                     <button
                       onClick={() => handleEdit(est)}

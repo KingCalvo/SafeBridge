@@ -262,7 +262,9 @@ const MonitoreoSensoresAdm = () => {
         {/* Modal de edición */}
         {showEditModal && editingEstacion && (
           <Modal onClose={closeEditModal} onSubmit={saveChanges}>
-            <h2 className="text-xl font-bold mb-4">EDITAR SENSOR</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">
+              EDITAR ESTACIÓN
+            </h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">

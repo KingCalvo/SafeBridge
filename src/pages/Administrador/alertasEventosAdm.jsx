@@ -59,14 +59,12 @@ const AlertasEventosAdm = () => {
   const handleToggle = async (id, currentStatus) => {
     const nuevoStatus = currentStatus === "Activa" ? "Inactiva" : "Activa";
 
-    // ACTUALIZA VISUALMENTE AL INSTANTE
     setAlertas((prevAlertas) =>
       prevAlertas.map((alerta) =>
         alerta.id_alertas === id ? { ...alerta, status: nuevoStatus } : alerta
       )
     );
 
-    // Luego INTENTA guardar en la base de datos
     const { error } = await supabase
       .from("alertas")
       .update({ status: nuevoStatus })
@@ -74,7 +72,6 @@ const AlertasEventosAdm = () => {
 
     if (error) {
       console.error("Error actualizando status:", error);
-      // Podrías volver al estado anterior si quieres, pero eso es opcional
     }
   };
 
@@ -157,9 +154,9 @@ const AlertasEventosAdm = () => {
         </h2>
 
         {/* Tabla de Alertas */}
-        <div className="overflow-auto bg-white rounded-lg shadow mb-6">
+        <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[400px] overflow-y-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[#2C2B2B] text-white">
+            <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
               <tr>
                 <th className="px-4 py-2 text-left text-xs uppercase">ID</th>
                 <th className="px-4 py-2 text-left text-xs uppercase">
@@ -235,9 +232,9 @@ const AlertasEventosAdm = () => {
         </div>
 
         {/* Tabla de Eventos */}
-        <div className="overflow-auto bg-white rounded-lg shadow">
+        <div className="overflow-auto bg-white rounded-lg shadow max-h-[400px] overflow-y-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[#2C2B2B] text-white">
+            <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
               <tr>
                 <th className="px-4 py-2 text-left text-xs uppercase">
                   Evento

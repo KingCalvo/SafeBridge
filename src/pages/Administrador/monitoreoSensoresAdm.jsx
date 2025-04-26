@@ -165,25 +165,25 @@ const MonitoreoSensoresAdm = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#2C2B2B] text-white sticky top-0">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                   ID
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                   Puente
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                   Ubicación
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                   Nombre
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                   Tipo
                 </th>
                 <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                   Sensor
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-medium uppercase">
+                <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                   Status
                 </th>
                 <th className="px-4 py-2 text-center text-xs font-medium uppercase">
@@ -219,7 +219,7 @@ const MonitoreoSensoresAdm = () => {
                   </td>
                   <td className="px-4 py-2 text-sm text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
+                      className={`px-3 py-1 rounded-full text-white font-bold ${
                         est.sensores?.status === "Activo"
                           ? "bg-green-500"
                           : "bg-red-500"

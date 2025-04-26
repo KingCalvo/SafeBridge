@@ -123,12 +123,10 @@ const ConfiguracionAdm = () => {
     <div className="flex">
       <Sidebar />
       <main className="flex-1 p-8 bg-gray-50">
-        {/* Título general */}
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           CONFIGURACIÓN
         </h1>
-
-        {/* Buscador común */}
+        {/* Buscador */}
         <div className="flex justify-center mb-8">
           <div className="relative w-96">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
@@ -144,9 +142,9 @@ const ConfiguracionAdm = () => {
           </div>
         </div>
 
-        {/* Sección Puentes */}
+        {/* Tabla Puentes */}
         <div className="flex items-center justify-center space-x-4 mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">Puentes</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">PUENTES</h2>
           <div className="relative">
             <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
             <select
@@ -165,17 +163,17 @@ const ConfiguracionAdm = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-2 text-left text-xs uppercase">ID</th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">ID</th>
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Nombre
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Ubicación
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Estado
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Status
                 </th>
                 <th className="px-4 py-2 text-center text-xs uppercase">
@@ -186,18 +184,24 @@ const ConfiguracionAdm = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredPuentes.map((p) => (
                 <tr key={p.id_puente}>
-                  <td className="px-4 py-2">{p.id_puente}</td>
-                  <td className="px-4 py-2">{p.nombre}</td>
-                  <td className="px-4 py-2">{p.ubicacion}</td>
-                  <td className="px-4 py-2 text-center">
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    {p.id_puente}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {p.nombre}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {p.ubicacion}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     <span className="px-3 py-1 rounded-full text-black">
                       {p.estado ? "Abierto" : "Cerrado"}
                     </span>
                   </td>
 
-                  <td className="px-4 py-2 text-center">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
+                      className={`px-3 py-1 rounded-full text-white font-bold ${
                         p.status === "Activo"
                           ? "bg-green-500"
                           : p.status === "Inactivo"
@@ -232,7 +236,7 @@ const ConfiguracionAdm = () => {
         {/* Sección Niveles de Riesgo */}
         <div className="flex items-center justify-center space-x-4 mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Niveles de Riesgo
+            NIVELES DE RIESGO
           </h2>
           <div className="relative">
             <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
@@ -254,17 +258,17 @@ const ConfiguracionAdm = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-2 text-left text-xs uppercase">ID</th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">ID</th>
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Nombre
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Descripción
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Tipo de Riesgo
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Status
                 </th>
                 <th className="px-4 py-2 text-center text-xs uppercase">
@@ -275,13 +279,21 @@ const ConfiguracionAdm = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredNiveles.map((n) => (
                 <tr key={n.id_nivel}>
-                  <td className="px-4 py-2">{n.id_nivel}</td>
-                  <td className="px-4 py-2">{n.nombre}</td>
-                  <td className="px-4 py-2">{n.descripcion}</td>
-                  <td className="px-4 py-2">{n.tipo_riesgo}</td>
-                  <td className="px-4 py-2 text-center">
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    {n.id_nivel}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {n.nombre}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    {n.descripcion}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {n.tipo_riesgo}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
+                      className={`px-3 py-1 rounded-full text-white font-bold ${
                         n.status === "Activo"
                           ? "bg-green-500"
                           : n.status === "Inactivo"

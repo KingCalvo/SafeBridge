@@ -115,7 +115,7 @@ const AlertasEventosAdm = () => {
       <Sidebar />
       <main className="flex-1 p-8 bg-gray-50">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Historial de Alertas
+          HISTORIAL DE ALERTAS Y EVENTOS
         </h1>
 
         {/* Buscador y Filtros */}
@@ -135,7 +135,7 @@ const AlertasEventosAdm = () => {
         </div>
         <div className="flex justify-center items-center gap-4 mb-4">
           <h2 className="text-2xl font-bold text-center text-gray-800">
-            Alertas
+            ALERTAS
           </h2>
           <div className="relative">
             <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
@@ -158,20 +158,20 @@ const AlertasEventosAdm = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-2 text-left text-xs uppercase">ID</th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">ID</th>
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Evento
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Ubicación
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Fecha y Hora
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Tipo de Alerta
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Status
                 </th>
                 <th className="px-4 py-2 text-center text-xs uppercase">
@@ -182,16 +182,33 @@ const AlertasEventosAdm = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredAlertas.map((alerta) => (
                 <tr key={alerta.id_alertas}>
-                  <td className="px-4 py-2">{alerta.id_alertas}</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    {alerta.id_alertas}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700">
                     {alerta.eventos_desbordamiento?.descripcion || "N/A"}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 text-sm text-gray-700">
                     {alerta.catalogo_puentes?.ubicacion || "Desconocida"}
                   </td>
-                  <td className="px-4 py-2">{alerta.fecha_hora}</td>
-                  <td className="px-4 py-2">{alerta.tipo_alerta}</td>
-                  <td className="px-4 py-2">{alerta.status}</td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {alerta.fecha_hora}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    {alerta.tipo_alerta}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    <span
+                      className={`px-2 py-1 rounded-full text-white font-bold  ${
+                        alerta.status === "Activa"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      }`}
+                    >
+                      {alerta.status}
+                    </span>
+                  </td>
+
                   <td className="px-4 py-2 text-center">
                     <Toggle
                       isOn={alerta.status === "Activa"}
@@ -208,7 +225,7 @@ const AlertasEventosAdm = () => {
 
         <div className="flex justify-center items-center gap-4 mb-4">
           <h2 className="text-2xl font-bold text-center text-gray-800">
-            Eventos de Desbordamiento
+            EVENTOS DE DESBORDAMIENTO
           </h2>
           <div className="relative">
             <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
@@ -236,16 +253,16 @@ const AlertasEventosAdm = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Evento
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   ID Puente
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Fecha y Hora
                 </th>
-                <th className="px-4 py-2 text-left text-xs uppercase">
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Nivel de Riesgo
                 </th>
               </tr>
@@ -253,10 +270,16 @@ const AlertasEventosAdm = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredEventos.map((evento) => (
                 <tr key={evento.id_evento}>
-                  <td className="px-4 py-2">{evento.descripcion}</td>
-                  <td className="px-4 py-2">{evento.id_puente}</td>
-                  <td className="px-4 py-2">{evento.fecha_hora}</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    {evento.descripcion}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {evento.id_puente}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {evento.fecha_hora}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {evento.catalogo_niveles_riesgo?.nombre}
                   </td>
                 </tr>

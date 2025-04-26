@@ -122,26 +122,13 @@ const GestionUserAdm = () => {
     }
   };
 
-  const getRowColor = (rol) => {
-    switch (rol) {
-      case "Administrador":
-        return "bg-[#e28000]";
-      case "Operador":
-        return "bg-[#ffc340]";
-      case "Proteccion Civil":
-        return "bg-[#ffff9a]";
-      default:
-        return "bg-white";
-    }
-  };
-
   return (
     <div className="flex">
       <Sidebar />
       <div className="flex-1 p-6 overflow-x-auto">
         <main className="flex-1 p-6 bg-gray-50">
-          <h1 className="text-2xl font-bold mb-4 text-center w-full">
-            Lista de Usuarios
+          <h1 className="text-3xl font-bold mb-4 text-center w-full">
+            LISTA DE USUARIOS
           </h1>
 
           <div className="flex items-center justify-center space-x-4 mb-4">
@@ -176,7 +163,7 @@ const GestionUserAdm = () => {
               onClick={openAddModal}
               className="p-2 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition"
             >
-              <FaUserPlus />
+              <FaUserPlus className="text-2xl" />
             </button>
           </div>
 
@@ -219,50 +206,71 @@ const GestionUserAdm = () => {
               <tbody className="divide-y divide-gray-200">
                 {filteredUsers.map((user) => {
                   const rol = user.catalogo_roles?.nombre;
-                  const rowColor = getRowColor(rol);
+                  const rolColor =
+                    rol === "Administrador"
+                      ? "#e28000"
+                      : rol === "Operador"
+                      ? "#ffc340"
+                      : rol === "Proteccion Civil"
+                      ? "#ffff9a"
+                      : "#ccc";
+
+                  const statusActivo = roles.find(
+                    (r) => r.id_rol === user.id_rol
+                  )?.status;
+
                   return (
-                    <tr key={user.id_usuario} className={rowColor}>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                    <tr key={user.id_usuario}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {user.id_usuario}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {rol || "—"}
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className="px-2 py-1 rounded-full font-semibold"
+                          style={{ backgroundColor: rolColor }}
+                        >
+                          {rol || "—"}
+                        </span>
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {user.nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {user.apellido_paterno}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {user.apellido_materno}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {user.curp}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {user.tel}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {user.correo}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {roles.find((r) => r.id_rol === user.id_rol)?.status
-                          ? "Activo"
-                          : "Inactivo"}
+                      <td className="px-4 py-2 text-sm text-center">
+                        <span
+                          className={`px-2 py-1 rounded-full font-semibold text-white ${
+                            statusActivo ? "bg-green-500" : "bg-red-500"
+                          }`}
+                        >
+                          {statusActivo ? "Activo" : "Inactivo"}
+                        </span>
                       </td>
                       <td className="px-4 py-2 text-center space-x-2 flex justify-center">
                         <button
                           onClick={() => openEditModal(user)}
                           className="p-1 hover:text-blue-600"
                         >
-                          <FaUserEdit />
+                          <FaUserEdit className="text-2xl" />
                         </button>
                         <button
                           onClick={() => handleDelete(user.id_usuario)}
                           className="p-1 hover:text-red-600"
                         >
-                          <FaUserTimes />
+                          <FaUserTimes className="text-2xl" />
                         </button>
                       </td>
                     </tr>

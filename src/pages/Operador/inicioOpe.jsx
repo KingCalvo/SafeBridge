@@ -98,7 +98,7 @@ const InicioOpe = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar userRole={2} />
       <main className="flex-1 p-8 bg-gray-50">
         {/* Título Principal */}
         <h1 className="text-3xl font-bold uppercase text-gray-800 mb-6 text-center">

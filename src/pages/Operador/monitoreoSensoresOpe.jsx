@@ -54,7 +54,7 @@ const MonitoreoSensoresOpe = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar userRole={2} />
       <main className="flex-1 p-8 bg-gray-50">
         {/* Título principal */}
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6 uppercase">

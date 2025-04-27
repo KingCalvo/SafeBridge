@@ -3,9 +3,12 @@ import { FaBridgeWater } from "react-icons/fa6";
 import { MdCrisisAlert } from "react-icons/md";
 import { SiSoundcharts } from "react-icons/si";
 import { FaUserClock } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { IoIosLogOut } from "react-icons/io";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
   const menuItems = [
     { label: "Graficos", icon: <SiSoundcharts />, path: "/graficosInv" },
     { label: "Puentes", icon: <FaBridgeWater />, path: "/puentesInv" },
@@ -15,6 +18,10 @@ const Sidebar = () => {
       path: "/alertasInv",
     },
   ];
+
+  const handleReturnToLogin = () => {
+    navigate("/"); // Redirige a la página de login
+  };
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
@@ -40,16 +47,28 @@ const Sidebar = () => {
             key={idx}
             to={path}
             className={({ isActive }) => `
-                    w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
-                    rounded-lg hover:bg-gray-100 transition
-                    ${isActive ? "bg-gray-100 font-semibold" : ""}
-                  `}
+              w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
+              rounded-lg hover:bg-gray-100 transition
+              ${isActive ? "bg-gray-100 font-semibold" : ""}
+            `}
           >
             <span className="text-lg mr-3">{icon}</span>
             {label}
           </NavLink>
         ))}
       </nav>
+
+      {/* Botón para regresar al login */}
+      <div className="p-4 border-t border-gray-200">
+        <button
+          onClick={handleReturnToLogin}
+          className="w-full flex items-center justify-center px-4 py-2 text-gray-700 text-sm font-medium
+            rounded-lg hover:bg-gray-100 transition cursor-pointer"
+        >
+          <IoIosLogOut className="text-lg mr-3" />
+          REGRESAR AL LOGIN
+        </button>
+      </div>
     </aside>
   );
 };

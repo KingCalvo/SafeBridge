@@ -51,7 +51,7 @@ const EventosOpe = () => {
     if (!error) setEventos(data || []);
   };
 
-  // 1) armo un map { Alto: algúnId, Bajo: algúnId }
+  // Armo un map { Alto: algúnId, Bajo: algúnId }
   const statusMap = useMemo(() => {
     const m = {};
     nivelesRiesgo.forEach((n) => {
@@ -60,9 +60,8 @@ const EventosOpe = () => {
     return m;
   }, [nivelesRiesgo]);
 
-  // 2) función que genera SOLO dos <option>
+  // Función que genera solo dos <option>
   const renderStatusOptions = () => {
-    // Modo AGREGAR → siempre Alto y Bajo
     if (!editingEvento) {
       return ["Alto", "Bajo"].map((st) => (
         <option key={st} value={statusMap[st]}>
@@ -71,7 +70,6 @@ const EventosOpe = () => {
       ));
     }
 
-    // Modo EDITAR → actual + contrario
     const actualId = formData.id_nivel_riesgo;
     const actualStatus = nivelesRiesgo.find(
       (n) => n.id_nivel === actualId
@@ -79,11 +77,11 @@ const EventosOpe = () => {
     const contrario = actualStatus === "Alto" ? "Bajo" : "Alto";
 
     return [
-      // 1) opción actual: *usamos su mismo id*
+      // opción actual: *usamos su mismo id*
       <option key={actualId} value={actualId}>
         {actualStatus}
       </option>,
-      // 2) opción opuesta: `statusMap[contrario]`
+      // opción opuesta
       <option key={contrario} value={statusMap[contrario]}>
         {contrario}
       </option>,
@@ -179,7 +177,7 @@ const EventosOpe = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar userRole={2} />
       <main className="flex-1 p-8 bg-gray-50">
         {/* Título */}
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">

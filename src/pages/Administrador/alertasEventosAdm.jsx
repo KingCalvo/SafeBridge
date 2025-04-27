@@ -106,7 +106,7 @@ const AlertasEventosAdm = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar userRole={1} />
       <main className="flex-1 p-8 bg-gray-50">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           HISTORIAL DE ALERTAS Y EVENTOS

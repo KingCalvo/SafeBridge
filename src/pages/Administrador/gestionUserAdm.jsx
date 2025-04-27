@@ -124,7 +124,7 @@ const GestionUserAdm = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar userRole={1} />
       <div className="flex-1 p-6 overflow-x-auto">
         <main className="flex-1 p-6 bg-gray-50">
           <h1 className="text-3xl font-bold mb-4 text-center w-full">

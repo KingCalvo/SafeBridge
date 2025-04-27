@@ -119,7 +119,7 @@ const MonitoreoSensoresAdm = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar userRole={1} />
       <main className="flex-1 p-8 bg-gray-50">
         {/* Título */}
         <div className="flex items-center justify-center mb-6">

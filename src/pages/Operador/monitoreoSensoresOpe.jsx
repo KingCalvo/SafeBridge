@@ -79,7 +79,7 @@ const MonitoreoSensoresOpe = () => {
 
         {/* Título tabla y filtro */}
         <div className="flex items-center justify-center space-x-4 mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800 uppercase">
+          <h2 className="text-2xl font-bold text-gray-800 uppercase">
             información de los Sensores
           </h2>
           <div className="relative">

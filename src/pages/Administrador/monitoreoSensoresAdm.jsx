@@ -194,19 +194,19 @@ const MonitoreoSensoresAdm = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredEstaciones.map((est) => (
                 <tr key={est.id_estaciones}>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {est.id_estaciones}
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {est.catalogo_puentes?.nombre || "Sin asignar"}
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {est.ubicacion}
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {est.nombre}
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {est.tipo_estacion}
                   </td>
                   <td className="px-4 py-2 text-center">

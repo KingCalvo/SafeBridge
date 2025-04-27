@@ -3,6 +3,8 @@ import Sidebar from "../../components/SidebarOperador";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
+import { GoAlert } from "react-icons/go";
+import { FaCheck } from "react-icons/fa";
 
 const InicioOpe = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +34,7 @@ const InicioOpe = () => {
     const { data, error } = await supabase
       .from("eventos_desbordamiento")
       .select(
-        `id_evento, id_puente, fecha_hora, descripcion, catalogo_niveles_riesgo (nombre)`
+        `id_evento, id_puente, fecha_hora, descripcion, catalogo_niveles_riesgo (status)`
       );
     if (!error) setEventos(data);
     else console.error(error);
@@ -72,9 +74,10 @@ const InicioOpe = () => {
     )
     .filter((e) =>
       nivelRiesgoFilter
-        ? e.catalogo_niveles_riesgo?.nombre === nivelRiesgoFilter
+        ? e.catalogo_niveles_riesgo?.status === nivelRiesgoFilter
         : true
-    );
+    )
+    .sort((a, b) => a.id_evento - b.id_evento);
 
   const filteredAlertas = alertas
     .filter((a) =>
@@ -188,15 +191,8 @@ const InicioOpe = () => {
               onChange={(e) => setNivelRiesgoFilter(e.target.value)}
             >
               <option value="">Todos los niveles</option>
-              {[
-                ...new Set(
-                  eventos.map((e) => e.catalogo_niveles_riesgo?.nombre)
-                ),
-              ].map((nivel) => (
-                <option key={nivel} value={nivel}>
-                  {nivel}
-                </option>
-              ))}
+              <option value="Alto">Alto</option>
+              <option value="Bajo">Bajo</option>
             </select>
           </div>
         </div>
@@ -222,8 +218,21 @@ const InicioOpe = () => {
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {evento.fecha_hora}
                   </td>
-                  <td className="ppx-4 py-2 text-sm text-gray-700 text-center">
-                    {evento.catalogo_niveles_riesgo?.nombre}
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                        evento.catalogo_niveles_riesgo?.status === "Alto"
+                          ? "bg-red-500"
+                          : "bg-green-500"
+                      }`}
+                    >
+                      {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
+                        <GoAlert className="mr-1" />
+                      ) : (
+                        <FaCheck className="mr-1" />
+                      )}
+                      {evento.catalogo_niveles_riesgo?.status || "—"}
+                    </span>
                   </td>
                 </tr>
               ))}

@@ -6,6 +6,8 @@ import { FaRegEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
+import { GoAlert } from "react-icons/go";
+import { FaCheck } from "react-icons/fa";
 
 const ConfiguracionAdm = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -293,15 +295,16 @@ const ConfiguracionAdm = () => {
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     <span
-                      className={`px-3 py-1 rounded-full text-white font-bold ${
-                        n.status === "Activo"
-                          ? "bg-green-500"
-                          : n.status === "Inactivo"
-                          ? "bg-red-500"
-                          : "bg-yellow-500"
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                        n.status === "Alto" ? "bg-red-500" : "bg-green-500"
                       }`}
                     >
-                      {n.status}
+                      {n.status === "Alto" ? (
+                        <GoAlert className="mr-1" />
+                      ) : (
+                        <FaCheck className="mr-1" />
+                      )}
+                      {n.status || "—"}
                     </span>
                   </td>
 

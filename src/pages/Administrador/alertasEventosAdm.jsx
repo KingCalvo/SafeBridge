@@ -4,6 +4,8 @@ import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
 import Toggle from "../../components/Toggle";
+import { GoAlert } from "react-icons/go";
+import { FaCheck } from "react-icons/fa";
 
 const AlertasEventosAdm = () => {
   const [alertas, setAlertas] = useState([]);
@@ -43,15 +45,12 @@ const AlertasEventosAdm = () => {
   const fetchEventos = async () => {
     const { data, error } = await supabase.from("eventos_desbordamiento")
       .select(`
-      id_evento,
-      id_puente,
-      fecha_hora,
-      descripcion,
-      catalogo_niveles_riesgo (
-        nombre
-      )
-    `);
-
+        id_evento,
+        id_puente,
+        fecha_hora,
+        descripcion,
+        catalogo_niveles_riesgo ( status )
+      `);
     if (error) console.error("Error cargando eventos:", error);
     else setEventos(data);
   };
@@ -97,16 +96,11 @@ const AlertasEventosAdm = () => {
     .filter((e) => {
       if (!searchTerm) return true;
       const lowerSearch = searchTerm.toLowerCase();
-      return (
-        (e.descripcion || "").toLowerCase().includes(lowerSearch) ||
-        (e.catalogo_niveles_riesgo?.nombre || "")
-          .toLowerCase()
-          .includes(lowerSearch)
-      );
+      return (e.descripcion || "").toLowerCase().includes(lowerSearch);
     })
     .filter((e) =>
       nivelRiesgoFilter
-        ? e.catalogo_niveles_riesgo?.nombre === nivelRiesgoFilter
+        ? e.catalogo_niveles_riesgo?.status === nivelRiesgoFilter
         : true
     );
 
@@ -182,19 +176,19 @@ const AlertasEventosAdm = () => {
             <tbody className="divide-y divide-gray-200">
               {filteredAlertas.map((alerta) => (
                 <tr key={alerta.id_alertas}>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {alerta.id_alertas}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700">
                     {alerta.eventos_desbordamiento?.descripcion || "N/A"}
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {alerta.catalogo_puentes?.ubicacion || "Desconocida"}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {alerta.fecha_hora}
                   </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {alerta.tipo_alerta}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700">
@@ -224,7 +218,7 @@ const AlertasEventosAdm = () => {
         </div>
 
         <div className="flex justify-center items-center gap-4 mb-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800">
+          <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
             EVENTOS DE DESBORDAMIENTO
           </h2>
           <div className="relative">
@@ -235,20 +229,12 @@ const AlertasEventosAdm = () => {
               onChange={(e) => setNivelRiesgoFilter(e.target.value)}
             >
               <option value="">Todos los niveles</option>
-              {[
-                ...new Set(
-                  eventos.map((e) => e.catalogo_niveles_riesgo?.nombre)
-                ),
-              ].map((nombre) => (
-                <option key={nombre} value={nombre}>
-                  {nombre}
-                </option>
-              ))}
+              <option value="Alto">Alto</option>
+              <option value="Bajo">Bajo</option>
             </select>
           </div>
         </div>
 
-        {/* Tabla de Eventos */}
         <div className="overflow-auto bg-white rounded-lg shadow max-h-[400px] overflow-y-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
@@ -280,7 +266,20 @@ const AlertasEventosAdm = () => {
                     {evento.fecha_hora}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    {evento.catalogo_niveles_riesgo?.nombre}
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                        evento.catalogo_niveles_riesgo?.status === "Alto"
+                          ? "bg-red-500"
+                          : "bg-green-500"
+                      }`}
+                    >
+                      {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
+                        <GoAlert className="mr-1" />
+                      ) : (
+                        <FaCheck className="mr-1" />
+                      )}
+                      {evento.catalogo_niveles_riesgo?.status || "—"}
+                    </span>
                   </td>
                 </tr>
               ))}

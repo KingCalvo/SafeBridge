@@ -17,6 +17,7 @@ import EventosOpe from "../pages/Operador/eventosOpe.jsx";
 import InicioOpe from "../pages/Operador/inicioOpe.jsx";
 import MonitoreoSensoresOpe from "../pages/Operador/monitoreoSensoresOpe.jsx";
 import ReportesOpe from "../pages/Operador/reportesOpe.jsx";
+import ReportePDF from "../pages/Operador/reportePDF.jsx";
 
 //Rutas de Proteccion Civil:
 import AlertasPC from "../pages/ProtecciónC/alertasPC.jsx";
@@ -43,6 +44,7 @@ const App = () => {
       <Route path="/inicioOpe" element={<InicioOpe />} />
       <Route path="/monitoreoSensoresOpe" element={<MonitoreoSensoresOpe />} />
       <Route path="/reportesOpe" element={<ReportesOpe />} />
+      <Route path="/reportePDF" element={<ReportePDF />} />
 
       {/* Rutas de Proteccion Civil */}
       <Route path="/alertasPC" element={<AlertasPC />} />

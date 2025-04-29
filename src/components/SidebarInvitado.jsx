@@ -24,7 +24,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col z-50">
       <div className="px-6 py-8 flex items-center space-x-2">
         <span className="text-4xl font-bold">
           <span className="text-orange-400">Safe</span>Bridge

@@ -54,7 +54,11 @@ const Sidebar = ({ userRole }) => {
         icon: <HiOutlineSignal />,
         path: "/monitoreoSensoresOpe",
       },
-      { label: "Eventos", icon: <MdCrisisAlert />, path: "/eventosOpe" },
+      {
+        label: "Alertas y Eventos",
+        icon: <MdCrisisAlert />,
+        path: "/eventosOpe",
+      },
       {
         label: "Generar Reportes",
         icon: <FaFileSignature />,

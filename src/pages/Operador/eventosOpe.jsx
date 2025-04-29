@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Sidebar from "../../components/Sidebar";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { IoIosAddCircleOutline, IoIosFlashOff } from "react-icons/io";
 import { FaRegEdit, FaCheck } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { GoAlert } from "react-icons/go";
@@ -15,7 +15,8 @@ const EventosOpe = () => {
   const [nivelesRiesgo, setNivelesRiesgo] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterNivel, setFilterNivel] = useState("");
-
+  const [alertas, setAlertas] = useState([]);
+  const [filtroRiesgoAlerta, setFiltroRiesgoAlerta] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingEvento, setEditingEvento] = useState(null);
   const [formData, setFormData] = useState({
@@ -30,6 +31,7 @@ const EventosOpe = () => {
     fetchEventos();
     fetchPuentes();
     fetchNivelesRiesgo();
+    fetchAlertas();
   }, []);
 
   const fetchEventos = async () => {
@@ -49,6 +51,20 @@ const EventosOpe = () => {
       .order("id_evento", { ascending: true });
 
     if (!error) setEventos(data || []);
+  };
+  const fetchAlertas = async () => {
+    const { data, error } = await supabase.from("alertas").select(`
+      id_alertas,
+      tipo_alerta,
+      fecha_hora,
+      status,
+      id_puente,
+      eventos_desbordamiento ( descripcion ),
+      catalogo_puentes ( ubicacion )
+    `);
+
+    if (!error) setAlertas(data || []);
+    else console.error("Error cargando alertas:", error);
   };
 
   // Armo un map { Alto: algúnId, Bajo: algúnId }
@@ -175,31 +191,46 @@ const EventosOpe = () => {
       filterNivel ? e.catalogo_niveles_riesgo?.status === filterNivel : true
     );
 
+  const desactivarAlerta = async (id) => {
+    const { error } = await supabase
+      .from("alertas")
+      .update({ status: "Inactiva" })
+      .eq("id_alertas", id);
+
+    if (!error) fetchAlertas();
+  };
+
   return (
     <div className="flex">
       <Sidebar userRole={2} />
       <div className="ml-64 flex-1">
         <main className="p-8 bg-gray-50">
           {/* Título */}
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-            Eventos de desbordamiento
+          <h1 className="text-3xl font-bold uppercase text-gray-800 mb-6 text-center">
+            Alertas y Eventos
           </h1>
 
-          <div className="flex items-center justify-center space-x-4 mb-6">
-            {/* Buscador */}
-            <div className="relative">
+          {/* Buscador */}
+          <div className="flex justify-center mb-8">
+            <div className="relative w-96">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
               </span>
               <input
                 type="text"
-                placeholder="Buscar evento, ubicación o puente..."
-                className="w-80 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                placeholder="Buscar evento, ubicación, puente o tipo de alerta..."
+                className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+          </div>
 
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            {/* Título */}
+            <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
+              Eventos de desbordamiento
+            </h2>
             {/* Filtro */}
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
@@ -304,6 +335,105 @@ const EventosOpe = () => {
                 </tbody>
               </table>
             )}
+          </div>
+          {/*TABLA DE ALERTAS */}
+          <div className="flex items-center justify-center space-x-4 mt-12 mb-4">
+            <h2 className="text-2xl font-bold text-gray-800 uppercase">
+              Alertas
+            </h2>
+            <div className="relative">
+              <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
+              <select
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                value={filtroRiesgoAlerta}
+                onChange={(e) => setFiltroRiesgoAlerta(e.target.value)}
+              >
+                <option value="">Todos los Status</option>
+                <option value="Activa">Activa</option>
+                <option value="Inactiva">Inactiva</option>
+              </select>
+            </div>
+          </div>
+          <div className="overflow-auto max-h-[400px] bg-white rounded-lg shadow">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
+                <tr>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    ID
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Eventos
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Ubicación
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Fecha y Hora
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Tipo de Alerta
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Status
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Acción
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {alertas
+                  .filter((a) =>
+                    a.tipo_alerta
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase())
+                  )
+                  .filter((a) =>
+                    filtroRiesgoAlerta ? a.status === filtroRiesgoAlerta : true
+                  )
+
+                  .map((a) => (
+                    <tr key={a.id_alertas}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.id_alertas}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.eventos_desbordamiento?.descripcion || "—"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.catalogo_puentes?.ubicacion || "—"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.tipo_alerta}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
+                            a.status === "Activa"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {a.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {a.status === "Activa" && (
+                          <button
+                            onClick={() => desactivarAlerta(a.id_alertas)}
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer"
+                          >
+                            <IoIosFlashOff />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
 
           {/* Modal */}

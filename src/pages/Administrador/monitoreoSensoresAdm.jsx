@@ -16,6 +16,7 @@ const MonitoreoSensoresAdm = () => {
   const [sensorInfo, setSensorInfo] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStation, setFilterStation] = useState("");
+  const [showEditSensorModal, setShowEditSensorModal] = useState(false);
 
   useEffect(() => {
     fetchEstaciones();
@@ -65,7 +66,7 @@ const MonitoreoSensoresAdm = () => {
     const { data: sensoresPuente, error: errorSensores } = await supabase
       .from("sensores")
       .select("id_sensor")
-      .eq("id_puente", est.id_puente)
+      .eq("id_puente", "status", est.id_puente)
       .limit(1);
     if (errorSensores) {
       console.error("Error al cargar sensores:", errorSensores);
@@ -253,9 +254,39 @@ const MonitoreoSensoresAdm = () => {
           {/* Tabla de Información de sensor*/}
           {sensorInfo && (
             <div className="overflow-auto w-full max-w-md mx-auto p-4">
-              <h2 className="text-xl font-bold mb-4 text-center">
-                Información del sensor
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-800 text-center">
+                  Información del sensor
+                </h2>
+                <div className="space-x-2">
+                  <button
+                    onClick={() => setShowEditSensorModal(true)}
+                    className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                  >
+                    <FaRegEdit />
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (
+                        window.confirm("¿Estás seguro de eliminar este sensor?")
+                      ) {
+                        const { error } = await supabase
+                          .from("catalogo_sensores")
+                          .delete()
+                          .eq("id_sensor", sensorInfo.id_sensor);
+                        if (!error) {
+                          setSensorInfo(null);
+                          fetchEstaciones();
+                        }
+                      }
+                    }}
+                    className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                  >
+                    <FaDeleteLeft />
+                  </button>
+                </div>
+              </div>
+
               <table className="w-full table-fixed border-collapse border border-gray-500">
                 <tbody>
                   {Object.entries(sensorInfo).map(([key, value]) => (
@@ -350,6 +381,52 @@ const MonitoreoSensoresAdm = () => {
                     ))}
                   </select>
                 </div>
+              </div>
+            </Modal>
+          )}
+          {sensorInfo && showEditSensorModal && (
+            <Modal
+              onClose={() => setShowEditSensorModal(false)}
+              onSubmit={async () => {
+                const { error } = await supabase
+                  .from("catalogo_sensores")
+                  .update(sensorInfo)
+                  .eq("id_sensor", sensorInfo.id_sensor);
+                if (!error) {
+                  setShowEditSensorModal(false);
+                  fetchEstaciones();
+                }
+              }}
+            >
+              <h2 className="text-xl font-bold mb-4 text-center">
+                Editar Sensor
+              </h2>
+              <div className="space-y-4">
+                {[
+                  "nombre",
+                  "tipo",
+                  "descripcion",
+                  "marca",
+                  "modelo",
+                  "status",
+                ].map((campo) => (
+                  <div key={campo}>
+                    <label className="block text-sm font-medium text-gray-700 capitalize">
+                      {campo}
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={sensorInfo[campo] || ""}
+                      onChange={(e) =>
+                        setSensorInfo({
+                          ...sensorInfo,
+                          [campo]: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                ))}
               </div>
             </Modal>
           )}

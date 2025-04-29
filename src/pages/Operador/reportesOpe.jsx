@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/SidebarOperador";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
@@ -6,25 +7,64 @@ import { FaFileMedical } from "react-icons/fa";
 import { supabase } from "../../supabase/client";
 import { GoAlert } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
+import dayjs from "dayjs";
+import Modal from "../../components/Modal";
+import { FaRegEdit } from "react-icons/fa";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const ReportesOpe = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [puentes, setPuentes] = useState([]);
   const [informes, setInformes] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
+  const [nivelRiesgoFilter, setNivelRiesgoFilter] = useState("");
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [editingInforme, setEditingInforme] = useState(null);
+  const [estaciones, setEstaciones] = useState([]);
+  const [formData, setFormData] = useState({
+    id_puente: "",
+    id_estaciones: "",
+    fecha_hora: "",
+    descripcion: "",
+  });
 
   useEffect(() => {
     fetchPuentes();
     fetchInformes();
+    fetchEstaciones();
+    fetchInformes();
   }, []);
 
   const fetchPuentes = async () => {
-    const { data, error } = await supabase
+    // Traer puentes
+    const { data: puentesData, error: errorPuentes } = await supabase
       .from("catalogo_puentes")
       .select("*")
       .order("id_puente", { ascending: true });
-    if (error) console.error(error);
-    else setPuentes(data);
+
+    // Traer estaciones
+    const { data: estacionesData, error: errorEstaciones } = await supabase
+      .from("catalogo_estaciones")
+      .select("id_puente, nombre");
+
+    if (errorPuentes || errorEstaciones) {
+      console.error("Error en fetchPuentes:", errorPuentes || errorEstaciones);
+      return;
+    }
+
+    // Unir datos manualmente
+    const puentesConEstaciones = puentesData.map((puente) => {
+      const estacion = estacionesData.find(
+        (e) => e.id_puente === puente.id_puente
+      );
+      return {
+        ...puente,
+        estacion_nombre: estacion ? estacion.nombre : "Sin estación",
+      };
+    });
+
+    setPuentes(puentesConEstaciones);
   };
 
   const fetchInformes = async () => {
@@ -49,7 +89,60 @@ const ReportesOpe = () => {
     if (error) console.error(error);
     else setInformes(data);
   };
-  const [nivelRiesgoFilter, setNivelRiesgoFilter] = useState("");
+
+  const fetchEstaciones = async () => {
+    const { data, error } = await supabase
+      .from("catalogo_estaciones")
+      .select("id_estaciones, nombre")
+      .order("id_estaciones", { ascending: true });
+
+    if (error) {
+      console.error("Error al traer estaciones:", error);
+    } else {
+      setEstaciones(data);
+    }
+  };
+
+  const handleGenerarReporte = async (idPuente) => {
+    const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
+
+    // Obtener la estación a través del id_puente
+    const { data: estacion, error: estacionError } = await supabase
+      .from("catalogo_estaciones")
+      .select("id_estaciones")
+      .eq("id_puente", idPuente)
+      .limit(1)
+      .single();
+
+    if (estacionError) {
+      console.error(
+        "No se pudo obtener la estación para el puente:",
+        estacionError
+      );
+      return;
+    }
+
+    // Insertar en informes
+    const { data, error } = await supabase
+      .from("informes")
+      .insert([
+        {
+          id_puente: idPuente,
+          id_estaciones: estacion?.id_estaciones || null,
+          fecha_hora: fechaActual,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error al generar informe:", error);
+    } else {
+      localStorage.setItem("id_informe", data.id_Informes);
+      localStorage.setItem("id_puente", idPuente);
+      navigate("/reportePDF");
+    }
+  };
 
   const filteredPuentes = puentes
     .filter((p) =>
@@ -83,11 +176,60 @@ const ReportesOpe = () => {
         : true
     );
 
-  const handleGenerarReporte = (idPuente) => {
-    console.log("Generar reporte para ID puente:", idPuente);
-    // Guardar el idPuente en el localStorage, context, o redireccionar
-    // localStorage.setItem("id_puente_reporte", idPuente);
-    // navigate("/reportePDF");
+  const openEditModal = (informe) => {
+    const fechaFormateada = informe.fecha_hora
+      ? new Date(informe.fecha_hora).toISOString().slice(0, 16)
+      : "";
+
+    setEditingInforme(informe.id_Informes);
+    setFormData({
+      id_puente: informe.id_puente,
+      id_estaciones: informe.id_estaciones,
+      fecha_hora: fechaFormateada,
+      descripcion: informe.descripcion || "",
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const handleModalSubmit = async () => {
+    const payload = {
+      id_puente: formData.id_puente,
+      id_estaciones: formData.id_estaciones,
+      fecha_hora: formData.fecha_hora,
+      descripcion: formData.descripcion,
+    };
+
+    const { error } = await supabase
+      .from("informes")
+      .update(payload)
+      .eq("id_Informes", editingInforme);
+
+    if (error) {
+      console.error("Error actualizando informe:", error);
+    } else {
+      fetchInformes();
+      setShowModal(false);
+    }
+  };
+
+  const handleDeleteInforme = async (idInforme) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este informe?")) return;
+
+    const { error } = await supabase
+      .from("informes")
+      .delete()
+      .eq("id_Informes", idInforme);
+
+    if (error) {
+      console.error("Error al eliminar informe:", error);
+    } else {
+      fetchInformes();
+      alert("Informe eliminado correctamente.");
+    }
   };
 
   return (
@@ -147,6 +289,9 @@ const ReportesOpe = () => {
                   Ubicación
                 </th>
                 <th className="px-4 py-2 text-center text-xs uppercase">
+                  Estación
+                </th>
+                <th className="px-4 py-2 text-center text-xs uppercase">
                   Status
                 </th>
                 <th className="px-4 py-2 text-center text-xs uppercase">
@@ -167,6 +312,9 @@ const ReportesOpe = () => {
                     {puente.ubicacion}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    {puente.estacion_nombre}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     <span
                       className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
                         puente.status === "Activo"
@@ -182,7 +330,7 @@ const ReportesOpe = () => {
                   <td className="px-4 py-2 text-center">
                     <button
                       onClick={() => handleGenerarReporte(puente.id_puente)}
-                      className="p-2 bg-[#e28000] text-white rounded-lg hover:bg-[#BA4A00] transition"
+                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
                     >
                       <FaFileMedical />
                     </button>
@@ -207,7 +355,7 @@ const ReportesOpe = () => {
                 value={nivelRiesgoFilter}
                 onChange={(e) => setNivelRiesgoFilter(e.target.value)}
               >
-                <option value="">Todos los niveles</option>
+                <option value="">Todos los riesgos</option>
                 <option value="Alto">Alto</option>
                 <option value="Bajo">Bajo</option>
               </select>
@@ -238,11 +386,14 @@ const ReportesOpe = () => {
                 <th className="px-4 py-2 text-center text-xs uppercase">
                   Descripción
                 </th>
+                <th className="px-4 py-2 text-center text-xs uppercase">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredInformes.map((info) => (
-                <tr key={info.id_informes}>
+                <tr key={info.id_Informes}>
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {info.id_Informes}
                   </td>
@@ -267,18 +418,103 @@ const ReportesOpe = () => {
                       </span>
                     )}
                   </td>
-
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {info.fecha_hora}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700 text-center">
                     {info.descripcion}
                   </td>
+                  <td className="px-4 py-2 text-center space-x-2">
+                    <button
+                      onClick={() => openEditModal(info)}
+                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                    >
+                      <FaRegEdit />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteInforme(info.id_Informes)}
+                      className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                    >
+                      <FaDeleteLeft />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        {showModal && (
+          <Modal onClose={closeModal} onSubmit={handleModalSubmit}>
+            <h2 className="text-xl font-bold text-center mb-4">
+              Editar Reporte
+            </h2>
+            <div className="space-y-4">
+              {/* Puente */}
+              <label className="block text-sm font-medium text-gray-700">
+                Puente
+              </label>
+              <select
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                value={formData.id_puente}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    id_puente: Number(e.target.value),
+                  })
+                }
+              >
+                <option value="">-- Selecciona un puente --</option>
+                {puentes.map((p) => (
+                  <option key={p.id_puente} value={p.id_puente}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </select>
+
+              {/* Estación */}
+              <label className="block text-sm font-medium text-gray-700">
+                Estación
+              </label>
+              <select
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                value={formData.id_estaciones}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    id_estaciones: Number(e.target.value),
+                  })
+                }
+              >
+                <option value="">-- Selecciona una estación --</option>
+                {estaciones.map((e) => (
+                  <option key={e.id_estaciones} value={e.id_estaciones}>
+                    {e.nombre}
+                  </option>
+                ))}
+              </select>
+
+              {/* Fecha y hora */}
+              <input
+                type="datetime-local"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                value={formData.fecha_hora}
+                onChange={(e) =>
+                  setFormData({ ...formData, fecha_hora: e.target.value })
+                }
+              />
+
+              {/* Descripción */}
+              <textarea
+                placeholder="Descripción"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                value={formData.descripcion}
+                onChange={(e) =>
+                  setFormData({ ...formData, descripcion: e.target.value })
+                }
+              />
+            </div>
+          </Modal>
+        )}
       </main>
     </div>
   );

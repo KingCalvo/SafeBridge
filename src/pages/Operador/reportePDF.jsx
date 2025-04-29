@@ -5,6 +5,8 @@ import { supabase } from "../../supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import dayjs from "dayjs";
+import { IoMdReturnLeft } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const ReportePDF = () => {
   const [sensores, setSensores] = useState([]);
@@ -12,11 +14,10 @@ const ReportePDF = () => {
   const [eventos, setEventos] = useState([]);
   const [puenteInfo, setPuenteInfo] = useState(null);
   const [descripcion, setDescripcion] = useState("");
-
-  const idPuenteSeleccionado = 1;
-
-  const fechaActual = dayjs().format("DD/MM/YYYY HH:mm");
-  const idReporte = "011";
+  const navigate = useNavigate();
+  const idInforme = localStorage.getItem("id_informe");
+  const idPuenteSeleccionado = localStorage.getItem("id_puente");
+  const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
 
   useEffect(() => {
     fetchDatos();
@@ -86,18 +87,16 @@ const ReportePDF = () => {
       ? eventos[0]?.catalogo_niveles_riesgo?.status
       : "Sin eventos registrados";
 
-  const generarPDF = () => {
-    const doc = new jsPDF("p", "pt", "a4");
+  const handleDescargar = async () => {
+    await supabase
+      .from("informes")
+      .update({ descripcion, fecha_hora: fechaActual })
+      .eq("id_Informes", idInforme);
 
-    // — Título y fecha —
-    doc.setFontSize(20);
-    doc.text(`REPORTE ${idReporte}`, 40, 40);
-    doc.setFontSize(12);
-    doc.text(`Fecha: ${fechaActual}`, 450, 45);
+    const doc = new jsPDF("p", "pt", "a4");
 
     let y = 70;
 
-    // — Información general —
     doc.setFontSize(14);
     doc.text(`Puente: ${puenteInfo?.nombre || "No disponible"}`, 40, y);
     y += 20;
@@ -116,7 +115,6 @@ const ReportePDF = () => {
     doc.text(`Nivel de riesgo: ${nivelRiesgo}`, 300, y);
     y += 30;
 
-    // — Tabla Sensores —
     doc.setFontSize(14);
     doc.text("SENSORES", 230, y);
     y += 20;
@@ -165,7 +163,6 @@ const ReportePDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // — Tabla Alertas —
     doc.setFontSize(14);
     doc.text("ALERTAS", 240, y);
     y += 20;
@@ -210,7 +207,6 @@ const ReportePDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // — Tabla Eventos —
     doc.setFontSize(14);
     doc.text("EVENTOS DE DESBORDAMIENTO", 150, y);
     y += 20;
@@ -244,7 +240,6 @@ const ReportePDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // — Descripción final —
     doc.setFontSize(14);
     doc.text("Descripción del Reporte:", 40, y);
     y += 20;
@@ -253,8 +248,11 @@ const ReportePDF = () => {
       maxWidth: 500,
     });
 
-    // — Guardar PDF con nombre dinámico —
-    doc.save(`REPORTE_${idReporte}.pdf`);
+    doc.save(`REPORTE_${idInforme}.pdf`);
+
+    // Limpiar el localStorage después de descargar
+    localStorage.removeItem("id_informe");
+    localStorage.removeItem("id_puente");
   };
 
   return (
@@ -262,10 +260,9 @@ const ReportePDF = () => {
       <Sidebar />
       <main className="flex-1 bg-gray-100 flex justify-center items-start py-8">
         <div className="bg-white rounded-lg shadow-lg p-10 w-full max-w-5xl space-y-8">
-          {/* Titulo y Fecha */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-800 uppercase">
-              REPORTE 011
+            <h1 className="text-3xl font-bold uppercase text-center mb-8">
+              REPORTE {idInforme}
             </h1>
             <p className="text-sm text-gray-500">
               {dayjs().format("DD/MM/YYYY HH:mm")}
@@ -440,19 +437,28 @@ const ReportePDF = () => {
             </h2>
             <div className="flex justify-center">
               <textarea
-                className="w-[50%] border border-gray-300 rounded-lg px-3 py-2"
-                placeholder="Escribe la descripción del reporte..."
+                className="w-full border p-4 mt-8 rounded-lg"
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
+                placeholder="Escribe aquí la descripción del reporte..."
               />
             </div>
           </div>
 
-          {/* Botón Descargar */}
-          <div className="flex justify-center">
+          {/* Botones de Acción */}
+          <div className="flex justify-center gap-4">
+            {/* Botón Regresar */}
             <button
-              onClick={generarPDF}
-              className="flex items-center gap-2 bg-black text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-800 transition cursor-pointer"
+              onClick={() => navigate("/reportesOpe")}
+              className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
+            >
+              <IoMdReturnLeft /> REGRESAR
+            </button>
+
+            {/* Botón Descargar */}
+            <button
+              onClick={handleDescargar}
+              className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
             >
               <FaFileDownload /> DESCARGAR
             </button>

@@ -65,8 +65,8 @@ const MonitoreoSensoresAdm = () => {
     // Obtener sensores ligados al puente de la estación
     const { data: sensoresPuente, error: errorSensores } = await supabase
       .from("sensores")
-      .select("id_sensor")
-      .eq("id_puente", "status", est.id_puente)
+      .select("id_sensor, status")
+      .eq("id_puente", est.id_puente)
       .limit(1);
     if (errorSensores) {
       console.error("Error al cargar sensores:", errorSensores);
@@ -74,20 +74,26 @@ const MonitoreoSensoresAdm = () => {
       return;
     }
     if (!sensoresPuente.length) {
-      setSensorInfo([]);
+      setSensorInfo(null);
       return;
     }
     const sensorId = sensoresPuente[0].id_sensor;
+    const statusSensor = sensoresPuente[0].status;
+
     const { data: detalle, error: errorDetalle } = await supabase
       .from("catalogo_sensores")
       .select("id_sensor, nombre, tipo, descripcion, marca, modelo")
       .eq("id_sensor", sensorId)
       .single();
+
     if (errorDetalle) {
       console.error("Error al cargar detalle de sensor:", errorDetalle);
       setSensorInfo(null);
     } else {
-      setSensorInfo(detalle);
+      setSensorInfo({
+        ...detalle,
+        status: statusSensor || "Desconocido",
+      });
     }
   };
 
@@ -186,7 +192,7 @@ const MonitoreoSensoresAdm = () => {
                     Sensor
                   </th>
                   <th className="px-4 py-2 text-center text-xs font-medium uppercase">
-                    Status
+                    Status del sensor
                   </th>
                   <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     Acciones
@@ -254,37 +260,35 @@ const MonitoreoSensoresAdm = () => {
           {/* Tabla de Información de sensor*/}
           {sensorInfo && (
             <div className="overflow-auto w-full max-w-md mx-auto p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-800 text-center">
+              <div className="flex items-center justify-center mb-4 space-x-4">
+                <h2 className="text-xl font-bold text-gray-800">
                   Información del sensor
                 </h2>
-                <div className="space-x-2">
-                  <button
-                    onClick={() => setShowEditSensorModal(true)}
-                    className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                  >
-                    <FaRegEdit />
-                  </button>
-                  <button
-                    onClick={async () => {
-                      if (
-                        window.confirm("¿Estás seguro de eliminar este sensor?")
-                      ) {
-                        const { error } = await supabase
-                          .from("catalogo_sensores")
-                          .delete()
-                          .eq("id_sensor", sensorInfo.id_sensor);
-                        if (!error) {
-                          setSensorInfo(null);
-                          fetchEstaciones();
-                        }
+                <button
+                  onClick={() => setShowEditSensorModal(true)}
+                  className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                >
+                  <FaRegEdit />
+                </button>
+                <button
+                  onClick={async () => {
+                    if (
+                      window.confirm("¿Estás seguro de eliminar este sensor?")
+                    ) {
+                      const { error } = await supabase
+                        .from("catalogo_sensores")
+                        .delete()
+                        .eq("id_sensor", sensorInfo.id_sensor);
+                      if (!error) {
+                        setSensorInfo(null);
+                        fetchEstaciones();
                       }
-                    }}
-                    className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                  >
-                    <FaDeleteLeft />
-                  </button>
-                </div>
+                    }
+                  }}
+                  className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                >
+                  <FaDeleteLeft />
+                </button>
               </div>
 
               <table className="w-full table-fixed border-collapse border border-gray-500">

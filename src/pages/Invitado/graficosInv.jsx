@@ -3,7 +3,7 @@ import Sidebar from "../../components/SidebarInvitado";
 
 const GraficosInv = () => {
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       <Sidebar />
       <div className="ml-64 flex-1">
         <main className="p-8 bg-gray-50">

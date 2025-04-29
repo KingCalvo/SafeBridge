@@ -429,7 +429,7 @@ const ReportesOpe = () => {
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {info.descripcion}
                     </td>
-                    <td className="px-4 py-2 text-center space-x-2">
+                    <td className="px-2 py-2 text-center space-x-2">
                       <button
                         onClick={() => openEditModal(info)}
                         className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"

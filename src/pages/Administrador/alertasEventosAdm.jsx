@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/SidebarAdmin";
+import Sidebar from "../../components/Sidebar";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
@@ -107,186 +107,190 @@ const AlertasEventosAdm = () => {
   return (
     <div className="flex">
       <Sidebar userRole={1} />
-      <main className="flex-1 p-8 bg-gray-50">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          HISTORIAL DE ALERTAS Y EVENTOS
-        </h1>
+      <div className="ml-64 flex-1">
+        <main className="p-8 bg-gray-50">
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+            HISTORIAL DE ALERTAS Y EVENTOS
+          </h1>
 
-        {/* Buscador y Filtros */}
-        <div className="flex items-center justify-center space-x-4 mb-6">
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-              <IoSearch />
-            </span>
-            <input
-              type="text"
-              placeholder="Buscar por evento, tipo de alerta o ubicación..."
-              className="w-96 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          {/* Buscador y Filtros */}
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                <IoSearch />
+              </span>
+              <input
+                type="text"
+                placeholder="Buscar por evento, tipo de alerta o ubicación..."
+                className="w-96 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex justify-center items-center gap-4 mb-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
-            Alertas
-          </h2>
-          <div className="relative">
-            <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
-            <select
-              className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
-              value={tipoAlertaFilter}
-              onChange={(e) => setTipoAlertaFilter(e.target.value)}
-            >
-              <option value="">Todos los tipos</option>
-              <option value="Sonora">Sonora</option>
-              <option value="Notificación de Celular">
-                Notificación de Celular
-              </option>
-            </select>
+          <div className="flex justify-center items-center gap-4 mb-4">
+            <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
+              Alertas
+            </h2>
+            <div className="relative">
+              <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
+              <select
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                value={tipoAlertaFilter}
+                onChange={(e) => setTipoAlertaFilter(e.target.value)}
+              >
+                <option value="">Todos los tipos</option>
+                <option value="Sonora">Sonora</option>
+                <option value="Notificación de Celular">
+                  Notificación de Celular
+                </option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        {/* Tabla de Alertas */}
-        <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[400px] overflow-y-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
-              <tr>
-                <th className="px-4 py-2 text-center text-xs uppercase">ID</th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Evento
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Ubicación
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Fecha y Hora
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Tipo de Alerta
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Status
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Acción
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredAlertas.map((alerta) => (
-                <tr key={alerta.id_alertas}>
-                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    {alerta.id_alertas}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
-                    {alerta.eventos_desbordamiento?.descripcion || "N/A"}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    {alerta.catalogo_puentes?.ubicacion || "Desconocida"}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    {alerta.fecha_hora}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    {alerta.tipo_alerta}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
-                    <span
-                      className={`px-2 py-1 rounded-full text-white font-bold  ${
-                        alerta.status === "Activa"
-                          ? "bg-green-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      {alerta.status}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-2 text-center">
-                    <Toggle
-                      isOn={alerta.status === "Activa"}
-                      onToggle={() =>
-                        handleToggle(alerta.id_alertas, alerta.status)
-                      }
-                    />
-                  </td>
+          {/* Tabla de Alertas */}
+          <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[400px] overflow-y-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
+                <tr>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    ID
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Evento
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Ubicación
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Fecha y Hora
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Tipo de Alerta
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Status
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Acción
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredAlertas.map((alerta) => (
+                  <tr key={alerta.id_alertas}>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {alerta.id_alertas}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {alerta.eventos_desbordamiento?.descripcion || "N/A"}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {alerta.catalogo_puentes?.ubicacion || "Desconocida"}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {alerta.fecha_hora}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {alerta.tipo_alerta}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      <span
+                        className={`px-2 py-1 rounded-full text-white font-bold  ${
+                          alerta.status === "Activa"
+                            ? "bg-green-500"
+                            : "bg-red-500"
+                        }`}
+                      >
+                        {alerta.status}
+                      </span>
+                    </td>
 
-        <div className="flex justify-center items-center gap-4 mb-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
-            EVENTOS DE DESBORDAMIENTO
-          </h2>
-          <div className="relative">
-            <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
-            <select
-              className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
-              value={nivelRiesgoFilter}
-              onChange={(e) => setNivelRiesgoFilter(e.target.value)}
-            >
-              <option value="">Todos los niveles</option>
-              <option value="Alto">Alto</option>
-              <option value="Bajo">Bajo</option>
-            </select>
+                    <td className="px-4 py-2 text-center">
+                      <Toggle
+                        isOn={alerta.status === "Activa"}
+                        onToggle={() =>
+                          handleToggle(alerta.id_alertas, alerta.status)
+                        }
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
 
-        <div className="overflow-auto bg-white rounded-lg shadow max-h-[400px] overflow-y-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
-              <tr>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Evento
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  ID Puente
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Fecha y Hora
-                </th>
-                <th className="px-4 py-2 text-center text-xs uppercase">
-                  Nivel de Riesgo
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredEventos.map((evento) => (
-                <tr key={evento.id_evento}>
-                  <td className="px-4 py-2 text-sm text-gray-700">
-                    {evento.descripcion}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    {evento.id_puente}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    {evento.fecha_hora}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
-                        evento.catalogo_niveles_riesgo?.status === "Alto"
-                          ? "bg-red-500"
-                          : "bg-green-500"
-                      }`}
-                    >
-                      {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
-                        <GoAlert className="mr-1" />
-                      ) : (
-                        <FaCheck className="mr-1" />
-                      )}
-                      {evento.catalogo_niveles_riesgo?.status || "—"}
-                    </span>
-                  </td>
+          <div className="flex justify-center items-center gap-4 mb-4">
+            <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
+              EVENTOS DE DESBORDAMIENTO
+            </h2>
+            <div className="relative">
+              <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
+              <select
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                value={nivelRiesgoFilter}
+                onChange={(e) => setNivelRiesgoFilter(e.target.value)}
+              >
+                <option value="">Todos los riesgos</option>
+                <option value="Alto">Alto</option>
+                <option value="Bajo">Bajo</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="overflow-auto bg-white rounded-lg shadow max-h-[400px] overflow-y-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
+                <tr>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Evento
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    ID Puente
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Fecha y Hora
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Nivel de Riesgo
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredEventos.map((evento) => (
+                  <tr key={evento.id_evento}>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {evento.descripcion}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {evento.id_puente}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {evento.fecha_hora}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                          evento.catalogo_niveles_riesgo?.status === "Alto"
+                            ? "bg-red-500"
+                            : "bg-green-500"
+                        }`}
+                      >
+                        {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
+                          <GoAlert className="mr-1" />
+                        ) : (
+                          <FaCheck className="mr-1" />
+                        )}
+                        {evento.catalogo_niveles_riesgo?.status || "—"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

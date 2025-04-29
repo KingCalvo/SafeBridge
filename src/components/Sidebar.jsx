@@ -1,17 +1,77 @@
 import React from "react";
-import { FaHome, FaUserNurse } from "react-icons/fa";
+import {
+  FaHome,
+  FaUser,
+  FaCog,
+  FaUserLock,
+  FaFileSignature,
+} from "react-icons/fa";
 import { MdCrisisAlert } from "react-icons/md";
+import { HiOutlineSignal } from "react-icons/hi2";
 import { IoIosLogOut } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
 
-const Sidebar = () => {
+const Sidebar = ({ userRole }) => {
   const navigate = useNavigate();
 
-  const menuItems = [
-    { label: "Inicio", icon: <FaHome />, path: "/inicioPC" },
-    { label: "Alertas", icon: <MdCrisisAlert />, path: "/alertasPC" },
-  ];
+  // Mapeo de roles a texto
+  const roleNames = {
+    1: "Administrador",
+    2: "Operador",
+    3: "Protección Civil",
+  };
+
+  // Menú basado en el rol del usuario
+  const menuItemsByRole = {
+    1: [
+      { label: "Inicio", icon: <FaHome />, path: "/inicioAdm" },
+      {
+        label: "Gestión de Usuario",
+        icon: <FaUser />,
+        path: "/gestionUserAdm",
+      },
+      {
+        label: "Monitoreo de Sensores",
+        icon: <HiOutlineSignal />,
+        path: "/monitoreoSensoresAdm",
+      },
+      {
+        label: "Alertas y Eventos",
+        icon: <MdCrisisAlert />,
+        path: "/alertasEventosAdm",
+      },
+      {
+        label: "Configuración del Sistema",
+        icon: <FaCog />,
+        path: "/configuracionAdm",
+      },
+    ],
+    2: [
+      { label: "Inicio", icon: <FaHome />, path: "/inicioOpe" },
+      {
+        label: "Monitoreo de Sensores",
+        icon: <HiOutlineSignal />,
+        path: "/monitoreoSensoresOpe",
+      },
+      { label: "Eventos", icon: <MdCrisisAlert />, path: "/eventosOpe" },
+      {
+        label: "Generar Reportes",
+        icon: <FaFileSignature />,
+        path: "/reportesOpe",
+      },
+    ],
+    3: [
+      { label: "Inicio", icon: <FaHome />, path: "/inicioPC" },
+      {
+        label: "Alertas y Eventos",
+        icon: <MdCrisisAlert />,
+        path: "/alertasPC",
+      },
+    ],
+  };
+
+  const menuItems = menuItemsByRole[userRole] || [];
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -24,7 +84,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col z-50">
       {/* Logo y título */}
       <div className="px-6 py-8 flex items-center space-x-2">
         <span className="text-4xl font-bold">
@@ -36,11 +96,11 @@ const Sidebar = () => {
       <div className="px-6 mb-8 flex items-center justify-between">
         <div>
           <p className="text-xl font-semibold text-black-700">
-            Protección Civil
+            {roleNames[userRole]}
           </p>
           <p className="text-xl text-gray-900">Menú</p>
         </div>
-        <FaUserNurse className="text-5xl text-black-500" />
+        <FaUserLock className="text-5xl text-black-500" />
       </div>
 
       {/* Opciones */}

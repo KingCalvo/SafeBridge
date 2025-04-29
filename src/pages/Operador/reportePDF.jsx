@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/SidebarOperador";
+import Sidebar from "../../components/Sidebar";
 import { FaFileDownload } from "react-icons/fa";
 import { supabase } from "../../supabase/client";
 import jsPDF from "jspdf";
@@ -257,214 +257,216 @@ const ReportePDF = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
-      <main className="flex-1 bg-gray-100 flex justify-center items-start py-8">
-        <div className="bg-white rounded-lg shadow-lg p-10 w-full max-w-5xl space-y-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold uppercase text-center mb-8">
-              REPORTE {idInforme}
-            </h1>
-            <p className="text-sm text-gray-500">
-              {dayjs().format("DD/MM/YYYY HH:mm")}
-            </p>
-          </div>
-
-          {/* Información General */}
-          {puenteInfo && (
-            <div className="space-y-2 text-gray-700">
-              <p>
-                <strong>Puente:</strong> {puenteInfo.nombre}
-              </p>
-              <p>
-                <strong>Número de sensores activos:</strong>{" "}
-                {sensores.filter((s) => s.status === "Activo").length}
-              </p>
-              <p>
-                <strong>Estación de atención:</strong>{" "}
-                {sensores[0]?.catalogo_puentes?.nombre || "Sin estación"}
-              </p>
-              <p>
-                <strong>Número de alertas emitidas:</strong> {alertas.length}
-              </p>
-              <p>
-                <strong>Status de la alerta:</strong>{" "}
-                {alertas[0]?.status || "N/A"}
-              </p>
-              <p>
-                <strong>Número de eventos de desbordamiento:</strong>{" "}
-                {eventos.length}
-              </p>
-              <p>
-                <strong>Nivel de riesgo:</strong>{" "}
-                {eventos[0]?.catalogo_niveles_riesgo?.status || "N/A"}
+      <Sidebar userRole={2} />
+      <div className="ml-64 flex-1">
+        <main className="p-8 py-8 bg-gray-100 flex-1  flex justify-center items-start">
+          <div className="bg-white rounded-lg shadow-lg p-10 w-full max-w-5xl space-y-8">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold uppercase text-center mb-8">
+                REPORTE {idInforme}
+              </h1>
+              <p className="text-sm text-gray-500">
+                {dayjs().format("DD/MM/YYYY HH:mm")}
               </p>
             </div>
-          )}
 
-          {/* Tabla Sensores */}
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-            SENSORES
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white text-sm text-gray-70">
-              <thead className="bg-[#2C2B2B] text-white sticky top-0">
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Tipo</th>
-                  <th>Marca</th>
-                  <th>Puente</th>
-                  <th>Modelo</th>
-                  <th>Ubicación</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sensores.map((s) => (
-                  <tr key={s.id_sensor} className="divide-y divide-gray-200">
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.id_sensor}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores?.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores?.tipo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores?.marca}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_puentes?.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores?.modelo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_puentes?.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+            {/* Información General */}
+            {puenteInfo && (
+              <div className="space-y-2 text-gray-700">
+                <p>
+                  <strong>Puente:</strong> {puenteInfo.nombre}
+                </p>
+                <p>
+                  <strong>Número de sensores activos:</strong>{" "}
+                  {sensores.filter((s) => s.status === "Activo").length}
+                </p>
+                <p>
+                  <strong>Estación de atención:</strong>{" "}
+                  {sensores[0]?.catalogo_puentes?.nombre || "Sin estación"}
+                </p>
+                <p>
+                  <strong>Número de alertas emitidas:</strong> {alertas.length}
+                </p>
+                <p>
+                  <strong>Status de la alerta:</strong>{" "}
+                  {alertas[0]?.status || "N/A"}
+                </p>
+                <p>
+                  <strong>Número de eventos de desbordamiento:</strong>{" "}
+                  {eventos.length}
+                </p>
+                <p>
+                  <strong>Nivel de riesgo:</strong>{" "}
+                  {eventos[0]?.catalogo_niveles_riesgo?.status || "N/A"}
+                </p>
+              </div>
+            )}
 
-          {/* Tabla Alertas */}
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-            ALERTAS
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white text-sm text-gray-70">
-              <thead className="bg-[#2C2B2B] text-white sticky top-0">
-                <tr>
-                  <th>ID</th>
-                  <th>Eventos</th>
-                  <th>Ubicación</th>
-                  <th>Fecha y Hora</th>
-                  <th>Tipo de Alerta</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alertas.map((a) => (
-                  <tr key={a.id_alertas} className="divide-y divide-gray-200">
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.id_alertas}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.eventos_desbordamiento?.descripcion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.catalogo_puentes?.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.fecha_hora}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.tipo_alerta}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Tabla Eventos */}
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-            EVENTOS DE DESBORDAMIENTO
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white text-sm text-gray-70">
-              <thead className="bg-[#2C2B2B] text-white sticky top-0">
-                <tr>
-                  <th>Evento</th>
-                  <th>ID Puente</th>
-                  <th>Fecha y Hora</th>
-                  <th>Nivel de Riesgo</th>
-                </tr>
-              </thead>
-              <tbody>
-                {eventos.map((e) => (
-                  <tr key={e.id_evento} className="divide-y divide-gray-200">
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {e.descripcion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {e.id_puente}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {e.fecha_hora}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {e.catalogo_niveles_riesgo?.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Agregar Descripción */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">
-              Agregar Descripción
+            {/* Tabla Sensores */}
+            <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+              SENSORES
             </h2>
-            <div className="flex justify-center">
-              <textarea
-                className="w-full border p-4 mt-8 rounded-lg"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                placeholder="Escribe aquí la descripción del reporte..."
-              />
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white text-sm text-gray-70">
+                <thead className="bg-[#2C2B2B] text-white sticky top-0">
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Marca</th>
+                    <th>Puente</th>
+                    <th>Modelo</th>
+                    <th>Ubicación</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sensores.map((s) => (
+                    <tr key={s.id_sensor} className="divide-y divide-gray-200">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.id_sensor}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores?.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores?.tipo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores?.marca}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_puentes?.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores?.modelo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_puentes?.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.status}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Tabla Alertas */}
+            <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+              ALERTAS
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white text-sm text-gray-70">
+                <thead className="bg-[#2C2B2B] text-white sticky top-0">
+                  <tr>
+                    <th>ID</th>
+                    <th>Eventos</th>
+                    <th>Ubicación</th>
+                    <th>Fecha y Hora</th>
+                    <th>Tipo de Alerta</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {alertas.map((a) => (
+                    <tr key={a.id_alertas} className="divide-y divide-gray-200">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.id_alertas}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.eventos_desbordamiento?.descripcion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.catalogo_puentes?.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.tipo_alerta}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.status}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Tabla Eventos */}
+            <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
+              EVENTOS DE DESBORDAMIENTO
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white text-sm text-gray-70">
+                <thead className="bg-[#2C2B2B] text-white sticky top-0">
+                  <tr>
+                    <th>Evento</th>
+                    <th>ID Puente</th>
+                    <th>Fecha y Hora</th>
+                    <th>Nivel de Riesgo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {eventos.map((e) => (
+                    <tr key={e.id_evento} className="divide-y divide-gray-200">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {e.descripcion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {e.id_puente}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {e.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {e.catalogo_niveles_riesgo?.status}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Agregar Descripción */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">
+                Agregar Descripción
+              </h2>
+              <div className="flex justify-center">
+                <textarea
+                  className="w-full border p-4 mt-8 rounded-lg"
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
+                  placeholder="Escribe aquí la descripción del reporte..."
+                />
+              </div>
+            </div>
+
+            {/* Botones de Acción */}
+            <div className="flex justify-center gap-4">
+              {/* Botón Regresar */}
+              <button
+                onClick={() => navigate("/reportesOpe")}
+                className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
+              >
+                <IoMdReturnLeft /> REGRESAR
+              </button>
+
+              {/* Botón Descargar */}
+              <button
+                onClick={handleDescargar}
+                className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
+              >
+                <FaFileDownload /> DESCARGAR
+              </button>
             </div>
           </div>
-
-          {/* Botones de Acción */}
-          <div className="flex justify-center gap-4">
-            {/* Botón Regresar */}
-            <button
-              onClick={() => navigate("/reportesOpe")}
-              className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
-            >
-              <IoMdReturnLeft /> REGRESAR
-            </button>
-
-            {/* Botón Descargar */}
-            <button
-              onClick={handleDescargar}
-              className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
-            >
-              <FaFileDownload /> DESCARGAR
-            </button>
-          </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };

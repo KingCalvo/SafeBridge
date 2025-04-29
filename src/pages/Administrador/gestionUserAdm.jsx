@@ -5,7 +5,7 @@ import { FaUserPlus } from "react-icons/fa6";
 import { FaUserEdit, FaUserTimes } from "react-icons/fa";
 import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
-import Sidebar from "../../components/SidebarAdmin";
+import Sidebar from "../../components/Sidebar";
 
 const GestionUserAdm = () => {
   const [users, setUsers] = useState([]);
@@ -125,8 +125,8 @@ const GestionUserAdm = () => {
   return (
     <div className="flex">
       <Sidebar userRole={1} />
-      <div className="flex-1 p-6 overflow-x-auto">
-        <main className="flex-1 p-6 bg-gray-50">
+      <div className="ml-64 flex-1">
+        <main className="p-8 bg-gray-50">
           <h1 className="text-3xl font-bold mb-4 text-center w-full">
             LISTA DE USUARIOS
           </h1>
@@ -150,7 +150,7 @@ const GestionUserAdm = () => {
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
               >
-                <option value="">Todos</option>
+                <option value="">Todos los usuarios</option>
                 {roles.map((r) => (
                   <option key={r.id_rol} value={r.id_rol}>
                     {r.nombre}
@@ -167,9 +167,9 @@ const GestionUserAdm = () => {
             </button>
           </div>
 
-          <div className="overflow-x-auto bg-white rounded-lg shadow">
+          <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[500px] overflow-y-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-[#2C2B2B] text-white">
+              <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs font-medium uppercase">
                     ID

@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEdit, FaFileMedical } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
 import { GoAlert } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const ConfiguracionAdm = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +19,7 @@ const ConfiguracionAdm = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [editingTipo, setEditingTipo] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPuentes();
@@ -161,6 +163,13 @@ const ConfiguracionAdm = () => {
                 <option value="Reparación">Reparación</option>
               </select>
             </div>
+            <button
+              onClick={() => navigate("/reportesPuentesPDF")}
+              className="flex items-center space-x-2 px-4 font-bold py-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
+            >
+              <FaFileMedical className="text-2xl font-bold" />
+              <span>GENERAR REPORTE</span>
+            </button>
           </div>
           <div className="overflow-auto max-h-[300px] bg-white rounded-lg shadow mb-8">
             <table className="min-w-full divide-y divide-gray-200">

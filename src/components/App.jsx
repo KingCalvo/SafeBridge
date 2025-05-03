@@ -6,6 +6,7 @@ import GestionUserAdm from "../pages/Administrador/gestionUserAdm.jsx";
 import MonitoreoSensoresAdm from "../pages/Administrador/monitoreoSensoresAdm.jsx";
 import AlertasEventosAdm from "../pages/Administrador/alertasEventosAdm.jsx";
 import ConfiguracionAdm from "../pages/Administrador/configuracionAdm.jsx";
+import ReportesPuentesPDF from "../pages/Administrador/reportesPuentesPDF.jsx";
 
 //Rutas del Invitado:
 import AlertasInv from "../pages/Invitado/alertasInv";
@@ -29,6 +30,7 @@ const App = () => {
       <Route path="/monitoreoSensoresAdm" element={<MonitoreoSensoresAdm />} />
       <Route path="/alertasEventosAdm" element={<AlertasEventosAdm />} />
       <Route path="/configuracionAdm" element={<ConfiguracionAdm />} />
+      <Route path="/reportesPuentesPDF" element={<ReportesPuentesPDF />} />
 
       {/* Rutas del Invitado */}
       <Route path="/alertasInv" element={<AlertasInv />} />

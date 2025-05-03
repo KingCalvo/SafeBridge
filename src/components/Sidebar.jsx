@@ -19,7 +19,6 @@ const Sidebar = ({ userRole }) => {
   const roleNames = {
     1: "Administrador",
     2: "Operador",
-    3: "Protección Civil",
   };
 
   // Menú basado en el rol del usuario
@@ -63,14 +62,6 @@ const Sidebar = ({ userRole }) => {
         label: "Generar Reportes",
         icon: <FaFileSignature />,
         path: "/reportesOpe",
-      },
-    ],
-    3: [
-      { label: "Inicio", icon: <FaHome />, path: "/inicioPC" },
-      {
-        label: "Alertas y Eventos",
-        icon: <MdCrisisAlert />,
-        path: "/alertasPC",
       },
     ],
   };

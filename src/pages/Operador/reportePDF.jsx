@@ -256,7 +256,7 @@ const ReportePDF = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={2} />
       <div className="ml-64 flex-1">
         <main className="p-8 py-8 bg-gray-100 flex-1  flex justify-center items-start">

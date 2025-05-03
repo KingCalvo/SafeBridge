@@ -53,7 +53,7 @@ const MonitoreoSensoresOpe = () => {
     .sort((a, b) => a.id_sensor - b.id_sensor);
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={2} />
       <div className="ml-64 flex-1">
         <main className="p-8 bg-gray-50">

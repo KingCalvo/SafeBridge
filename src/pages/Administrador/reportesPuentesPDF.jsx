@@ -69,8 +69,14 @@ const ReportesPuentesPDF = () => {
     y += 20;
     autoTable(doc, {
       startY: y,
-      head: [["ID", "Nombre", "Ubicación", "Status"]],
-      body: puentes.map((p) => [p.id_puente, p.nombre, p.ubicacion, p.status]),
+      head: [["ID", "Nombre", "Ubicación", "Información", "Status"]],
+      body: puentes.map((p) => [
+        p.id_puente,
+        p.nombre,
+        p.ubicacion,
+        p.info,
+        p.status,
+      ]),
       styles: { fontSize: 8, halign: "center", cellPadding: 5 },
       headStyles: { fillColor: [44, 43, 43], textColor: [255, 255, 255] },
     });
@@ -192,6 +198,9 @@ const ReportesPuentesPDF = () => {
                       Ubicación
                     </th>
                     <th className="px-4 py-2 text-center text-xs uppercase">
+                      Información
+                    </th>
+                    <th className="px-4 py-2 text-center text-xs uppercase">
                       Status
                     </th>
                   </tr>
@@ -199,16 +208,19 @@ const ReportesPuentesPDF = () => {
                 <tbody className="divide-y divide-gray-200">
                   {puentes.map((p) => (
                     <tr key={p.id_puente}>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {p.id_puente}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {p.nombre}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {p.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {p.info}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {p.status}
                       </td>
                     </tr>
@@ -254,28 +266,28 @@ const ReportesPuentesPDF = () => {
                 <tbody className="divide-y divide-gray-200">
                   {sensores.map((s) => (
                     <tr key={s.id_sensor}>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.id_sensor}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.catalogo_sensores?.nombre}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.catalogo_sensores?.tipo}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.catalogo_sensores?.marca}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.catalogo_puentes?.nombre}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.catalogo_sensores?.modelo}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.catalogo_puentes?.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.status}
                       </td>
                     </tr>
@@ -315,22 +327,22 @@ const ReportesPuentesPDF = () => {
                 <tbody className="divide-y divide-gray-200">
                   {alertas.map((a) => (
                     <tr key={a.id_alertas}>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {a.id_alertas}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {a.eventos_desbordamiento?.descripcion}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {a.catalogo_puentes?.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {a.fecha_hora}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {a.tipo_alerta}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {a.status}
                       </td>
                     </tr>
@@ -364,16 +376,16 @@ const ReportesPuentesPDF = () => {
                 <tbody className="divide-y divide-gray-200">
                   {eventos.map((e, i) => (
                     <tr key={i}>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700">
                         {e.descripcion}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {e.id_puente}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {e.fecha_hora}
                       </td>
-                      <td className="px-4 py-2 text-center text-sm">
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {e.catalogo_niveles_riesgo?.status}
                       </td>
                     </tr>

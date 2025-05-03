@@ -48,7 +48,7 @@ const EventosOpe = () => {
         catalogo_niveles_riesgo ( status )
       `
       )
-      .order("id_evento", { ascending: true });
+      .order("id_evento", { ascending: false });
 
     if (!error) setEventos(data || []);
   };

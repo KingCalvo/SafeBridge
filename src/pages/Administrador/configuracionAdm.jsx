@@ -16,6 +16,8 @@ const ConfiguracionAdm = () => {
   const [filterPuenteStatus, setFilterPuenteStatus] = useState("");
   const [niveles, setNiveles] = useState([]);
   const [filterNivelTipo, setFilterNivelTipo] = useState("");
+  const [sensores, setSensores] = useState([]);
+  const [filterSensorStatus, setFilterSensorStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [editingTipo, setEditingTipo] = useState("");
@@ -24,6 +26,7 @@ const ConfiguracionAdm = () => {
   useEffect(() => {
     fetchPuentes();
     fetchNiveles();
+    fetchSensores();
   }, []);
 
   const fetchPuentes = async () => {
@@ -45,6 +48,23 @@ const ConfiguracionAdm = () => {
     else setNiveles(data);
   };
 
+  const fetchSensores = async () => {
+    const { data, error } = await supabase
+      .from("sensores")
+      .select(
+        `
+        id_sensor,
+        status,
+        id_puente,
+        catalogo_sensores ( nombre, tipo, marca, modelo ),
+        catalogo_puentes ( nombre, ubicacion )
+      `
+      )
+      .order("id_sensor", { ascending: true });
+    if (error) console.error(error);
+    else setSensores(data);
+  };
+
   // Handlers modal
   const openEditModal = (item, tipo) => {
     setEditingItem({ ...item });
@@ -58,10 +78,10 @@ const ConfiguracionAdm = () => {
 
   const saveChanges = async () => {
     if (editingTipo === "puente") {
-      const { id_puente, nombre, ubicacion, estado, status } = editingItem;
+      const { id_puente, nombre, ubicacion, info, status } = editingItem;
       const { error } = await supabase
         .from("catalogo_puentes")
-        .update({ nombre, ubicacion, estado, status })
+        .update({ nombre, ubicacion, info, status })
         .eq("id_puente", id_puente);
       if (error) console.error(error);
       else fetchPuentes();
@@ -121,6 +141,18 @@ const ConfiguracionAdm = () => {
     )
     .filter((n) =>
       filterNivelTipo ? n.tipo_riesgo === filterNivelTipo : true
+    );
+
+  const filteredSensores = sensores
+    .filter((s) =>
+      searchTerm
+        ? s.catalogo_sensores.nombre
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+        : true
+    )
+    .filter((s) =>
+      filterSensorStatus ? s.status === filterSensorStatus : true
     );
 
   return (
@@ -185,7 +217,7 @@ const ConfiguracionAdm = () => {
                     Ubicación
                   </th>
                   <th className="px-4 py-2 text-center text-xs uppercase">
-                    Estado
+                    Información
                   </th>
                   <th className="px-4 py-2 text-center text-xs uppercase">
                     Status
@@ -208,11 +240,8 @@ const ConfiguracionAdm = () => {
                       {p.ubicacion}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span className="px-3 py-1 rounded-full text-black">
-                        {p.estado ? "Abierto" : "Cerrado"}
-                      </span>
+                      {p.info}
                     </td>
-
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       <span
                         className={`px-3 py-1 rounded-full text-white font-bold ${
@@ -342,14 +371,119 @@ const ConfiguracionAdm = () => {
             </table>
           </div>
 
+          {/* --- Sección Sensores --- */}
+          <div className="flex items-center justify-center space-x-4 mb-4 mt-8">
+            <h2 className="text-2xl font-semibold text-gray-800">SENSORES</h2>
+            <div className="relative">
+              <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
+              <select
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 appearance-none"
+                value={filterSensorStatus}
+                onChange={(e) => setFilterSensorStatus(e.target.value)}
+              >
+                <option value="">Todos los status</option>
+                <option>Activo</option>
+                <option>Inactivo</option>
+              </select>
+            </div>
+          </div>
+          <div className="overflow-auto max-h-[300px] bg-white rounded-lg shadow mb-8">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
+                <tr>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    ID
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Nombre
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Tipo
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Marca
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Puente
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Modelo
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Ubicación
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Status
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredSensores.map((s) => (
+                  <tr key={s.id_sensor}>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {s.id_sensor}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {s.catalogo_sensores.nombre}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {s.catalogo_sensores.tipo}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {s.catalogo_sensores.marca}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {s.catalogo_puentes.nombre}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {s.catalogo_sensores.modelo}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {s.catalogo_puentes.ubicacion}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <span
+                        className={`px-3 py-1 rounded-full text-white ${
+                          s.status === "Activo" ? "bg-green-500" : "bg-red-500"
+                        }`}
+                      >
+                        {s.status}
+                      </span>
+                    </td>
+                    <td className="px-2 py-2 text-center space-x-2">
+                      <button
+                        onClick={() => openEditModal(s, "sensor")}
+                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                      >
+                        <FaRegEdit />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(s.id_sensor, "sensor")}
+                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                      >
+                        <FaDeleteLeft />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {/* Modal de edición */}
           {showModal && editingItem && (
             <Modal onClose={closeModal} onSubmit={saveChanges}>
               <h2 className="text-xl font-bold mb-4 text-center">
-                {editingTipo === "puente" ? "Editar Puente" : "Editar Nivel"}
+                {editingTipo === "puente" && "Editar Puente"}
+                {editingTipo === "nivel" && "Editar Nivel"}
+                {editingTipo === "sensor" && "Editar Sensor"}
               </h2>
-              <div className="space-y-4">
-                {editingTipo === "puente" ? (
+
+              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                {/* --- Campos para PUENTE --- */}
+                {editingTipo === "puente" && (
                   <>
                     <label className="block text-sm font-medium text-gray-700">
                       Nombre
@@ -365,6 +499,7 @@ const ConfiguracionAdm = () => {
                         })
                       }
                     />
+
                     <label className="block text-sm font-medium text-gray-700">
                       Ubicación
                     </label>
@@ -379,22 +514,18 @@ const ConfiguracionAdm = () => {
                         })
                       }
                     />
+
                     <label className="block text-sm font-medium text-gray-700">
-                      Estado
+                      Info
                     </label>
-                    <select
+                    <textarea
                       className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                      value={editingItem.estado ? "true" : "false"}
+                      value={editingItem.info}
                       onChange={(e) =>
-                        setEditingItem({
-                          ...editingItem,
-                          estado: e.target.value === "true",
-                        })
+                        setEditingItem({ ...editingItem, info: e.target.value })
                       }
-                    >
-                      <option value="true">Abierto</option>
-                      <option value="false">Cerrado</option>
-                    </select>
+                    />
+
                     <label className="block text-sm font-medium text-gray-700">
                       Status
                     </label>
@@ -413,7 +544,10 @@ const ConfiguracionAdm = () => {
                       <option>Reparación</option>
                     </select>
                   </>
-                ) : (
+                )}
+
+                {/* --- Campos para NIVEL DE RIESGO --- */}
+                {editingTipo === "nivel" && (
                   <>
                     <label className="block text-sm font-medium text-gray-700">
                       Nombre
@@ -429,6 +563,7 @@ const ConfiguracionAdm = () => {
                         })
                       }
                     />
+
                     <label className="block text-sm font-medium text-gray-700">
                       Descripción
                     </label>
@@ -442,6 +577,7 @@ const ConfiguracionAdm = () => {
                         })
                       }
                     />
+
                     <label className="block text-sm font-medium text-gray-700">
                       Tipo de Riesgo
                     </label>
@@ -456,6 +592,146 @@ const ConfiguracionAdm = () => {
                         })
                       }
                     />
+
+                    <label className="block text-sm font-medium text-gray-700">
+                      Status
+                    </label>
+                    <select
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={editingItem.status}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          status: e.target.value,
+                        })
+                      }
+                    >
+                      <option>Alto</option>
+                      <option>Bajo</option>
+                    </select>
+                  </>
+                )}
+
+                {/* --- Campos para SENSOR --- */}
+                {editingTipo === "sensor" && (
+                  <>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Nombre
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={editingItem.catalogo_sensores.nombre}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          catalogo_sensores: {
+                            ...editingItem.catalogo_sensores,
+                            nombre: e.target.value,
+                          },
+                        })
+                      }
+                    />
+
+                    <label className="block text-sm font-medium text-gray-700">
+                      Tipo
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={editingItem.catalogo_sensores.tipo}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          catalogo_sensores: {
+                            ...editingItem.catalogo_sensores,
+                            tipo: e.target.value,
+                          },
+                        })
+                      }
+                    />
+
+                    <label className="block text-sm font-medium text-gray-700">
+                      Marca
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={editingItem.catalogo_sensores.marca}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          catalogo_sensores: {
+                            ...editingItem.catalogo_sensores,
+                            marca: e.target.value,
+                          },
+                        })
+                      }
+                    />
+
+                    <label className="block text-sm font-medium text-gray-700">
+                      Puente Asociado
+                    </label>
+                    <select
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={editingItem.id_puente}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          id_puente: Number(e.target.value),
+                        })
+                      }
+                    >
+                      <option value="">Selecciona Puente</option>
+                      {puentes.map((p) => (
+                        <option key={p.id_puente} value={p.id_puente}>
+                          {p.nombre}
+                        </option>
+                      ))}
+                    </select>
+
+                    <label className="block text-sm font-medium text-gray-700">
+                      Modelo
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={editingItem.catalogo_sensores.modelo}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          catalogo_sensores: {
+                            ...editingItem.catalogo_sensores,
+                            modelo: e.target.value,
+                          },
+                        })
+                      }
+                    />
+
+                    <label className="block text-sm font-medium text-gray-700">
+                      Ubicación
+                    </label>
+                    <select
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={editingItem.catalogo_puentes.ubicacion}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          catalogo_puentes: {
+                            ...editingItem.catalogo_puentes,
+                            ubicacion: e.target.value,
+                          },
+                        })
+                      }
+                    >
+                      <option value="">Selecciona Ubicación</option>
+                      {puentes.map((p) => (
+                        <option key={p.id_puente} value={p.ubicacion}>
+                          {p.ubicacion}
+                        </option>
+                      ))}
+                    </select>
+
                     <label className="block text-sm font-medium text-gray-700">
                       Status
                     </label>
@@ -471,7 +747,6 @@ const ConfiguracionAdm = () => {
                     >
                       <option>Activo</option>
                       <option>Inactivo</option>
-                      <option>Reparación</option>
                     </select>
                   </>
                 )}

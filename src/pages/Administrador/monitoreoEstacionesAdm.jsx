@@ -7,6 +7,7 @@ import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 const MonitoreoSensoresAdm = () => {
   const [estaciones, setEstaciones] = useState([]);
@@ -16,7 +17,13 @@ const MonitoreoSensoresAdm = () => {
   const [sensorInfo, setSensorInfo] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStation, setFilterStation] = useState("");
-  const [showEditSensorModal, setShowEditSensorModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newEstacion, setNewEstacion] = useState({
+    nombre: "",
+    tipo_estacion: "",
+    ubicacion: "",
+    id_puente: "",
+  });
 
   useEffect(() => {
     fetchEstaciones();
@@ -124,6 +131,82 @@ const MonitoreoSensoresAdm = () => {
         : true
     );
 
+  const openAddModal = () => {
+    setNewEstacion({
+      nombre: "",
+      tipo_estacion: "",
+      ubicacion: "",
+      id_puente: "",
+    });
+    setShowAddModal(true);
+  };
+
+  const closeAddModal = () => {
+    setShowAddModal(false);
+  };
+  const handleAddEstacion = async () => {
+    // 1) Obtener último ID de estación
+    const { data: last, error: errLast } = await supabase
+      .from("catalogo_estaciones")
+      .select("id_estaciones")
+      .order("id_estaciones", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (errLast) {
+      console.error("Error al obtener último ID:", errLast);
+      alert("No se pudo generar el ID de la estación.");
+      return;
+    }
+    const nextId = (last?.id_estaciones || 0) + 1;
+
+    // 2) Validar campos del formulario
+    const { nombre, tipo_estacion, ubicacion, id_puente } = newEstacion;
+    if (!nombre || !tipo_estacion || !ubicacion || !id_puente) {
+      alert("Debes completar todos los campos.");
+      return;
+    }
+
+    // 3) Buscar el sensor ya existente para ese puente
+    const { data: sensorData, error: errSensor } = await supabase
+      .from("sensores")
+      .select("id_sensor")
+      .eq("id_puente", Number(id_puente))
+      .limit(1)
+      .single();
+
+    if (errSensor) {
+      console.error("Error al buscar sensor para el puente:", errSensor);
+      alert("No se pudo vincular un sensor al puente seleccionado.");
+      return;
+    }
+    const id_sensor = sensorData?.id_sensor;
+    if (!id_sensor) {
+      alert("Este puente no tiene ningún sensor asignado aún.");
+      return;
+    }
+
+    // 4) Insertar la nueva estación, incluyendo id_sensor
+    const { error } = await supabase.from("catalogo_estaciones").insert([
+      {
+        id_estaciones: nextId,
+        nombre,
+        tipo_estacion,
+        ubicacion,
+        id_puente: Number(id_puente),
+        id_sensor: id_sensor,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error al agregar estación:", error);
+      alert("No se pudo crear la estación.");
+    } else {
+      closeAddModal();
+      fetchEstaciones();
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={1} />
@@ -167,6 +250,13 @@ const MonitoreoSensoresAdm = () => {
                 ))}
               </select>
             </div>
+            <button
+              onClick={openAddModal}
+              className="flex items-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+            >
+              <IoIosAddCircleOutline className="text-lg" />
+              <span className="text-sm font-medium">Agregar</span>
+            </button>
           </div>
           {/* Tabla de estaciones*/}
           <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[500px] overflow-y-auto">
@@ -264,31 +354,6 @@ const MonitoreoSensoresAdm = () => {
                 <h2 className="text-xl font-bold text-gray-800">
                   Información del sensor
                 </h2>
-                <button
-                  onClick={() => setShowEditSensorModal(true)}
-                  className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                >
-                  <FaRegEdit />
-                </button>
-                <button
-                  onClick={async () => {
-                    if (
-                      window.confirm("¿Estás seguro de eliminar este sensor?")
-                    ) {
-                      const { error } = await supabase
-                        .from("catalogo_sensores")
-                        .delete()
-                        .eq("id_sensor", sensorInfo.id_sensor);
-                      if (!error) {
-                        setSensorInfo(null);
-                        fetchEstaciones();
-                      }
-                    }
-                  }}
-                  className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                >
-                  <FaDeleteLeft />
-                </button>
               </div>
 
               <table className="w-full table-fixed border-collapse border border-gray-500">
@@ -388,49 +453,79 @@ const MonitoreoSensoresAdm = () => {
               </div>
             </Modal>
           )}
-          {sensorInfo && showEditSensorModal && (
-            <Modal
-              onClose={() => setShowEditSensorModal(false)}
-              onSubmit={async () => {
-                const { error } = await supabase
-                  .from("catalogo_sensores")
-                  .update(sensorInfo)
-                  .eq("id_sensor", sensorInfo.id_sensor);
-                if (!error) {
-                  setShowEditSensorModal(false);
-                  fetchEstaciones();
-                }
-              }}
-            >
-              <h2 className="text-xl font-bold mb-4 text-center">
-                Editar Sensor
+          {showAddModal && (
+            <Modal onClose={closeAddModal} onSubmit={handleAddEstacion}>
+              <h2 className="text-xl font-bold text-center mb-4">
+                Nueva Estación
               </h2>
               <div className="space-y-4">
-                {[
-                  "nombre",
-                  "tipo",
-                  "descripcion",
-                  "marca",
-                  "modelo",
-                  "status",
-                ].map((campo) => (
-                  <div key={campo}>
-                    <label className="block text-sm font-medium text-gray-700 capitalize">
-                      {campo}
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                      value={sensorInfo[campo] || ""}
-                      onChange={(e) =>
-                        setSensorInfo({
-                          ...sensorInfo,
-                          [campo]: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                ))}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Nombre
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    value={newEstacion.nombre}
+                    onChange={(e) =>
+                      setNewEstacion({ ...newEstacion, nombre: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Tipo de Estación
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    value={newEstacion.tipo_estacion}
+                    onChange={(e) =>
+                      setNewEstacion({
+                        ...newEstacion,
+                        tipo_estacion: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Ubicación
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    value={newEstacion.ubicacion}
+                    onChange={(e) =>
+                      setNewEstacion({
+                        ...newEstacion,
+                        ubicacion: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Puente Asociado
+                  </label>
+                  <select
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    value={newEstacion.id_puente}
+                    onChange={(e) =>
+                      setNewEstacion({
+                        ...newEstacion,
+                        id_puente: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Selecciona Puente</option>
+                    {puentes.map((p) => (
+                      <option key={p.id_puente} value={p.id_puente}>
+                        {p.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </Modal>
           )}

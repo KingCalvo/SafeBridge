@@ -3,7 +3,7 @@ import Login from "./Login.jsx";
 //Rutas del Admin:
 import InicioAdm from "../pages/Administrador/inicioAdm.jsx";
 import GestionUserAdm from "../pages/Administrador/gestionUserAdm.jsx";
-import MonitoreoSensoresAdm from "../pages/Administrador/monitoreoSensoresAdm.jsx";
+import MonitoreoEstacionesAdm from "../pages/Administrador/monitoreoEstacionesAdm.jsx";
 import AlertasEventosAdm from "../pages/Administrador/alertasEventosAdm.jsx";
 import ConfiguracionAdm from "../pages/Administrador/configuracionAdm.jsx";
 import ReportesPuentesPDF from "../pages/Administrador/reportesPuentesPDF.jsx";
@@ -27,7 +27,10 @@ const App = () => {
       {/* Rutas del Administrador */}
       <Route path="/inicioAdm" element={<InicioAdm />} />
       <Route path="/gestionUserAdm" element={<GestionUserAdm />} />
-      <Route path="/monitoreoSensoresAdm" element={<MonitoreoSensoresAdm />} />
+      <Route
+        path="/monitoreoEstacionesAdm"
+        element={<MonitoreoEstacionesAdm />}
+      />
       <Route path="/alertasEventosAdm" element={<AlertasEventosAdm />} />
       <Route path="/configuracionAdm" element={<ConfiguracionAdm />} />
       <Route path="/reportesPuentesPDF" element={<ReportesPuentesPDF />} />

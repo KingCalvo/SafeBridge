@@ -31,9 +31,9 @@ const Sidebar = ({ userRole }) => {
         path: "/gestionUserAdm",
       },
       {
-        label: "Monitoreo de Sensores",
+        label: "Monitoreo de Estaciones",
         icon: <HiOutlineSignal />,
-        path: "/monitoreoSensoresAdm",
+        path: "/monitoreoEstacionesAdm",
       },
       {
         label: "Alertas y Eventos",

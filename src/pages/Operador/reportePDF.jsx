@@ -142,11 +142,14 @@ const ReportePDF = () => {
       .eq("id_Informes", idInforme);
 
     const doc = new jsPDF("p", "pt", "a4");
+    const pageWidth = doc.internal.pageSize.getWidth();
 
     doc.setFontSize(20);
-    doc.text(`REPORTE ${idInforme}`, 40, 40);
+    doc.text(`REPORTE ${idInforme}`, pageWidth / 2, 40, { align: "center" });
     doc.setFontSize(12);
-    doc.text(dayjs().format("DD/MM/YYYY HH:mm"), 450, 45);
+    doc.text(dayjs().format("DD/MM/YYYY HH:mm"), pageWidth - 40, 45, {
+      align: "right",
+    });
 
     let y = 70;
 
@@ -168,8 +171,32 @@ const ReportePDF = () => {
     doc.text(`Nivel de riesgo: ${nivelRiesgo}`, 300, y);
     y += 30;
 
+    const tableStyles = {
+      margin: { left: 40, right: 40 },
+      tableWidth: pageWidth - 80,
+      styles: {
+        fontSize: 8,
+        cellPadding: 5,
+        valign: "middle",
+        halign: "center",
+        textColor: [40, 40, 40],
+        lineColor: [220, 220, 220],
+        lineWidth: 0.1,
+      },
+      headStyles: {
+        fillColor: [0, 0, 0],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        halign: "center",
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240],
+      },
+    };
+
+    // SENSORES
     doc.setFontSize(14);
-    doc.text("SENSORES", 230, y);
+    doc.text("SENSORES", pageWidth / 2, y, { align: "center" });
     y += 20;
     autoTable(doc, {
       startY: y,
@@ -195,29 +222,13 @@ const ReportePDF = () => {
         s.catalogo_puentes?.ubicacion,
         s.status,
       ]),
-      styles: {
-        fontSize: 8,
-        cellPadding: 5,
-        valign: "middle",
-        halign: "center",
-        textColor: [40, 40, 40],
-        lineColor: [220, 220, 220],
-        lineWidth: 0.1,
-      },
-      headStyles: {
-        fillColor: [41, 128, 185],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        halign: "center",
-      },
-      alternateRowStyles: {
-        fillColor: [240, 240, 240],
-      },
+      ...tableStyles,
     });
     y = doc.lastAutoTable.finalY + 30;
 
+    // ALERTAS
     doc.setFontSize(14);
-    doc.text("ALERTAS", 240, y);
+    doc.text("ALERTAS", pageWidth / 2, y, { align: "center" });
     y += 20;
     autoTable(doc, {
       startY: y,
@@ -239,29 +250,15 @@ const ReportePDF = () => {
         a.tipo_alerta,
         a.status,
       ]),
-      styles: {
-        fontSize: 8,
-        cellPadding: 5,
-        valign: "middle",
-        halign: "center",
-        textColor: [40, 40, 40],
-        lineColor: [220, 220, 220],
-        lineWidth: 0.1,
-      },
-      headStyles: {
-        fillColor: [41, 128, 185],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        halign: "center",
-      },
-      alternateRowStyles: {
-        fillColor: [240, 240, 240],
-      },
+      ...tableStyles,
     });
     y = doc.lastAutoTable.finalY + 30;
 
+    // EVENTOS
     doc.setFontSize(14);
-    doc.text("EVENTOS DE DESBORDAMIENTO", 150, y);
+    doc.text("EVENTOS DE DESBORDAMIENTO", pageWidth / 2, y, {
+      align: "center",
+    });
     y += 20;
     autoTable(doc, {
       startY: y,
@@ -272,24 +269,7 @@ const ReportePDF = () => {
         e.fecha_hora,
         e.catalogo_niveles_riesgo?.status || "N/A",
       ]),
-      styles: {
-        fontSize: 8,
-        cellPadding: 5,
-        valign: "middle",
-        halign: "center",
-        textColor: [40, 40, 40],
-        lineColor: [220, 220, 220],
-        lineWidth: 0.1,
-      },
-      headStyles: {
-        fillColor: [41, 128, 185],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        halign: "center",
-      },
-      alternateRowStyles: {
-        fillColor: [240, 240, 240],
-      },
+      ...tableStyles,
     });
     y = doc.lastAutoTable.finalY + 30;
 
@@ -298,12 +278,10 @@ const ReportePDF = () => {
     y += 20;
     doc.setFontSize(12);
     doc.text(descripcion || "Sin descripción agregada.", 40, y, {
-      maxWidth: 500,
+      maxWidth: pageWidth - 80,
     });
 
     doc.save(`REPORTE_${idInforme}.pdf`);
-
-    // Limpiar el localStorage después de descargar
     localStorage.removeItem("id_informe");
     localStorage.removeItem("id_puente");
   };

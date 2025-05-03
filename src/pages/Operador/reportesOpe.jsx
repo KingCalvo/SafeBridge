@@ -7,7 +7,6 @@ import { FaFileMedical } from "react-icons/fa";
 import { supabase } from "../../supabase/client";
 import { GoAlert } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
-import dayjs from "dayjs";
 import Modal from "../../components/Modal";
 import { FaRegEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
@@ -103,45 +102,10 @@ const ReportesOpe = () => {
     }
   };
 
-  const handleGenerarReporte = async (idPuente) => {
-    const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
-
-    // Obtener la estación a través del id_puente
-    const { data: estacion, error: estacionError } = await supabase
-      .from("catalogo_estaciones")
-      .select("id_estaciones")
-      .eq("id_puente", idPuente)
-      .limit(1)
-      .single();
-
-    if (estacionError) {
-      console.error(
-        "No se pudo obtener la estación para el puente:",
-        estacionError
-      );
-      return;
-    }
-
-    // Insertar en informes
-    const { data, error } = await supabase
-      .from("informes")
-      .insert([
-        {
-          id_puente: idPuente,
-          id_estaciones: estacion?.id_estaciones || null,
-          fecha_hora: fechaActual,
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error al generar informe:", error);
-    } else {
-      localStorage.setItem("id_informe", data.id_Informes);
-      localStorage.setItem("id_puente", idPuente);
-      navigate("/reportePDF");
-    }
+  const handleGenerarReporte = (idPuente) => {
+    // Sólo guardamos el ID puente y navegamos
+    localStorage.setItem("id_puente", idPuente);
+    navigate("/reportePDF");
   };
 
   const filteredPuentes = puentes

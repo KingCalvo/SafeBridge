@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
-import { FaFileDownload } from "react-icons/fa";
+import { FaFileDownload, FaSave } from "react-icons/fa";
 import { supabase } from "../../supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -13,14 +13,32 @@ const ReportePDF = () => {
   const [alertas, setAlertas] = useState([]);
   const [eventos, setEventos] = useState([]);
   const [puenteInfo, setPuenteInfo] = useState(null);
-  const [descripcion, setDescripcion] = useState("");
   const navigate = useNavigate();
-  const idInforme = localStorage.getItem("id_informe");
   const idPuenteSeleccionado = localStorage.getItem("id_puente");
+  const [idInforme, setIdInforme] = useState(null);
+  const [idEstacion, setIdEstacion] = useState(null);
+  const [idSensor, setIdSensor] = useState(null);
+  const [idEvento, setIdEvento] = useState(null);
+  const [descripcion, setDescripcion] = useState("");
   const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
 
   useEffect(() => {
-    fetchDatos();
+    const inicializar = async () => {
+      // Obtener último id_Informes
+      const { data: ultimo } = await supabase
+        .from("informes")
+        .select("id_Informes")
+        .order("id_Informes", { ascending: false })
+        .limit(1)
+        .single();
+
+      const nuevoId = (ultimo?.id_Informes || 0) + 1;
+      setIdInforme(nuevoId);
+
+      await fetchDatos(); //datos actuales
+    };
+
+    inicializar();
   }, []);
 
   const fetchDatos = async () => {
@@ -73,6 +91,15 @@ const ReportePDF = () => {
       )
       .eq("id_puente", idPuenteSeleccionado);
     setEventos(eventosData || []);
+
+    const { data: estData } = await supabase
+      .from("catalogo_estaciones")
+      .select("id_estaciones")
+      .eq("id_puente", idPuenteSeleccionado)
+      .single();
+    setIdEstacion(estData?.id_estaciones || null);
+    setIdSensor(sensoresData[0]?.id_sensor ?? null);
+    setIdEvento(eventosData[0]?.id_evento ?? null);
   };
 
   const sensoresActivos = sensores.filter(
@@ -87,6 +114,27 @@ const ReportePDF = () => {
       ? eventos[0]?.catalogo_niveles_riesgo?.status
       : "Sin eventos registrados";
 
+  const handleGuardarInforme = async () => {
+    const { error } = await supabase.from("informes").insert([
+      {
+        id_Informes: idInforme, // <--- usar el nuevo ID calculado
+        id_puente: Number(idPuenteSeleccionado),
+        id_estaciones: Number(idEstacion),
+        id_sensor: Number(idSensor),
+        id_evento: Number(idEvento),
+        fecha_hora: fechaActual,
+        descripcion: descripcion,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error guardando informe:", error);
+      alert("Error al guardar el informe.");
+    } else {
+      alert("Informe guardado correctamente.");
+    }
+  };
+
   const handleDescargar = async () => {
     await supabase
       .from("informes")
@@ -94,6 +142,11 @@ const ReportePDF = () => {
       .eq("id_Informes", idInforme);
 
     const doc = new jsPDF("p", "pt", "a4");
+
+    doc.setFontSize(20);
+    doc.text(`REPORTE ${idInforme}`, 40, 40);
+    doc.setFontSize(12);
+    doc.text(dayjs().format("DD/MM/YYYY HH:mm"), 450, 45);
 
     let y = 70;
 
@@ -454,6 +507,14 @@ const ReportePDF = () => {
                 className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
               >
                 <IoMdReturnLeft /> REGRESAR
+              </button>
+              {/* Botón de guardar */}
+              <button
+                onClick={handleGuardarInforme}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+              >
+                <FaSave />
+                GUARDAR
               </button>
 
               {/* Botón Descargar */}

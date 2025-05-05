@@ -691,7 +691,7 @@ const ConfiguracionAdm = () => {
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {s.catalogo_puentes.ubicacion}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center space-x-3">
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center flex items-center justify-center space-x-3">
                       <span
                         className={`px-3 py-1 rounded-full text-white ${
                           s.status === "Activo" ? "bg-green-500" : "bg-red-500"

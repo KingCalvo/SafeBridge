@@ -1,6 +1,6 @@
 import React from "react";
 
-const Modal = ({ onClose, onSubmit, children }) => {
+const ModalInfo = ({ onClose, children }) => {
   return (
     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white text-black rounded-2xl shadow-xl w-full max-w-md p-8 relative border-4 border-[#ffc340]">
@@ -21,13 +21,7 @@ const Modal = ({ onClose, onSubmit, children }) => {
             onClick={onClose}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
           >
-            Cancelar
-          </button>
-          <button
-            onClick={onSubmit}
-            className="px-4 py-2 bg-green-500 text-black font-semibold rounded-lg hover:bg-green-700 transition cursor-pointer"
-          >
-            Guardar
+            Cerrar
           </button>
         </div>
       </div>
@@ -35,4 +29,4 @@ const Modal = ({ onClose, onSubmit, children }) => {
   );
 };
 
-export default Modal;
+export default ModalInfo;

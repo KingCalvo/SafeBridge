@@ -3,11 +3,15 @@ import Sidebar from "../../components/Sidebar";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
+import ModalInfo from "../../components/ModalInfo";
+import { FaInfoCircle } from "react-icons/fa";
 
 const MonitoreoSensoresOpe = () => {
   const [detalles, setDetalles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [selectedInfo, setSelectedInfo] = useState({ status: "", info: "" });
 
   useEffect(() => {
     fetchDetallesSensores();
@@ -25,7 +29,8 @@ const MonitoreoSensoresOpe = () => {
           nombre,
           tipo,
           marca,
-          modelo
+          modelo,
+          info
         ),
         catalogo_puentes (
           nombre,
@@ -51,6 +56,14 @@ const MonitoreoSensoresOpe = () => {
     })
     .filter((d) => (statusFilter ? d.status === statusFilter : true))
     .sort((a, b) => a.id_sensor - b.id_sensor);
+
+  const handleInfo = (sensor) => {
+    setSelectedInfo({
+      status: sensor.status,
+      info: sensor.catalogo_sensores?.info || "Sin información",
+    });
+    setShowInfoModal(true);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -152,7 +165,7 @@ const MonitoreoSensoresOpe = () => {
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {d.catalogo_puentes?.ubicacion || "Desconocida"}
                     </td>
-                    <td className="ppx-4 py-2 text-sm text-gray-700 text-center">
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center space-x-3">
                       <span
                         className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
                           d.status === "Activo" ? "bg-green-500" : "bg-red-500"
@@ -160,12 +173,33 @@ const MonitoreoSensoresOpe = () => {
                       >
                         {d.status}
                       </span>
+                      <button
+                        onClick={() => handleInfo(d)}
+                        className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                      >
+                        <FaInfoCircle className="mr-1" /> Info
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {showInfoModal && (
+            <ModalInfo onClose={() => setShowInfoModal(false)}>
+              <h2 className="text-xl font-bold mb-4 text-center">
+                Información del status
+              </h2>
+              <div className="space-y-4">
+                <p>
+                  <strong>Status:</strong> {selectedInfo.status}
+                </p>
+                <p>
+                  <strong>Información:</strong> {selectedInfo.info}
+                </p>
+              </div>
+            </ModalInfo>
+          )}
         </main>
       </div>
     </div>

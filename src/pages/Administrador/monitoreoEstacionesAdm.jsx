@@ -8,6 +8,8 @@ import Modal from "../../components/Modal";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { FaInfoCircle } from "react-icons/fa";
+import ModalInfo from "../../components/ModalInfo";
 
 const MonitoreoSensoresAdm = () => {
   const [estaciones, setEstaciones] = useState([]);
@@ -18,6 +20,7 @@ const MonitoreoSensoresAdm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStation, setFilterStation] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showSensorModal, setShowSensorModal] = useState(false);
   const [newEstacion, setNewEstacion] = useState({
     nombre: "",
     tipo_estacion: "",
@@ -89,18 +92,13 @@ const MonitoreoSensoresAdm = () => {
 
     const { data: detalle, error: errorDetalle } = await supabase
       .from("catalogo_sensores")
-      .select("id_sensor, nombre, tipo, descripcion, marca, modelo")
+      .select("id_sensor, nombre, tipo, descripcion, marca, modelo, info")
       .eq("id_sensor", sensorId)
       .single();
 
-    if (errorDetalle) {
-      console.error("Error al cargar detalle de sensor:", errorDetalle);
-      setSensorInfo(null);
-    } else {
-      setSensorInfo({
-        ...detalle,
-        status: statusSensor || "Desconocido",
-      });
+    if (!errorDetalle) {
+      setSensorInfo({ ...detalle, status: statusSensor || "Desconocido" });
+      setShowSensorModal(true);
     }
   };
 
@@ -308,7 +306,7 @@ const MonitoreoSensoresAdm = () => {
                         onClick={() => handleInfo(est)}
                         className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
                       >
-                        <FaRegEdit className="mr-1" /> Info
+                        <FaInfoCircle className="mr-1" /> Info
                       </button>
                     </td>
                     <td className="px-4 py-2 text-sm text-center">
@@ -343,30 +341,28 @@ const MonitoreoSensoresAdm = () => {
             </table>
           </div>
 
-          {/* Tabla de Información de sensor*/}
-          {sensorInfo && (
-            <div className="overflow-auto w-full max-w-md mx-auto p-4">
-              <div className="flex items-center justify-center mb-4 space-x-4">
-                <h2 className="text-xl font-bold text-gray-800">
-                  Información del sensor
-                </h2>
+          {showSensorModal && sensorInfo && (
+            <ModalInfo onClose={() => setShowSensorModal(false)}>
+              <h2 className="text-xl font-bold mb-4 text-center">
+                Información del sensor
+              </h2>
+              <div className="overflow-y-auto max-h-80">
+                <table className="w-full table-fixed border-collapse border border-gray-500">
+                  <tbody>
+                    {Object.entries(sensorInfo).map(([key, value]) => (
+                      <tr key={key} className="border-b">
+                        <td className="w-1/3 font-semibold text-gray-800 uppercase py-2 px-2 border-r border-gray-500 text-center">
+                          {key.replace("_", " ")}
+                        </td>
+                        <td className="w-2/3 text-gray-800 py-2 px-2 text-center">
+                          {value}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-
-              <table className="w-full table-fixed border-collapse border border-gray-500">
-                <tbody>
-                  {Object.entries(sensorInfo).map(([key, value]) => (
-                    <tr key={key} className="border-b">
-                      <td className="w-1/3 font-semibold text-gray-800 uppercase py-2 px-2 border-r border-gray-500 text-center">
-                        {key.replace("_", " ")}
-                      </td>
-                      <td className="w-2/3 text-gray-800 py-2 px-2 text-center">
-                        {value}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            </ModalInfo>
           )}
 
           {/* Modal de edición */}

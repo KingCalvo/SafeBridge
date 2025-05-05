@@ -25,28 +25,38 @@ const ReportesPuentesPDF = () => {
       .select("*");
     setPuentes(puentesData || []);
 
-    const { data: sensoresData } = await supabase.from("sensores").select(`
+    const { data: sensoresData } = await supabase
+      .from("sensores")
+      .select(
+        `
         id_sensor,
         status,
         catalogo_sensores (nombre, tipo, marca, modelo),
         catalogo_puentes (nombre, ubicacion)
-      `);
+      `
+      )
+      .order("id_sensor", { ascending: true });
     setSensores(sensoresData || []);
 
-    const { data: alertasData } = await supabase.from("alertas").select(`
+    const { data: alertasData } = await supabase
+      .from("alertas")
+      .select(
+        `
         id_alertas,
         tipo_alerta,
         fecha_hora,
         status,
         eventos_desbordamiento (descripcion),
         catalogo_puentes (ubicacion)
-      `);
+      `
+      )
+      .order("id_alertas", { ascending: true });
     setAlertas(alertasData || []);
 
     const { data: eventosData } = await supabase.from("eventos_desbordamiento")
       .select(`
         descripcion,
-        id_puente,
+        catalogo_puentes ( nombre ),
         fecha_hora,
         catalogo_niveles_riesgo (status)
       `);
@@ -150,10 +160,10 @@ const ReportesPuentesPDF = () => {
     y += 20;
     autoTable(doc, {
       startY: y,
-      head: [["Evento", "ID Puente", "Fecha y Hora", "Nivel de Riesgo"]],
+      head: [["Evento", "Puente", "Fecha y Hora", "Nivel de Riesgo"]],
       body: eventos.map((e) => [
         e.descripcion,
-        e.id_puente,
+        e.catalogo_puentes?.nombre,
         e.fecha_hora,
         e.catalogo_niveles_riesgo?.status,
       ]),
@@ -363,7 +373,7 @@ const ReportesPuentesPDF = () => {
                       Evento
                     </th>
                     <th className="px-4 py-2 text-center text-xs uppercase">
-                      ID Puente
+                      Puente
                     </th>
                     <th className="px-4 py-2 text-center text-xs uppercase">
                       Fecha y Hora
@@ -380,7 +390,7 @@ const ReportesPuentesPDF = () => {
                         {e.descripcion}
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {e.id_puente}
+                        {e.catalogo_puentes?.nombre}
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {e.fecha_hora}

@@ -7,10 +7,12 @@ import { FaDeleteLeft } from "react-icons/fa6";
 import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
 import { GoAlert } from "react-icons/go";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaInfoCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import ModalInfo from "../../components/ModalInfo";
 
+import {} from "react-icons/fa";
 const ConfiguracionAdm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [puentes, setPuentes] = useState([]);
@@ -24,6 +26,8 @@ const ConfiguracionAdm = () => {
   const [editingTipo, setEditingTipo] = useState("");
   const navigate = useNavigate();
   const [addingTipo, setAddingTipo] = useState("");
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [selectedInfo, setSelectedInfo] = useState({ status: "", info: "" });
 
   useEffect(() => {
     fetchPuentes();
@@ -59,7 +63,7 @@ const ConfiguracionAdm = () => {
       id_tipo_sensor,
       status,
       id_puente,
-      catalogo_sensores ( nombre, tipo, marca, modelo ),
+      catalogo_sensores ( nombre, tipo, marca, modelo, info ),
       catalogo_puentes ( nombre, ubicacion )
     `
       )
@@ -95,7 +99,13 @@ const ConfiguracionAdm = () => {
       });
     } else if (tipo === "sensor") {
       setEditingItem({
-        catalogo_sensores: { nombre: "", tipo: "", marca: "", modelo: "" },
+        catalogo_sensores: {
+          nombre: "",
+          tipo: "",
+          marca: "",
+          modelo: "",
+          info: "",
+        },
         id_puente: "",
         catalogo_puentes: { ubicacion: "" },
         status: "Activo",
@@ -151,10 +161,13 @@ const ConfiguracionAdm = () => {
         if (errLastCat) throw errLastCat;
         const nextCatId = (lastCat?.id_sensor || 0) + 1;
 
-        const { nombre, tipo, marca, modelo } = editingItem.catalogo_sensores;
+        const { nombre, tipo, marca, modelo, info } =
+          editingItem.catalogo_sensores;
         const { error: errCatInsert } = await supabase
           .from("catalogo_sensores")
-          .insert([{ id_sensor: nextCatId, nombre, tipo, marca, modelo }]);
+          .insert([
+            { id_sensor: nextCatId, nombre, tipo, marca, modelo, info },
+          ]);
         if (errCatInsert) throw errCatInsert;
 
         const { data: lastSens, error: errLastSens } = await supabase
@@ -221,6 +234,7 @@ const ConfiguracionAdm = () => {
             tipo: catalogo_sensores.tipo,
             marca: catalogo_sensores.marca,
             modelo: catalogo_sensores.modelo,
+            info: catalogo_sensores.info,
           })
           .eq("id_sensor", id_tipo_sensor);
         if (errCatUpd) throw errCatUpd;
@@ -275,26 +289,30 @@ const ConfiguracionAdm = () => {
         await supabase.from("catalogo_puentes").delete().eq("id_puente", id);
         fetchPuentes();
       } else if (tipo === "sensor") {
-        //Eliminar informes directamente referenciando este sensor
-        await supabase.from("informes").delete().eq("id_sensor", id);
+        // --- ELIMINACIÓN PARA SENSORES ---
+        // 1) Traer id_tipo_sensor para luego borrar en catalogo_sensores
+        const { data: rec, error: errFetch } = await supabase
+          .from("sensores")
+          .select("id_tipo_sensor")
+          .eq("id_sensor", id)
+          .single();
+        if (errFetch) throw errFetch;
 
-        //Eliminar informes referenciando las estaciones de este sensor
-        const { data: estacionesSensor } = await supabase
-          .from("catalogo_estaciones")
-          .select("id_estaciones")
+        // 2) Borrar de 'sensores'
+        const { error: errDelSens } = await supabase
+          .from("sensores")
+          .delete()
           .eq("id_sensor", id);
-        for (let est of estacionesSensor) {
-          await supabase
-            .from("informes")
-            .delete()
-            .eq("id_estaciones", est.id_estaciones);
-        }
+        if (errDelSens) throw errDelSens;
 
-        //Borrar estaciones vinculadas al sensor
-        await supabase.from("catalogo_estaciones").delete().eq("id_sensor", id);
-        await supabase.from("sensores").delete().eq("id_sensor", id);
+        // 3) Borrar de 'catalogo_sensores' usando id_tipo_sensor
+        const { error: errDelCat } = await supabase
+          .from("catalogo_sensores")
+          .delete()
+          .eq("id_sensor", rec.id_tipo_sensor);
+        if (errDelCat) throw errDelCat;
 
-        fetchSensores();
+        await fetchSensores();
       } else if (tipo === "nivel") {
         const { data: eventos } = await supabase
           .from("eventos_desbordamiento")
@@ -354,6 +372,14 @@ const ConfiguracionAdm = () => {
     .filter((s) =>
       filterSensorStatus ? s.status === filterSensorStatus : true
     );
+
+  const handleInfo = (sensor) => {
+    setSelectedInfo({
+      status: sensor.status,
+      info: sensor.catalogo_sensores?.info || "Sin información",
+    });
+    setShowInfoModal(true);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -665,7 +691,7 @@ const ConfiguracionAdm = () => {
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {s.catalogo_puentes.ubicacion}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center space-x-3">
                       <span
                         className={`px-3 py-1 rounded-full text-white ${
                           s.status === "Activo" ? "bg-green-500" : "bg-red-500"
@@ -673,6 +699,12 @@ const ConfiguracionAdm = () => {
                       >
                         {s.status}
                       </span>
+                      <button
+                        onClick={() => handleInfo(s)}
+                        className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                      >
+                        <FaInfoCircle className="mr-1" /> Info
+                      </button>
                     </td>
                     <td className="px-2 py-2 text-center space-x-2">
                       <button
@@ -966,10 +998,41 @@ const ConfiguracionAdm = () => {
                       <option>Activo</option>
                       <option>Inactivo</option>
                     </select>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Información del status
+                    </label>
+                    <textarea
+                      className="w-full border rounded px-3 py-2"
+                      value={editingItem.catalogo_sensores?.info || ""}
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          catalogo_sensores: {
+                            ...editingItem.catalogo_sensores,
+                            info: e.target.value,
+                          },
+                        })
+                      }
+                    />
                   </>
                 )}
               </div>
             </Modal>
+          )}
+          {showInfoModal && (
+            <ModalInfo onClose={() => setShowInfoModal(false)}>
+              <h2 className="text-xl font-bold mb-4 text-center">
+                Información del status
+              </h2>
+              <div className="space-y-4">
+                <p>
+                  <strong>Status:</strong> {selectedInfo.status}
+                </p>
+                <p>
+                  <strong>Información:</strong> {selectedInfo.info}
+                </p>
+              </div>
+            </ModalInfo>
           )}
         </main>
       </div>

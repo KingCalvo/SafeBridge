@@ -2,18 +2,17 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import ApexCharts from "react-apexcharts";
 import { supabase } from "../../supabase/client";
+import ApexChartSensores from "../../components/ApexChartSensores";
 
 const AdminInicio = () => {
   const [alertaSeries, setAlertaSeries] = useState([]);
   const [alertaCategories, setAlertaCategories] = useState([]);
   const [eventoSeries, setEventoSeries] = useState([]);
   const [eventoCategories, setEventoCategories] = useState([]);
-  const [sensorSeries, setSensorSeries] = useState([]);
 
   useEffect(() => {
     fetchAlertas();
     fetchEventos();
-    fetchSensores();
   }, []);
 
   const fetchAlertas = async () => {
@@ -69,39 +68,6 @@ const AdminInicio = () => {
       },
     ]);
   };
-
-  const fetchSensores = async () => {
-    const { data: sensores, error: sensoresError } = await supabase
-      .from("sensores")
-      .select("id_sensor, status");
-
-    const { data: catalogo, error: catalogoError } = await supabase
-      .from("catalogo_sensores")
-      .select("id_sensor, nombre, modelo");
-
-    if (sensoresError || catalogoError)
-      return console.error("Error sensores", sensoresError || catalogoError);
-
-    const sensorMap = catalogo.reduce((acc, s) => {
-      acc[s.id_sensor] = `${s.nombre} (${s.modelo})`;
-      return acc;
-    }, {});
-
-    const categories = sensores.map(
-      (s) => sensorMap[s.id_sensor] || `Sensor ${s.id_sensor}`
-    );
-    const values = sensores.map((s) => (s.status === "Activo" ? 1 : 0));
-
-    setSensorSeries([
-      {
-        name: "Estado del Sensor",
-        data: values,
-      },
-    ]);
-    setSensorCategories(categories);
-  };
-
-  const [sensorCategories, setSensorCategories] = useState([]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -192,39 +158,7 @@ const AdminInicio = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
             ESTADO DE LOS SENSORES
           </h2>
-          <ApexCharts
-            options={{
-              chart: {
-                type: "area",
-                height: 350,
-              },
-              dataLabels: {
-                enabled: false,
-              },
-              stroke: {
-                curve: "smooth",
-              },
-              xaxis: {
-                categories: sensorCategories,
-              },
-              tooltip: {
-                y: {
-                  formatter: (val) => (val === 1 ? "Activo" : "Inactivo"),
-                },
-              },
-              yaxis: {
-                min: 0,
-                max: 1,
-                tickAmount: 1,
-                labels: {
-                  formatter: (val) => (val === 1 ? "Activo" : "Inactivo"),
-                },
-              },
-            }}
-            series={sensorSeries}
-            type="area"
-            height={350}
-          />
+          <ApexChartSensores />
         </div>
       </div>
     </div>

@@ -24,8 +24,16 @@ const InicioOpe = () => {
 
   const fetchSensores = async () => {
     const { data, error } = await supabase
-      .from("alertas")
-      .select(`id_alertas, tipo_alerta, status, catalogo_puentes (nombre)`);
+      .from("sensores")
+      .select(
+        `
+        id_sensor,
+        status,
+        catalogo_sensores ( nombre, tipo, modelo ),
+        catalogo_puentes ( nombre )
+      `
+      )
+      .order("id_sensor", { ascending: true });
     if (!error) setSensores(data);
     else console.error(error);
   };
@@ -34,8 +42,15 @@ const InicioOpe = () => {
     const { data, error } = await supabase
       .from("eventos_desbordamiento")
       .select(
-        `id_evento, id_puente, fecha_hora, descripcion, catalogo_niveles_riesgo (status)`
-      );
+        `
+        id_evento,
+        fecha_hora,
+        descripcion,
+        catalogo_niveles_riesgo ( status ),
+        catalogo_puentes ( nombre )
+      `
+      )
+      .order("id_evento", { ascending: true });
     if (!error) setEventos(data);
     else console.error(error);
   };
@@ -60,11 +75,16 @@ const InicioOpe = () => {
         ? s.catalogo_puentes?.nombre
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          s.tipo_alerta.toLowerCase().includes(searchTerm.toLowerCase())
+          s.catalogo_sensores?.nombre
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          s.catalogo_sensores?.tipo
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
         : true
     )
     .filter((s) => (statusFilter ? s.status === statusFilter : true))
-    .sort((a, b) => a.id_alertas - b.id_alertas);
+    .sort((a, b) => a.id_sensor - b.id_sensor);
 
   const filteredEventos = eventos
     .filter((e) =>
@@ -135,8 +155,8 @@ const InicioOpe = () => {
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
                 <option value="">Todos los status</option>
-                <option value="Activa">Activa</option>
-                <option value="Inactiva">Inactiva</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
               </select>
             </div>
           </div>
@@ -146,26 +166,34 @@ const InicioOpe = () => {
                 <tr>
                   <th className="px-4 py-2 text-xs uppercase">ID</th>
                   <th className="px-4 py-2 text-xs uppercase">Puente</th>
+                  <th className="px-4 py-2 text-xs uppercase">Nombre</th>
                   <th className="px-4 py-2 text-xs uppercase">Tipo</th>
+                  <th className="px-4 py-2 text-xs uppercase">Modelo</th>
                   <th className="px-4 py-2 text-xs uppercase">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredSensores.map((sensor) => (
-                  <tr key={sensor.id_alertas}>
+                  <tr key={sensor.id_sensor}>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {sensor.id_alertas}
+                      {sensor.id_sensor}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {sensor.catalogo_puentes?.nombre}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {sensor.tipo_alerta}
+                      {sensor.catalogo_sensores?.nombre}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {sensor.catalogo_sensores?.tipo}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {sensor.catalogo_sensores?.modelo}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       <span
                         className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
-                          sensor.status === "Activa"
+                          sensor.status === "Activo"
                             ? "bg-green-500"
                             : "bg-red-500"
                         }`}
@@ -202,7 +230,7 @@ const InicioOpe = () => {
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-xs uppercase">Evento</th>
-                  <th className="px-4 py-2 text-xs uppercase">ID Puente</th>
+                  <th className="px-4 py-2 text-xs uppercase">Puente</th>
                   <th className="px-4 py-2 text-xs uppercase">Fecha y Hora</th>
                   <th className="px-4 py-2 text-xs uppercase">
                     Nivel de Riesgo
@@ -216,7 +244,7 @@ const InicioOpe = () => {
                       {evento.descripcion}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {evento.id_puente}
+                      {evento.catalogo_puentes?.nombre}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {evento.fecha_hora}

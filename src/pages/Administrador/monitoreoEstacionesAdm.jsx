@@ -145,7 +145,6 @@ const MonitoreoSensoresAdm = () => {
     setShowAddModal(false);
   };
   const handleAddEstacion = async () => {
-    // 1) Obtener último ID de estación
     const { data: last, error: errLast } = await supabase
       .from("catalogo_estaciones")
       .select("id_estaciones")
@@ -160,14 +159,12 @@ const MonitoreoSensoresAdm = () => {
     }
     const nextId = (last?.id_estaciones || 0) + 1;
 
-    // 2) Validar campos del formulario
     const { nombre, tipo_estacion, ubicacion, id_puente } = newEstacion;
     if (!nombre || !tipo_estacion || !ubicacion || !id_puente) {
       alert("Debes completar todos los campos.");
       return;
     }
 
-    // 3) Buscar el sensor ya existente para ese puente
     const { data: sensorData, error: errSensor } = await supabase
       .from("sensores")
       .select("id_sensor")
@@ -186,7 +183,6 @@ const MonitoreoSensoresAdm = () => {
       return;
     }
 
-    // 4) Insertar la nueva estación, incluyendo id_sensor
     const { error } = await supabase.from("catalogo_estaciones").insert([
       {
         id_estaciones: nextId,
@@ -254,7 +250,7 @@ const MonitoreoSensoresAdm = () => {
               onClick={openAddModal}
               className="flex items-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
             >
-              <IoIosAddCircleOutline className="text-lg" />
+              <IoIosAddCircleOutline className="text-2xl" />
               <span className="text-sm font-medium">Agregar</span>
             </button>
           </div>

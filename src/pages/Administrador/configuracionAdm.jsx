@@ -9,6 +9,7 @@ import Modal from "../../components/Modal";
 import { GoAlert } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 const ConfiguracionAdm = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,6 +23,7 @@ const ConfiguracionAdm = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [editingTipo, setEditingTipo] = useState("");
   const navigate = useNavigate();
+  const [addingTipo, setAddingTipo] = useState("");
 
   useEffect(() => {
     fetchPuentes();
@@ -53,12 +55,13 @@ const ConfiguracionAdm = () => {
       .from("sensores")
       .select(
         `
-        id_sensor,
-        status,
-        id_puente,
-        catalogo_sensores ( nombre, tipo, marca, modelo ),
-        catalogo_puentes ( nombre, ubicacion )
-      `
+      id_sensor,
+      id_tipo_sensor,
+      status,
+      id_puente,
+      catalogo_sensores ( nombre, tipo, marca, modelo ),
+      catalogo_puentes ( nombre, ubicacion )
+    `
       )
       .order("id_sensor", { ascending: true });
     if (error) console.error(error);
@@ -67,7 +70,10 @@ const ConfiguracionAdm = () => {
 
   // Handlers modal
   const openEditModal = (item, tipo) => {
-    setEditingItem({ ...item });
+    setEditingItem({
+      ...item,
+      id_tipo_sensor: item.id_tipo_sensor,
+    });
     setEditingTipo(tipo);
     setShowModal(true);
   };
@@ -76,48 +82,242 @@ const ConfiguracionAdm = () => {
     setEditingItem(null);
   };
 
-  const saveChanges = async () => {
-    if (editingTipo === "puente") {
-      const { id_puente, nombre, ubicacion, info, status } = editingItem;
-      const { error } = await supabase
-        .from("catalogo_puentes")
-        .update({ nombre, ubicacion, info, status })
-        .eq("id_puente", id_puente);
-      if (error) console.error(error);
-      else fetchPuentes();
-    } else {
-      const { id_nivel, nombre, descripcion, tipo_riesgo, status } =
-        editingItem;
-      const { error } = await supabase
-        .from("catalogo_niveles_riesgo")
-        .update({ nombre, descripcion, tipo_riesgo, status })
-        .eq("id_nivel", id_nivel);
-      if (error) console.error(error);
-      else fetchNiveles();
+  const openAddModal = (tipo) => {
+    setAddingTipo(tipo);
+    if (tipo === "puente") {
+      setEditingItem({ nombre: "", ubicacion: "", info: "", status: "Activo" });
+    } else if (tipo === "nivel") {
+      setEditingItem({
+        nombre: "",
+        descripcion: "",
+        tipo_riesgo: "",
+        status: "Alto",
+      });
+    } else if (tipo === "sensor") {
+      setEditingItem({
+        catalogo_sensores: { nombre: "", tipo: "", marca: "", modelo: "" },
+        id_puente: "",
+        catalogo_puentes: { ubicacion: "" },
+        status: "Activo",
+      });
     }
-    closeModal();
+    setShowModal(true);
+  };
+
+  const saveChanges = async () => {
+    try {
+      //AGREGAR PUENTE
+      if (addingTipo === "puente") {
+        const lastId = puentes[puentes.length - 1]?.id_puente || 0;
+        const nuevoPuente = {
+          id_puente: lastId + 1,
+          nombre: editingItem.nombre,
+          ubicacion: editingItem.ubicacion,
+          info: editingItem.info,
+          status: editingItem.status,
+        };
+        const { error: errP } = await supabase
+          .from("catalogo_puentes")
+          .insert([nuevoPuente]);
+        if (errP) throw errP;
+        await fetchPuentes();
+      }
+
+      //AGREGAR NIVEL
+      else if (addingTipo === "nivel") {
+        const lastId = niveles[niveles.length - 1]?.id_nivel || 0;
+        const nuevoNivel = {
+          id_nivel: lastId + 1,
+          nombre: editingItem.nombre,
+          descripcion: editingItem.descripcion,
+          tipo_riesgo: editingItem.tipo_riesgo,
+          status: editingItem.status,
+        };
+        const { error: errN } = await supabase
+          .from("catalogo_niveles_riesgo")
+          .insert([nuevoNivel]);
+        if (errN) throw errN;
+        await fetchNiveles();
+      }
+
+      //AGREGAR SENSOR
+      else if (addingTipo === "sensor") {
+        const { data: lastCat, error: errLastCat } = await supabase
+          .from("catalogo_sensores")
+          .select("id_sensor")
+          .order("id_sensor", { ascending: false })
+          .limit(1)
+          .single();
+        if (errLastCat) throw errLastCat;
+        const nextCatId = (lastCat?.id_sensor || 0) + 1;
+
+        const { nombre, tipo, marca, modelo } = editingItem.catalogo_sensores;
+        const { error: errCatInsert } = await supabase
+          .from("catalogo_sensores")
+          .insert([{ id_sensor: nextCatId, nombre, tipo, marca, modelo }]);
+        if (errCatInsert) throw errCatInsert;
+
+        const { data: lastSens, error: errLastSens } = await supabase
+          .from("sensores")
+          .select("id_sensor")
+          .order("id_sensor", { ascending: false })
+          .limit(1)
+          .single();
+        if (errLastSens) throw errLastSens;
+        const nextSensId = (lastSens?.id_sensor || 0) + 1;
+
+        const { error: errSensInsert } = await supabase
+          .from("sensores")
+          .insert([
+            {
+              id_sensor: nextSensId,
+              id_puente: editingItem.id_puente,
+              status: editingItem.status,
+              id_tipo_sensor: nextCatId,
+            },
+          ]);
+        if (errSensInsert) throw errSensInsert;
+
+        await fetchSensores();
+      }
+
+      //EDITAR PUENTE
+      else if (editingTipo === "puente") {
+        const { id_puente, nombre, ubicacion, info, status } = editingItem;
+        const { error } = await supabase
+          .from("catalogo_puentes")
+          .update({ nombre, ubicacion, info, status })
+          .eq("id_puente", id_puente);
+        if (error) throw error;
+        await fetchPuentes();
+      }
+
+      //EDITAR NIVEL
+      else if (editingTipo === "nivel") {
+        const { id_nivel, nombre, descripcion, tipo_riesgo, status } =
+          editingItem;
+        const { error } = await supabase
+          .from("catalogo_niveles_riesgo")
+          .update({ nombre, descripcion, tipo_riesgo, status })
+          .eq("id_nivel", id_nivel);
+        if (error) throw error;
+        await fetchNiveles();
+      }
+
+      //EDITAR SENSOR
+      else if (editingTipo === "sensor") {
+        const {
+          catalogo_sensores,
+          id_sensor,
+          id_puente,
+          status,
+          id_tipo_sensor,
+        } = editingItem;
+
+        const { error: errCatUpd } = await supabase
+          .from("catalogo_sensores")
+          .update({
+            nombre: catalogo_sensores.nombre,
+            tipo: catalogo_sensores.tipo,
+            marca: catalogo_sensores.marca,
+            modelo: catalogo_sensores.modelo,
+          })
+          .eq("id_sensor", id_tipo_sensor);
+        if (errCatUpd) throw errCatUpd;
+
+        const { error: errSensUpd } = await supabase
+          .from("sensores")
+          .update({ id_puente, status })
+          .eq("id_sensor", id_sensor);
+        if (errSensUpd) throw errSensUpd;
+
+        await fetchSensores();
+      }
+    } catch (err) {
+      console.error("Error en saveChanges:", err);
+    } finally {
+      setAddingTipo("");
+      setEditingTipo("");
+      closeModal();
+    }
   };
 
   const handleDelete = async (id, tipo) => {
     if (!window.confirm("¿Seguro que quieres eliminar?")) return;
-    if (tipo === "puente") {
-      const { error } = await supabase
-        .from("catalogo_puentes")
-        .delete()
-        .eq("id_puente", id);
-      if (error) console.error(error);
-      else fetchPuentes();
-    } else {
-      const { error } = await supabase
-        .from("catalogo_niveles_riesgo")
-        .delete()
-        .eq("id_nivel", id);
-      if (error) console.error(error);
-      else fetchNiveles();
+
+    try {
+      if (tipo === "puente") {
+        await supabase.from("informes").delete().eq("id_puente", id);
+
+        const { data: eventos } = await supabase
+          .from("eventos_desbordamiento")
+          .select("id_evento")
+          .eq("id_puente", id);
+        for (let ev of eventos) {
+          await supabase.from("alertas").delete().eq("id_evento", ev.id_evento);
+        }
+        await supabase
+          .from("eventos_desbordamiento")
+          .delete()
+          .eq("id_puente", id);
+
+        const { data: sensList } = await supabase
+          .from("sensores")
+          .select("id_sensor")
+          .eq("id_puente", id);
+        for (let s of sensList) {
+          await supabase
+            .from("catalogo_estaciones")
+            .delete()
+            .eq("id_sensor", s.id_sensor);
+        }
+        await supabase.from("sensores").delete().eq("id_puente", id);
+        await supabase.from("catalogo_puentes").delete().eq("id_puente", id);
+        fetchPuentes();
+      } else if (tipo === "sensor") {
+        //Eliminar informes directamente referenciando este sensor
+        await supabase.from("informes").delete().eq("id_sensor", id);
+
+        //Eliminar informes referenciando las estaciones de este sensor
+        const { data: estacionesSensor } = await supabase
+          .from("catalogo_estaciones")
+          .select("id_estaciones")
+          .eq("id_sensor", id);
+        for (let est of estacionesSensor) {
+          await supabase
+            .from("informes")
+            .delete()
+            .eq("id_estaciones", est.id_estaciones);
+        }
+
+        //Borrar estaciones vinculadas al sensor
+        await supabase.from("catalogo_estaciones").delete().eq("id_sensor", id);
+        await supabase.from("sensores").delete().eq("id_sensor", id);
+
+        fetchSensores();
+      } else if (tipo === "nivel") {
+        const { data: eventos } = await supabase
+          .from("eventos_desbordamiento")
+          .select("id_evento")
+          .eq("id_nivel_riesgo", id);
+        for (let ev of eventos) {
+          await supabase.from("alertas").delete().eq("id_evento", ev.id_evento);
+        }
+        await supabase
+          .from("eventos_desbordamiento")
+          .delete()
+          .eq("id_nivel_riesgo", id);
+        await supabase
+          .from("catalogo_niveles_riesgo")
+          .delete()
+          .eq("id_nivel", id);
+        fetchNiveles();
+      }
+    } catch (error) {
+      console.error("Error al eliminar:", error);
     }
   };
 
-  // Filtros combinados
   const filteredPuentes = puentes
     .filter((p) =>
       searchTerm
@@ -195,6 +395,13 @@ const ConfiguracionAdm = () => {
                 <option value="Reparación">Reparación</option>
               </select>
             </div>
+            <button
+              onClick={() => openAddModal("puente")}
+              className="flex items-center font-bold space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+            >
+              <IoIosAddCircleOutline className="text-2xl" />
+              <span>Agregar</span>
+            </button>
             <button
               onClick={() => navigate("/reportesPuentesPDF")}
               className="flex items-center space-x-2 px-4 font-bold py-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
@@ -296,6 +503,13 @@ const ConfiguracionAdm = () => {
                 ))}
               </select>
             </div>
+            <button
+              onClick={() => openAddModal("nivel")}
+              className="flex items-center space-x-1 font-bold px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+            >
+              <IoIosAddCircleOutline className="text-2xl" />
+              <span>Agregar</span>
+            </button>
           </div>
           <div className="overflow-auto max-h-[300px] bg-white rounded-lg shadow">
             <table className="min-w-full divide-y divide-gray-200">
@@ -386,6 +600,13 @@ const ConfiguracionAdm = () => {
                 <option>Inactivo</option>
               </select>
             </div>
+            <button
+              onClick={() => openAddModal("sensor")}
+              className="flex items-center space-x-1 font-bold px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+            >
+              <IoIosAddCircleOutline className="text-2xl" />
+              <span>Agregar</span>
+            </button>
           </div>
           <div className="overflow-auto max-h-[300px] bg-white rounded-lg shadow mb-8">
             <table className="min-w-full divide-y divide-gray-200">
@@ -472,25 +693,26 @@ const ConfiguracionAdm = () => {
               </tbody>
             </table>
           </div>
-          {/* Modal de edición */}
           {showModal && editingItem && (
             <Modal onClose={closeModal} onSubmit={saveChanges}>
               <h2 className="text-xl font-bold mb-4 text-center">
-                {editingTipo === "puente" && "Editar Puente"}
-                {editingTipo === "nivel" && "Editar Nivel"}
-                {editingTipo === "sensor" && "Editar Sensor"}
+                {addingTipo === "puente" && "Agregar Puente"}
+                {addingTipo === "nivel" && "Agregar Nivel"}
+                {addingTipo === "sensor" && "Agregar Sensor"}
+                {!addingTipo && editingTipo === "puente" && "Editar Puente"}
+                {!addingTipo && editingTipo === "nivel" && "Editar Nivel"}
+                {!addingTipo && editingTipo === "sensor" && "Editar Sensor"}
               </h2>
 
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                {/* --- Campos para PUENTE --- */}
-                {editingTipo === "puente" && (
+                {/* PUENTE */}
+                {(addingTipo === "puente" || editingTipo === "puente") && (
                   <>
                     <label className="block text-sm font-medium text-gray-700">
                       Nombre
                     </label>
                     <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.nombre}
                       onChange={(e) =>
                         setEditingItem({
@@ -504,8 +726,7 @@ const ConfiguracionAdm = () => {
                       Ubicación
                     </label>
                     <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.ubicacion}
                       onChange={(e) =>
                         setEditingItem({
@@ -516,10 +737,10 @@ const ConfiguracionAdm = () => {
                     />
 
                     <label className="block text-sm font-medium text-gray-700">
-                      Info
+                      Información
                     </label>
                     <textarea
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.info}
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, info: e.target.value })
@@ -530,7 +751,7 @@ const ConfiguracionAdm = () => {
                       Status
                     </label>
                     <select
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.status}
                       onChange={(e) =>
                         setEditingItem({
@@ -546,15 +767,14 @@ const ConfiguracionAdm = () => {
                   </>
                 )}
 
-                {/* --- Campos para NIVEL DE RIESGO --- */}
-                {editingTipo === "nivel" && (
+                {/* NIVEL */}
+                {(addingTipo === "nivel" || editingTipo === "nivel") && (
                   <>
                     <label className="block text-sm font-medium text-gray-700">
                       Nombre
                     </label>
                     <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.nombre}
                       onChange={(e) =>
                         setEditingItem({
@@ -568,7 +788,7 @@ const ConfiguracionAdm = () => {
                       Descripción
                     </label>
                     <textarea
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.descripcion}
                       onChange={(e) =>
                         setEditingItem({
@@ -581,9 +801,8 @@ const ConfiguracionAdm = () => {
                     <label className="block text-sm font-medium text-gray-700">
                       Tipo de Riesgo
                     </label>
-                    <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    <select
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.tipo_riesgo}
                       onChange={(e) =>
                         setEditingItem({
@@ -591,13 +810,18 @@ const ConfiguracionAdm = () => {
                           tipo_riesgo: e.target.value,
                         })
                       }
-                    />
+                    >
+                      <option value="">Selecciona tipo</option>
+                      {tiposRiesgo.map((t) => (
+                        <option key={t}>{t}</option>
+                      ))}
+                    </select>
 
                     <label className="block text-sm font-medium text-gray-700">
                       Status
                     </label>
                     <select
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.status}
                       onChange={(e) =>
                         setEditingItem({
@@ -612,15 +836,14 @@ const ConfiguracionAdm = () => {
                   </>
                 )}
 
-                {/* --- Campos para SENSOR --- */}
-                {editingTipo === "sensor" && (
+                {/* SENSOR */}
+                {(addingTipo === "sensor" || editingTipo === "sensor") && (
                   <>
                     <label className="block text-sm font-medium text-gray-700">
                       Nombre
                     </label>
                     <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.catalogo_sensores.nombre}
                       onChange={(e) =>
                         setEditingItem({
@@ -637,8 +860,7 @@ const ConfiguracionAdm = () => {
                       Tipo
                     </label>
                     <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.catalogo_sensores.tipo}
                       onChange={(e) =>
                         setEditingItem({
@@ -655,8 +877,7 @@ const ConfiguracionAdm = () => {
                       Marca
                     </label>
                     <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.catalogo_sensores.marca}
                       onChange={(e) =>
                         setEditingItem({
@@ -673,7 +894,7 @@ const ConfiguracionAdm = () => {
                       Puente Asociado
                     </label>
                     <select
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.id_puente}
                       onChange={(e) =>
                         setEditingItem({
@@ -694,8 +915,7 @@ const ConfiguracionAdm = () => {
                       Modelo
                     </label>
                     <input
-                      type="text"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.catalogo_sensores.modelo}
                       onChange={(e) =>
                         setEditingItem({
@@ -712,7 +932,7 @@ const ConfiguracionAdm = () => {
                       Ubicación
                     </label>
                     <select
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.catalogo_puentes.ubicacion}
                       onChange={(e) =>
                         setEditingItem({
@@ -726,9 +946,7 @@ const ConfiguracionAdm = () => {
                     >
                       <option value="">Selecciona Ubicación</option>
                       {puentes.map((p) => (
-                        <option key={p.id_puente} value={p.ubicacion}>
-                          {p.ubicacion}
-                        </option>
+                        <option key={p.id_puente}>{p.ubicacion}</option>
                       ))}
                     </select>
 
@@ -736,7 +954,7 @@ const ConfiguracionAdm = () => {
                       Status
                     </label>
                     <select
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      className="w-full border rounded px-3 py-2"
                       value={editingItem.status}
                       onChange={(e) =>
                         setEditingItem({

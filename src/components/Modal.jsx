@@ -19,13 +19,13 @@ const Modal = ({ onClose, onSubmit, children }) => {
         <div className="flex justify-end space-x-3 mt-6">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-[#BA4A00] text-white rounded-lg hover:bg-[#e28000] transition"
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-[#e28000] transition"
           >
             Cancelar
           </button>
           <button
             onClick={onSubmit}
-            className="px-4 py-2 bg-[#ffc340] text-black font-semibold rounded-lg hover:bg-[#ff9800] transition"
+            className="px-4 py-2 bg-green-500 text-black font-semibold rounded-lg hover:bg-[#ff9800] transition"
           >
             Guardar
           </button>

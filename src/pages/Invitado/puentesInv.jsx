@@ -79,6 +79,9 @@ const PuentesInv = () => {
                     Ubicación
                   </th>
                   <th className="px-4 py-2 text-center text-xs uppercase">
+                    Información
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs uppercase">
                     Status
                   </th>
                 </tr>
@@ -91,6 +94,9 @@ const PuentesInv = () => {
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {p.ubicacion}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      {p.info}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       <span

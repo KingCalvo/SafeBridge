@@ -5,6 +5,7 @@ import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
 import ModalInfo from "../../components/ModalInfo";
 import { FaInfoCircle } from "react-icons/fa";
+import ApexCharts from "react-apexcharts";
 
 const MonitoreoSensoresOpe = () => {
   const [detalles, setDetalles] = useState([]);
@@ -13,8 +14,13 @@ const MonitoreoSensoresOpe = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [selectedInfo, setSelectedInfo] = useState({ status: "", info: "" });
 
+  // Estados para la gráfica de sensores
+  const [sensorChartSeries, setSensorChartSeries] = useState([]);
+  const [sensorChartCategories, setSensorChartCategories] = useState([]);
+
   useEffect(() => {
     fetchDetallesSensores();
+    fetchSensorChart();
   }, []);
 
   const fetchDetallesSensores = async () => {
@@ -41,6 +47,42 @@ const MonitoreoSensoresOpe = () => {
       .order("id_sensor", { ascending: true });
     if (error) console.error("Error cargando detalles:", error);
     else setDetalles(data);
+  };
+
+  const fetchSensorChart = async () => {
+    const { data: sensores, error: sensoresError } = await supabase
+      .from("sensores")
+      .select("id_sensor, status");
+    const { data: catalogo, error: catalogoError } = await supabase
+      .from("catalogo_sensores")
+      .select("id_sensor, nombre, modelo");
+
+    if (sensoresError || catalogoError) {
+      console.error(
+        "Error cargando datos de gráfica:",
+        sensoresError || catalogoError
+      );
+      return;
+    }
+
+    // Mapear id_sensor a nombre + modelo
+    const sensorMap = catalogo.reduce((acc, s) => {
+      acc[s.id_sensor] = `${s.nombre} (${s.modelo})`;
+      return acc;
+    }, {});
+
+    const categories = sensores.map(
+      (s) => sensorMap[s.id_sensor] || `Sensor ${s.id_sensor}`
+    );
+    const values = sensores.map((s) => (s.status === "Activo" ? 1 : 0));
+
+    setSensorChartCategories(categories);
+    setSensorChartSeries([
+      {
+        name: "Estado del Sensor",
+        data: values,
+      },
+    ]);
   };
 
   const filteredDetalles = detalles
@@ -185,6 +227,39 @@ const MonitoreoSensoresOpe = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Gráfica de Estado de Sensores */}
+          <div className="mt-8 bg-white p-6 rounded-2xl shadow">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+              Estado de Sensores
+            </h2>
+            <ApexCharts
+              options={{
+                chart: { id: "sensores-line", zoom: { enabled: false } },
+                xaxis: { categories: sensorChartCategories },
+                yaxis: {
+                  min: 0,
+                  max: 1,
+                  tickAmount: 1,
+                  labels: {
+                    formatter: (val) => (val === 1 ? "Activo" : "Inactivo"),
+                  },
+                },
+                dataLabels: { enabled: false },
+                stroke: { curve: "straight" },
+                tooltip: {
+                  y: {
+                    formatter: (val) => (val === 1 ? "Activo" : "Inactivo"),
+                  },
+                },
+                title: { text: "Estado de Sensores", align: "left" },
+              }}
+              series={sensorChartSeries}
+              type="line"
+              height={350}
+            />
+          </div>
+
           {showInfoModal && (
             <ModalInfo onClose={() => setShowInfoModal(false)}>
               <h2 className="text-xl font-bold mb-4 text-center">

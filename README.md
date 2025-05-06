@@ -1,12 +1,29 @@
-# React + Vite
+# Bienvenido al proyecto SafeBridge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Lo que necesitas para poder utilizar el proyecto es lo sguiente:
 
-Currently, two official plugins are available:
+### Requisitos:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Tener el archivo en la raiz del proyecto .env.local con las variables de entorno del proyecto SafeBridge en Supabase. Si no las tienes enviame un correo: enriquecalvo75@gmail.com
 
-## Expanding the ESLint configuration
+2. Tener npm, Node.js o cualquier depencencia necesaria.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+3. Cuenta de GitHub
+
+### ¿Como utilizar el proyecto?
+
+1. Primero en la terminal colocar: npm i
+2. Hacer un pull al repositorio.
+3. En la terminal colocar: npm run dev
+
+## ¿Que es SafeBridge?
+
+### Problemática
+
+Las inundaciones en puentes representan un grave peligro para conductores y peatones, ya que el agua puede cubrir la vía sin previo aviso, dejando a las personas atrapadas y en riesgo.
+Actualmente, el cierre de estos accesos depende de reportes manuales, lo que genera retrasos y decisiones ineficaces
+
+### SafeBridge:
+
+SafeBridge implementa diferentes tipos de sensores para medir el nivel del agua y prevenir desbordamientos en puentes.
+Al detectar un incremento crítico, activa alarmas y plumas/barreras automáticas para bloquear el paso. Esta medida protege a los conductores y peatones, además, notifica a las autoridades para una respuesta inmediata

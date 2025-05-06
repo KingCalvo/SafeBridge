@@ -26,4 +26,9 @@ Actualmente, el cierre de estos accesos depende de reportes manuales, lo que gen
 ### SafeBridge:
 
 SafeBridge implementa diferentes tipos de sensores para medir el nivel del agua y prevenir desbordamientos en puentes.
-Al detectar un incremento crítico, activa alarmas y plumas/barreras automáticas para bloquear el paso. Esta medida protege a los conductores y peatones, además, notifica a las autoridades para una respuesta inmediata
+Al detectar un incremento crítico, activa alarmas y plumas/barreras automáticas para bloquear el paso.
+Esta medida protege a los conductores y peatones, además, notifica a las autoridades para una respuesta inmediata
+
+### Dudas y contacto:
+
+enriquecalvo75@gmail.com

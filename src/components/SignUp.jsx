@@ -106,33 +106,105 @@ const SignUp = () => {
           Crear Cuenta
         </h1>
 
-        {error && (
-          <div className="text-red-500 text-sm text-center">{error}</div>
-        )}
+        {/* Nombre */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            Nombre
+          </label>
+          <input
+            name="nombre"
+            type="text"
+            value={form.nombre}
+            onChange={handleChange}
+            required
+            maxLength="30"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          />
+        </div>
 
-        {/* Campos de usuario */}
-        {[
-          { label: "Nombre", name: "nombre" },
-          { label: "Apellido Paterno", name: "apellido_paterno" },
-          { label: "Apellido Materno", name: "apellido_materno" },
-          { label: "CURP", name: "curp" },
-          { label: "Teléfono", name: "tel" },
-          { label: "Correo", name: "correo", type: "email" },
-        ].map(({ label, name, type }) => (
-          <div key={name}>
-            <label className="block text-sm font-medium text-gray-700">
-              {label}
-            </label>
-            <input
-              name={name}
-              type={type || "text"}
-              value={form[name]}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
-            />
-          </div>
-        ))}
+        {/* Apellido Paterno */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            Apellido Paterno
+          </label>
+          <input
+            name="apellido_paterno"
+            type="text"
+            value={form.apellido_paterno}
+            onChange={handleChange}
+            required
+            maxLength="30"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          />
+        </div>
+
+        {/* Apellido Materno */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            Apellido Materno
+          </label>
+          <input
+            name="apellido_materno"
+            type="text"
+            value={form.apellido_materno}
+            onChange={handleChange}
+            required
+            maxLength="30"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          />
+        </div>
+
+        {/* CURP */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            CURP
+          </label>
+          <input
+            name="curp"
+            type="text"
+            value={form.curp}
+            onChange={handleChange}
+            required
+            maxLength="18"
+            pattern="[A-Z0-9]{18}"
+            title="La CURP debe tener exactamente 18 caracteres en mayúsculas y números"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 uppercase"
+          />
+        </div>
+
+        {/* Teléfono */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            Teléfono
+          </label>
+          <input
+            name="tel"
+            type="tel"
+            value={form.tel}
+            onChange={handleChange}
+            required
+            maxLength="10"
+            pattern="[0-9]{10}"
+            title="El teléfono debe contener exactamente 10 dígitos"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          />
+        </div>
+
+        {/* Correo */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            Correo
+          </label>
+          <input
+            name="correo"
+            type="email"
+            value={form.correo}
+            onChange={handleChange}
+            required
+            maxLength="40"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          />
+        </div>
 
         {/* Contraseña */}
         <div>
@@ -161,6 +233,9 @@ const SignUp = () => {
             className="w-full border border-gray-300 rounded-lg px-3 py-2"
           />
         </div>
+        {error && (
+          <div className="text-red-500 text-sm text-center">{error}</div>
+        )}
 
         <button
           type="submit"

@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./Login.jsx";
+import SignUp from "./SignUp.jsx";
 //Rutas del Admin:
 import InicioAdm from "../pages/Administrador/inicioAdm.jsx";
 import GestionUserAdm from "../pages/Administrador/gestionUserAdm.jsx";
@@ -24,6 +25,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
       {/* Rutas del Administrador */}
       <Route path="/inicioAdm" element={<InicioAdm />} />
       <Route path="/gestionUserAdm" element={<GestionUserAdm />} />

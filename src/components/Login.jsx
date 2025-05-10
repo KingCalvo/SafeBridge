@@ -25,13 +25,6 @@ const Login = () => {
       return;
     }
 
-    /*     //DEBUG: lista todos los correos que realmente tiene tu tabla
-    const { data: allUsers, error: allErr } = await supabase
-      .from("usuario")
-      .select("correo, id_rol");
-    console.log("ALL USERS:", allUsers, "ERR:", allErr); */
-
-    //Normalizar y buscar case-insensitive
     const normalizedEmail = email.trim().toLowerCase();
     const { data: userData, error: userError } = await supabase
       .from("usuario")
@@ -125,15 +118,20 @@ const Login = () => {
         {/* Auxiliares */}
         <div className="flex justify-end text-sm">
           <a href="#" className="text-gray-500 hover:underline">
-            ¿Olvidaste contraseña?
+            ¿Olvidaste tu contraseña?
           </a>
         </div>
         <div className="text-center text-sm">
           <span className="text-gray-600">¿No tengo una cuenta? </span>
-          <a href="#" className="text-orange-400 font-medium hover:underline">
+          <button
+            type="button"
+            onClick={() => navigate("/signup")}
+            className="text-orange-400 font-medium hover:underline focus:outline-none"
+          >
             Regístrate aquí
-          </a>
+          </button>
         </div>
+
         {/* Botón continuar como invitado */}
         <button
           onClick={handleGuestAccess}

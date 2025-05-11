@@ -41,10 +41,13 @@ const GestionUserAdm = () => {
   };
 
   const fetchUsers = async () => {
-    const { data, error } = await supabase.from("usuario").select(
-      `id_usuario, id_rol, nombre, apellido_paterno, apellido_materno, curp, tel, correo, 
+    const { data, error } = await supabase
+      .from("usuario")
+      .select(
+        `id_usuario, id_rol, nombre, apellido_paterno, apellido_materno, curp, tel, correo, 
          catalogo_roles ( nombre, status )`
-    );
+      )
+      .order("id_usuario", { ascending: true });
     if (!error) {
       setUsers(data);
       setFilteredUsers(data);

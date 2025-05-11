@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs";
 import { supabase } from "../supabase/client.js";
 
 const SignUp = () => {
@@ -24,7 +25,7 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
 
-    //Validaciones básicas
+    // --- Validaciones básicas ---
     if (!form.correo.includes("@")) {
       setError("El correo debe contener '@'.");
       return;
@@ -33,36 +34,39 @@ const SignUp = () => {
       setError("Las contraseñas no coinciden.");
       return;
     }
+    if (form.password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
 
     const emailClean = form.correo.trim().toLowerCase();
+    const curpClean = form.curp.trim().toUpperCase();
 
-    //Crear usuario en Auth
-    const { error: authError } = await supabase.auth.signUp({
-      email: emailClean,
-      password: form.password,
-    });
-    if (authError) {
-      setError("Error al crear usuario en autenticación: " + authError.message);
-      return;
+    try {
+      // --- Cifrar la contraseña ---
+      const hashedPassword = await bcrypt.hash(form.password, 10);
+
+      // --- Insertar usuario en tabla "usuario" ---
+      const { error: perfilErr } = await supabase.from("usuario").insert([
+        {
+          nombre: form.nombre.trim(),
+          apellido_paterno: form.apellido_paterno.trim(),
+          apellido_materno: form.apellido_materno.trim(),
+          curp: curpClean,
+          tel: form.tel.trim(),
+          correo: emailClean,
+          pass: hashedPassword,
+        },
+      ]);
+
+      if (perfilErr) {
+        throw new Error("Error al guardar tu perfil: " + perfilErr.message);
+      }
+
+      setStage("success");
+    } catch (err) {
+      setError(err.message || "Error desconocido al crear la cuenta.");
     }
-
-    //Insertar usuario en tabla "usuario"
-    const { error: perfilErr } = await supabase.from("usuario").insert([
-      {
-        nombre: form.nombre,
-        apellido_paterno: form.apellido_paterno,
-        apellido_materno: form.apellido_materno,
-        curp: form.curp,
-        tel: form.tel,
-        correo: emailClean,
-      },
-    ]);
-    if (perfilErr) {
-      setError("Error al guardar tu perfil: " + perfilErr.message);
-      return;
-    }
-
-    setStage("success");
   };
 
   if (stage === "success") {

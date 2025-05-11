@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaUserGroup } from "react-icons/fa6";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { CiMail } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import bcrypt from "bcryptjs";
 import { supabase } from "../supabase/client.js";
 
 const Login = () => {
@@ -14,50 +14,54 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    //Autenticación
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (authError) {
-      alert("Correo o contraseña incorrectos");
-      console.error(authError);
-      return;
-    }
-
     const normalizedEmail = email.trim().toLowerCase();
-    const { data: userData, error: userError } = await supabase
-      .from("usuario")
-      .select("id_rol")
-      .ilike("correo", normalizedEmail)
-      .maybeSingle();
 
-    if (userError) {
-      alert("Error al consultar la base de datos");
-      console.error(userError);
-      return;
-    }
-    if (!userData) {
-      alert(`Usuario no encontrado en la base de datos:\n${normalizedEmail}`);
-      console.warn(`No existe usuario con correo ${normalizedEmail}`);
-      return;
-    }
+    try {
+      // 1) Traer hash de contraseña e id_rol de la tabla usuario
+      const { data: user, error: fetchError } = await supabase
+        .from("usuario")
+        .select("pass, id_rol")
+        .ilike("correo", normalizedEmail)
+        .maybeSingle();
 
-    //Redirigir según rol
-    switch (userData.id_rol) {
-      case 1:
-        navigate("/inicioAdm");
-        break;
-      case 2:
-        navigate("/inicioOpe");
-        break;
-      case 3:
-        navigate("/inicioPC");
-        break;
-      default:
-        alert("Rol no válido");
+      if (fetchError) {
+        console.error(fetchError);
+        alert("Error al consultar la base de datos.");
+        return;
+      }
+
+      if (!user) {
+        alert("Usuario no encontrado o correo incorrecto.");
+        return;
+      }
+
+      // 2) Comparar contraseña con el hash
+      const match = await bcrypt.compare(password, user.pass || "");
+      if (!match) {
+        alert("Correo o contraseña incorrectos.");
+        return;
+      }
+
+      // 3) Redirigir según rol
+      switch (user.id_rol) {
+        case 1:
+          navigate("/inicioAdm");
+          break;
+        case 2:
+          navigate("/inicioOpe");
+          break;
+        case 3:
+          navigate("/inicioPC");
+          break;
+        default:
+          alert("Rol no válido.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Ocurrió un error inesperado.");
     }
   };
+
   const handleGuestAccess = () => {
     navigate("/graficosInv");
   };
@@ -77,13 +81,13 @@ const Login = () => {
         </div>
 
         <div className="space-y-4">
-          {/* Usuario */}
+          {/* Correo */}
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
               <CiMail />
             </span>
             <input
-              type="text"
+              type="email"
               placeholder="CORREO"
               className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
               value={email}
@@ -100,9 +104,9 @@ const Login = () => {
               type="password"
               placeholder="CONTRASEÑA"
               className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
-              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
         </div>

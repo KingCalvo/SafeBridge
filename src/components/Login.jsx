@@ -17,7 +17,7 @@ const Login = () => {
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      // 1) Traer hash de contraseña e id_rol de la tabla usuario
+      //Traer hash de contraseña e id_rol de la tabla usuario
       const { data: user, error: fetchError } = await supabase
         .from("usuario")
         .select("pass, id_rol")
@@ -35,14 +35,13 @@ const Login = () => {
         return;
       }
 
-      // 2) Comparar contraseña con el hash
+      //Comparar contraseña con el hash
       const match = await bcrypt.compare(password, user.pass || "");
       if (!match) {
         alert("Correo o contraseña incorrectos.");
         return;
       }
 
-      // 3) Redirigir según rol
       switch (user.id_rol) {
         case 1:
           navigate("/inicioAdm");

@@ -25,7 +25,6 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
 
-    // --- Validaciones básicas ---
     if (!form.correo.includes("@")) {
       setError("El correo debe contener '@'.");
       return;
@@ -43,10 +42,9 @@ const SignUp = () => {
     const curpClean = form.curp.trim().toUpperCase();
 
     try {
-      // --- Cifrar la contraseña ---
+      // Para cifrar la contraseña
       const hashedPassword = await bcrypt.hash(form.password, 10);
 
-      // --- Insertar usuario en tabla "usuario" ---
       const { error: perfilErr } = await supabase.from("usuario").insert([
         {
           nombre: form.nombre.trim(),

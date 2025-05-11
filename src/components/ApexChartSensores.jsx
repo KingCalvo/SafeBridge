@@ -14,24 +14,52 @@ const ApexChartSensores = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Traer sensores con datos de catalogo_sensores
       const { data: sensores, error } = await supabase
         .from("sensores")
-        .select("id_sensor, status, catalogo_sensores(nombre)")
+        .select("id_sensor, id_puente, status, catalogo_sensores(nombre)")
         .order("id_sensor", { ascending: true });
-
       if (error) {
         console.error("Error al obtener sensores:", error.message);
         return;
       }
 
-      // Formatear datos para la gráfica
-      const formateados = sensores.map((s) => ({
-        nombre: s.catalogo_sensores?.nombre || `Sensor ${s.id_sensor}`,
-        status: s.status,
-      }));
+      const enriched = await Promise.all(
+        sensores.map(async (s) => {
+          let fecha = null;
+          if (s.status === "Inactivo") {
+            const { data: alerta } = await supabase
+              .from("alertas")
+              .select("fecha_hora")
+              .eq("id_puente", s.id_puente)
+              .eq("status", "Inactiva")
+              .order("fecha_hora", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (alerta?.fecha_hora) {
+              fecha = new Date(alerta.fecha_hora).toLocaleDateString();
+            } else {
+              const { data: evento } = await supabase
+                .from("eventos_desbordamiento")
+                .select("fecha_hora")
+                .eq("id_puente", s.id_puente)
+                .order("fecha_hora", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+              if (evento?.fecha_hora) {
+                fecha = new Date(evento.fecha_hora).toLocaleDateString();
+              }
+            }
+            if (!fecha) fecha = "05/01/2025";
+          }
+          return {
+            nombre: s.catalogo_sensores?.nombre || `Sensor ${s.id_sensor}`,
+            status: s.status,
+            date: fecha,
+          };
+        })
+      );
 
-      setDatosSensores(formateados);
+      setDatosSensores(enriched);
     };
 
     fetchData();
@@ -39,10 +67,9 @@ const ApexChartSensores = () => {
 
   const categories = datosSensores.map((s) => s.nombre);
   const seriesData = datosSensores.map((s) => statusMap[s.status] || 0);
-
-  const discreteMarkers = datosSensores.map((s, index) => ({
+  const discreteMarkers = datosSensores.map((s, idx) => ({
     seriesIndex: 0,
-    dataPointIndex: index,
+    dataPointIndex: idx,
     fillColor: colorMap[s.status] || "#999",
     strokeColor: "#fff",
     size: 6,
@@ -54,21 +81,9 @@ const ApexChartSensores = () => {
       type: "line",
       zoom: { enabled: false },
     },
-    stroke: {
-      curve: "smooth",
-      width: 3,
-    },
-    markers: {
-      size: 5,
-      discrete: discreteMarkers,
-      hover: {
-        sizeOffset: 4,
-      },
-    },
-    xaxis: {
-      categories,
-      labels: { rotate: -45 },
-    },
+    stroke: { curve: "smooth", width: 3 },
+    markers: { size: 5, discrete: discreteMarkers, hover: { sizeOffset: 4 } },
+    xaxis: { categories, labels: { rotate: -45 } },
     yaxis: {
       min: 0.5,
       max: 3.5,
@@ -83,22 +98,24 @@ const ApexChartSensores = () => {
       },
     },
     tooltip: {
+      enabled: true,
+      shared: false,
+      intersect: true,
       y: {
-        formatter: (val) => {
-          if (val === 1) return "Inactivo";
-          if (val === 2) return "Reparación";
-          if (val === 3) return "Activo";
-          return "";
+        title: {
+          formatter: () => "Estado",
+        },
+        formatter: (val, { dataPointIndex }) => {
+          const s = datosSensores[dataPointIndex];
+          if (s.status === "Inactivo") {
+            return `Inactivo\n${s.date}`;
+          }
+          return s.status;
         },
       },
     },
-    grid: {
-      borderColor: "#f1f1f1",
-    },
-    title: {
-      text: "Estado actual de los sensores",
-      align: "left",
-    },
+    grid: { borderColor: "#f1f1f1" },
+    title: { text: "Estado actual de los sensores", align: "left" },
   };
 
   return (

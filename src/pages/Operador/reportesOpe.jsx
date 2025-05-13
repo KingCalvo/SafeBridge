@@ -10,6 +10,8 @@ import { FaCheck } from "react-icons/fa";
 import Modal from "../../components/Modal";
 import { FaRegEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { useNotificacion } from "../../components/NotificacionContext";
+import { useAlerta } from "../../components/AlertaContext";
 
 const ReportesOpe = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +29,8 @@ const ReportesOpe = () => {
     fecha_hora: "",
     descripcion: "",
   });
+  const { confirmar } = useAlerta();
+  const { notify } = useNotificacion();
 
   useEffect(() => {
     fetchPuentes();
@@ -160,28 +164,36 @@ const ReportesOpe = () => {
   };
 
   const handleModalSubmit = async () => {
-    const payload = {
-      id_puente: formData.id_puente,
-      id_estaciones: formData.id_estaciones,
-      fecha_hora: formData.fecha_hora,
-      descripcion: formData.descripcion,
-    };
+    try {
+      const payload = {
+        id_puente: formData.id_puente,
+        id_estaciones: formData.id_estaciones,
+        fecha_hora: formData.fecha_hora,
+        descripcion: formData.descripcion,
+      };
 
-    const { error } = await supabase
-      .from("informes")
-      .update(payload)
-      .eq("id_Informes", editingInforme);
+      const { error } = await supabase
+        .from("informes")
+        .update(payload)
+        .eq("id_Informes", editingInforme);
 
-    if (error) {
-      console.error("Error actualizando informe:", error);
-    } else {
+      if (error) throw error;
+
+      notify("Reporte actualizado con éxito.", { type: "success" });
       fetchInformes();
       setShowModal(false);
+    } catch (err) {
+      console.error("Error actualizando informe:", err);
+      notify("Error al actualizar reporte: " + err.message, { type: "error" });
     }
   };
 
   const handleDeleteInforme = async (idInforme) => {
-    if (!window.confirm("¿Seguro que deseas eliminar este informe?")) return;
+    const ok = await confirmar(`el informe con ID ${idInforme}`);
+    if (!ok) {
+      notify("Operación cancelada.", { type: "success" });
+      return;
+    }
 
     const { error } = await supabase
       .from("informes")
@@ -190,9 +202,10 @@ const ReportesOpe = () => {
 
     if (error) {
       console.error("Error al eliminar informe:", error);
+      notify("Error al eliminar reporte: " + error.message, { type: "error" });
     } else {
+      notify("Reporte eliminado con éxito.", { type: "success" });
       fetchInformes();
-      alert("Informe eliminado correctamente.");
     }
   };
 

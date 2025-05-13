@@ -57,7 +57,10 @@ const EventosOpe = () => {
     if (!error) setEventos(data || []);
   };
   const fetchAlertas = async () => {
-    const { data, error } = await supabase.from("alertas").select(`
+    const { data, error } = await supabase
+      .from("alertas")
+      .select(
+        `
       id_alertas,
       tipo_alerta,
       fecha_hora,
@@ -65,7 +68,9 @@ const EventosOpe = () => {
       id_puente,
       eventos_desbordamiento ( descripcion ),
       catalogo_puentes ( ubicacion )
-    `);
+    `
+      )
+      .order("id_alertas", { ascending: true });
 
     if (!error) setAlertas(data || []);
     else console.error("Error cargando alertas:", error);

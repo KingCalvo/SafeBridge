@@ -7,6 +7,7 @@ import autoTable from "jspdf-autotable";
 import dayjs from "dayjs";
 import { IoMdReturnLeft } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useNotificacion } from "../../components/NotificacionContext";
 
 const ReportePDF = () => {
   const [sensores, setSensores] = useState([]);
@@ -21,10 +22,10 @@ const ReportePDF = () => {
   const [idEvento, setIdEvento] = useState(null);
   const [descripcion, setDescripcion] = useState("");
   const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
+  const { notify } = useNotificacion();
 
   useEffect(() => {
     const inicializar = async () => {
-      // Obtener último id_Informes
       const { data: ultimo } = await supabase
         .from("informes")
         .select("id_Informes")
@@ -35,7 +36,7 @@ const ReportePDF = () => {
       const nuevoId = (ultimo?.id_Informes || 0) + 1;
       setIdInforme(nuevoId);
 
-      await fetchDatos(); //datos actuales
+      await fetchDatos();
     };
 
     inicializar();
@@ -117,7 +118,7 @@ const ReportePDF = () => {
   const handleGuardarInforme = async () => {
     const { error } = await supabase.from("informes").insert([
       {
-        id_Informes: idInforme, // <--- usar el nuevo ID calculado
+        id_Informes: idInforme,
         id_puente: Number(idPuenteSeleccionado),
         id_estaciones: Number(idEstacion),
         id_sensor: Number(idSensor),
@@ -129,9 +130,9 @@ const ReportePDF = () => {
 
     if (error) {
       console.error("Error guardando informe:", error);
-      alert("Error al guardar el informe.");
+      notify("Error al guardar el informe " + error.message, { type: "error" });
     } else {
-      alert("Informe guardado correctamente.");
+      notify("Informe guardado correctamente.", { type: "success" });
     }
   };
 

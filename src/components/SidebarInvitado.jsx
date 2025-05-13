@@ -13,7 +13,7 @@ const Sidebar = () => {
     { label: "Graficos", icon: <SiSoundcharts />, path: "/graficosInv" },
     { label: "Puentes", icon: <FaBridgeWater />, path: "/puentesInv" },
     {
-      label: "Alertas recientes",
+      label: "Alertas y Estaciones",
       icon: <MdCrisisAlert />,
       path: "/alertasInv",
     },

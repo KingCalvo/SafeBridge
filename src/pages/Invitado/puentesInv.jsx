@@ -80,7 +80,7 @@ const PuentesInv = () => {
                     Ubicación
                   </th>
                   <th className="px-4 py-2 text-center text-xs uppercase">
-                    +Información
+                    Información
                   </th>
                   <th className="px-4 py-2 text-center text-xs uppercase">
                     Status

@@ -48,7 +48,12 @@ const GraficosInv = () => {
           <div className="p-6 rounded-lg shadow mb-8 text-center">
             {/* Emoji y temperatura centrados */}
             <div className="text-5xl mb-2">
-              {weather.current_weather.temperature >= 25 ? "🌤️" : "🌥️"}{" "}
+              {weather.current_weather.temperature < 15
+                ? "🌥️"
+                : weather.current_weather.temperature >= 15 &&
+                  weather.current_weather.temperature < 20
+                ? "🌤️"
+                : "☀️"}{" "}
               {Math.round(weather.current_weather.temperature)}°C
             </div>
 
@@ -69,20 +74,21 @@ const GraficosInv = () => {
                 Prob. de precipitaciones:{" "}
                 {weather.daily.precipitation_probability_max?.[0] ?? "--"}%
               </p>
-              <p>
-                Humedad:{" "}
-                {weather.hourly?.relativehumidity_2m?.[new Date().getHours()] ??
-                  "--"}
-                %
-              </p>
               <p>Viento: {weather.current_weather.windspeed} km/h</p>
             </div>
 
-            {/* Pronóstico 5 días */}
+            {/* Pronóstico 7 días */}
             <div className="flex justify-center gap-4">
-              {weather.daily.time.slice(0, 5).map((day, i) => {
+              {weather.daily.time.slice(0, 7).map((day, i) => {
                 const prob = weather.daily.precipitation_probability_max[i];
-                const emoji = prob > 50 ? "🌥️" : "🌤️";
+                const tempMax = weather.daily.temperature_2m_max[i];
+                // Emoji basado en temperatura (no en probabilidad de lluvia)
+                const emoji =
+                  tempMax < 15
+                    ? "🌥️"
+                    : tempMax >= 15 && tempMax < 20
+                    ? "🌤️"
+                    : "☀️";
                 return (
                   <div
                     key={day}
@@ -95,7 +101,7 @@ const GraficosInv = () => {
                       })}
                     </p>
                     <p className="text-sm">
-                      {Math.round(weather.daily.temperature_2m_max[i])}° |{" "}
+                      {Math.round(tempMax)}° |{" "}
                       {Math.round(weather.daily.temperature_2m_min[i])}°
                     </p>
                     <p className="text-xs text-blue-600">{prob}% lluvia</p>

@@ -8,6 +8,8 @@ import { FaDeleteLeft } from "react-icons/fa6";
 import { GoAlert } from "react-icons/go";
 import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
+import { useNotificacion } from "../../components/NotificacionContext";
+import { useAlerta } from "../../components/AlertaContext";
 
 const EventosOpe = () => {
   const [eventos, setEventos] = useState([]);
@@ -26,6 +28,8 @@ const EventosOpe = () => {
     ubicacion: "",
     id_nivel_riesgo: "",
   });
+  const { confirmar } = useAlerta();
+  const { notify } = useNotificacion();
 
   useEffect(() => {
     fetchEventos();
@@ -152,30 +156,57 @@ const EventosOpe = () => {
   };
 
   const handleModalSubmit = async () => {
-    const payload = {
-      id_puente: formData.id_puente,
-      descripcion: formData.descripcion,
-      fecha_hora: formData.fecha_hora,
-      id_nivel_riesgo: Number(formData.id_nivel_riesgo),
-    };
+    try {
+      const payload = {
+        id_puente: formData.id_puente,
+        descripcion: formData.descripcion,
+        fecha_hora: formData.fecha_hora,
+        id_nivel_riesgo: Number(formData.id_nivel_riesgo),
+      };
 
-    if (editingEvento) {
-      await supabase
-        .from("eventos_desbordamiento")
-        .update(payload)
-        .eq("id_evento", editingEvento);
-    } else {
-      await supabase.from("eventos_desbordamiento").insert([payload]);
+      if (editingEvento) {
+        const { error } = await supabase
+          .from("eventos_desbordamiento")
+          .update(payload)
+          .eq("id_evento", editingEvento);
+        if (error) throw error;
+
+        notify("Evento editado con éxito.", { type: "success" });
+      } else {
+        const { error } = await supabase
+          .from("eventos_desbordamiento")
+          .insert([payload]);
+        if (error) throw error;
+
+        notify("Evento creado con éxito.", { type: "success" });
+      }
+
+      fetchEventos();
+      setShowModal(false);
+    } catch (err) {
+      console.error(err);
+      notify("Error al guardar evento: " + err.message, { type: "error" });
     }
-
-    fetchEventos();
-    setShowModal(false);
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro que quieres eliminar este evento?")) return;
-    await supabase.from("eventos_desbordamiento").delete().eq("id_evento", id);
-    fetchEventos();
+    const ok = await confirmar(`el evento con ID ${id}`);
+    if (!ok) {
+      notify("Operación cancelada.", { type: "success" });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("eventos_desbordamiento")
+      .delete()
+      .eq("id_evento", id);
+
+    if (error) {
+      notify("Error al eliminar evento: " + error.message, { type: "error" });
+    } else {
+      notify("Evento eliminado.", { type: "success" });
+      fetchEventos();
+    }
   };
 
   const filteredEventos = eventos
@@ -198,6 +229,7 @@ const EventosOpe = () => {
       .eq("id_alertas", id);
 
     if (!error) fetchAlertas();
+    notify("Alerta desactivada con éxito.", { type: "success" });
   };
 
   return (

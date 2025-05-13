@@ -6,15 +6,15 @@ import { FaUserEdit, FaUserTimes } from "react-icons/fa";
 import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
 import Sidebar from "../../components/Sidebar";
+import bcrypt from "bcryptjs";
 
 const GestionUserAdm = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [roles, setRoles] = useState([]);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("");
-
+  const [modalError, setModalError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
@@ -25,6 +25,8 @@ const GestionUserAdm = () => {
     curp: "",
     tel: "",
     correo: "",
+    password: "",
+    confirmPassword: "",
   });
 
   useEffect(() => {
@@ -90,7 +92,10 @@ const GestionUserAdm = () => {
       curp: "",
       tel: "",
       correo: "",
+      password: "",
+      confirmPassword: "",
     });
+    setModalError("");
     setShowModal(true);
   };
 
@@ -109,19 +114,61 @@ const GestionUserAdm = () => {
   };
 
   const handleModalSubmit = async () => {
-    const payload = { ...formData };
-    let error;
-    if (editingUser) {
-      ({ error } = await supabase
-        .from("usuario")
-        .update(payload)
-        .eq("id_usuario", editingUser));
-    } else {
-      ({ error } = await supabase.from("usuario").insert([payload]));
+    setModalError("");
+
+    const roleId = parseInt(formData.id_rol, 10);
+    if (isNaN(roleId)) {
+      setModalError("Debes seleccionar un rol válido.");
+      return;
     }
-    if (!error) {
+
+    // Validaciones de contraseña
+    if (!editingUser) {
+      if (formData.password.length < 6) {
+        setModalError("La contraseña debe tener al menos 6 caracteres.");
+        return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setModalError("Las contraseñas no coinciden.");
+        return;
+      }
+    }
+
+    try {
+      const payload = {
+        id_rol: roleId,
+        nombre: formData.nombre.trim(),
+        apellido_paterno: formData.apellido_paterno.trim(),
+        apellido_materno: formData.apellido_materno.trim(),
+        curp: formData.curp.trim().toUpperCase(),
+        tel: formData.tel.trim(),
+        correo: formData.correo.trim().toLowerCase(),
+      };
+
+      //Solo al agregar: cifrar contraseña y añadir pass
+      if (!editingUser) {
+        const hashed = await bcrypt.hash(formData.password, 10);
+        payload.pass = hashed;
+      }
+
+      //Insertar o actualizar
+      let error;
+      if (editingUser) {
+        ({ error } = await supabase
+          .from("usuario")
+          .update(payload)
+          .eq("id_usuario", editingUser));
+      } else {
+        ({ error } = await supabase.from("usuario").insert([payload]));
+      }
+
+      if (error) throw error;
+
       setShowModal(false);
       fetchUsers();
+    } catch (err) {
+      console.error(err);
+      setModalError("Error al guardar usuario: " + err.message);
     }
   };
 
@@ -366,6 +413,38 @@ const GestionUserAdm = () => {
                     setFormData({ ...formData, correo: e.target.value })
                   }
                 />
+                {/* Contraseña */}
+                {!editingUser && (
+                  <>
+                    <input
+                      type="password"
+                      placeholder="Contraseña"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                    />
+                    <input
+                      type="password"
+                      placeholder="Confirmar contraseña"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                    />
+                  </>
+                )}
+
+                {modalError && (
+                  <div className="text-red-500 text-sm text-center mt-2">
+                    {modalError}
+                  </div>
+                )}
               </div>
             </Modal>
           )}

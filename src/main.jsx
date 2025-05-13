@@ -5,13 +5,16 @@ import "./index.css";
 import App from "./components/App.jsx";
 
 import { NotificacionContext } from "./components/NotificacionContext.jsx";
+import { AlertaProvider } from "./components/AlertaContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <NotificacionContext>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <AlertaProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AlertaProvider>
     </NotificacionContext>
   </StrictMode>
 );

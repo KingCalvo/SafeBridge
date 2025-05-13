@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import bcrypt from "bcryptjs";
 import { supabase } from "../supabase/client.js";
+import { useNotificacion } from "../components/NotificacionContext.jsx";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const SignUp = () => {
   });
   const [error, setError] = useState("");
   const [stage, setStage] = useState("form");
+  const { notify } = useNotificacion();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,15 +29,17 @@ const SignUp = () => {
 
     if (!form.correo.includes("@")) {
       setError("El correo debe contener '@'.");
-      return;
+      return notify("El correo debe contener '@'.", { type: "error" });
     }
     if (form.password !== form.confirm) {
       setError("Las contraseñas no coinciden.");
-      return;
+      return notify("Las contraseñas no coinciden.", { type: "error" });
     }
     if (form.password.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres.");
-      return;
+      return notify("La contraseña debe tener al menos 6 caracteres.", {
+        type: "error",
+      });
     }
 
     const emailClean = form.correo.trim().toLowerCase();
@@ -58,11 +62,14 @@ const SignUp = () => {
       ]);
 
       if (perfilErr) {
-        throw new Error("Error al guardar tu perfil: " + perfilErr.message);
+        throw new Error("Error al guardar la cuenta: " + perfilErr.message);
       }
-
+      notify("Usuario creado con éxito", { type: "success" });
       setStage("success");
     } catch (err) {
+      notify(err.message || "Error desconocido al crear la cuenta.", {
+        type: "error",
+      });
       setError(err.message || "Error desconocido al crear la cuenta.");
     }
   };

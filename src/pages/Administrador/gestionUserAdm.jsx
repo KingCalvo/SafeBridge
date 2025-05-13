@@ -7,6 +7,8 @@ import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
 import Sidebar from "../../components/Sidebar";
 import bcrypt from "bcryptjs";
+import { useNotificacion } from "../../components/NotificacionContext";
+import { useAlerta } from "../../components/AlertaContext";
 
 const GestionUserAdm = () => {
   const [users, setUsers] = useState([]);
@@ -28,6 +30,8 @@ const GestionUserAdm = () => {
     password: "",
     confirmPassword: "",
   });
+  const { confirmar } = useAlerta();
+  const { notify } = useNotificacion();
 
   useEffect(() => {
     fetchRoles();
@@ -74,12 +78,22 @@ const GestionUserAdm = () => {
   }, [searchTerm, filterRole, users]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro quieres eliminar este usuario?")) return;
+    const ok = await confirmar(`el usuario con ID ${id}`);
+    if (!ok) {
+      notify("Operación cancelada.", { type: "success" });
+      return;
+    }
     const { error } = await supabase
       .from("usuario")
       .delete()
       .eq("id_usuario", id);
-    if (!error) fetchUsers();
+
+    if (error) {
+      notify("Error al eliminar usuario: " + error.message, { type: "error" });
+    } else {
+      notify("Usuario eliminado.", { type: "success" });
+      fetchUsers();
+    }
   };
 
   const openAddModal = () => {
@@ -166,9 +180,14 @@ const GestionUserAdm = () => {
 
       setShowModal(false);
       fetchUsers();
+      if (editingUser) {
+        notify("Usuario editado con éxito.", { type: "success" });
+      } else {
+        notify("Usuario agregado con éxito.", { type: "success" });
+      }
     } catch (err) {
       console.error(err);
-      setModalError("Error al guardar usuario: " + err.message);
+      notify("Error al guardar usuario: " + err.message, { type: "error" });
     }
   };
 

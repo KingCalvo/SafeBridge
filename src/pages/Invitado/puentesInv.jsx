@@ -3,6 +3,7 @@ import Sidebar from "../../components/SidebarInvitado";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
+import ApexChartPuentes from "../../components/ApexChartPuentes";
 
 const PuentesInv = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,7 +80,7 @@ const PuentesInv = () => {
                     Ubicación
                   </th>
                   <th className="px-4 py-2 text-center text-xs uppercase">
-                    Información
+                    +Información
                   </th>
                   <th className="px-4 py-2 text-center text-xs uppercase">
                     Status
@@ -115,6 +116,10 @@ const PuentesInv = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+          {/* Gráfica */}
+          <div className="mt-8 bg-white p-6 rounded-2xl shadow">
+            <ApexChartPuentes />
           </div>
         </main>
       </div>

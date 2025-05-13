@@ -6,6 +6,7 @@ import { supabase } from "../../supabase/client";
 import Toggle from "../../components/Toggle";
 import { GoAlert } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
+import { useNotificacion } from "../../components/NotificacionContext";
 
 const AlertasEventosAdm = () => {
   const [alertas, setAlertas] = useState([]);
@@ -13,6 +14,7 @@ const AlertasEventosAdm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [tipoAlertaFilter, setTipoAlertaFilter] = useState("");
   const [nivelRiesgoFilter, setNivelRiesgoFilter] = useState("");
+  const { notify } = useNotificacion();
 
   useEffect(() => {
     fetchAlertas();
@@ -70,7 +72,17 @@ const AlertasEventosAdm = () => {
       .eq("id_alertas", id);
 
     if (error) {
-      console.error("Error actualizando status:", error);
+      setAlertas((prevAlertas) =>
+        prevAlertas.map((alerta) =>
+          alerta.id_alertas === id
+            ? { ...alerta, status: currentStatus }
+            : alerta
+        )
+      );
+      notify("Error al actualizar alerta: " + error.message, { type: "error" });
+    } else {
+      const verbo = nuevoStatus === "Activa" ? "activada" : "desactivada";
+      notify(`Alerta ${verbo}.`, { type: "success" });
     }
   };
 

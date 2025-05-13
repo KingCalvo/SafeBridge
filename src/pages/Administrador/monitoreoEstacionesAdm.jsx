@@ -351,7 +351,7 @@ const MonitoreoSensoresAdm = () => {
                   <tbody>
                     {Object.entries(sensorInfo).map(([key, value]) => (
                       <tr key={key} className="border-b">
-                        <td className="w-1/3 font-semibold text-gray-800 uppercase py-2 px-2 border-r border-gray-500 text-center">
+                        <td className="w-1/2 font-semibold text-gray-800 uppercase py-2 px-2 border-r border-gray-500 text-center">
                           {key.replace("_", " ")}
                         </td>
                         <td className="w-2/3 text-gray-800 py-2 px-2 text-center">

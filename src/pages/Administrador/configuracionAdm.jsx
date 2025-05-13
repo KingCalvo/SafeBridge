@@ -11,6 +11,8 @@ import { FaCheck, FaInfoCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import ModalInfo from "../../components/ModalInfo";
+import { useNotificacion } from "../../components/NotificacionContext";
+import { useAlerta } from "../../components/AlertaContext";
 
 import {} from "react-icons/fa";
 const ConfiguracionAdm = () => {
@@ -28,6 +30,8 @@ const ConfiguracionAdm = () => {
   const [addingTipo, setAddingTipo] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [selectedInfo, setSelectedInfo] = useState({ status: "", info: "" });
+  const { confirmar } = useAlerta();
+  const { notify } = useNotificacion();
 
   useEffect(() => {
     fetchPuentes();
@@ -131,6 +135,7 @@ const ConfiguracionAdm = () => {
           .insert([nuevoPuente]);
         if (errP) throw errP;
         await fetchPuentes();
+        notify("Puente agregado correctamente.", { type: "success" });
       }
 
       //AGREGAR NIVEL
@@ -148,6 +153,7 @@ const ConfiguracionAdm = () => {
           .insert([nuevoNivel]);
         if (errN) throw errN;
         await fetchNiveles();
+        notify("Nivel de riesgo editado correctamente.", { type: "success" });
       }
 
       //AGREGAR SENSOR
@@ -192,6 +198,7 @@ const ConfiguracionAdm = () => {
         if (errSensInsert) throw errSensInsert;
 
         await fetchSensores();
+        notify("Sensor agregado correctamente.", { type: "success" });
       }
 
       //EDITAR PUENTE
@@ -203,6 +210,7 @@ const ConfiguracionAdm = () => {
           .eq("id_puente", id_puente);
         if (error) throw error;
         await fetchPuentes();
+        notify("Puente editado correctamente.", { type: "success" });
       }
 
       //EDITAR NIVEL
@@ -215,6 +223,7 @@ const ConfiguracionAdm = () => {
           .eq("id_nivel", id_nivel);
         if (error) throw error;
         await fetchNiveles();
+        notify("Nivel de riesgo editado correctamente.", { type: "success" });
       }
 
       //EDITAR SENSOR
@@ -246,6 +255,7 @@ const ConfiguracionAdm = () => {
         if (errSensUpd) throw errSensUpd;
 
         await fetchSensores();
+        notify("Sensor editado correctamente.", { type: "success" });
       }
     } catch (err) {
       console.error("Error en saveChanges:", err);
@@ -257,7 +267,11 @@ const ConfiguracionAdm = () => {
   };
 
   const handleDelete = async (id, tipo) => {
-    if (!window.confirm("¿Seguro que quieres eliminar?")) return;
+    const ok = await confirmar(`el ${tipo} con ID ${id}`);
+    if (!ok) {
+      notify("Operación cancelada.", { type: "success" });
+      return;
+    }
 
     try {
       if (tipo === "puente") {
@@ -288,9 +302,9 @@ const ConfiguracionAdm = () => {
         await supabase.from("sensores").delete().eq("id_puente", id);
         await supabase.from("catalogo_puentes").delete().eq("id_puente", id);
         fetchPuentes();
+        notify("Puente eliminado correctamente.", { type: "success" });
       } else if (tipo === "sensor") {
         // --- ELIMINACIÓN PARA SENSORES ---
-        // 1) Traer id_tipo_sensor para luego borrar en catalogo_sensores
         const { data: rec, error: errFetch } = await supabase
           .from("sensores")
           .select("id_tipo_sensor")
@@ -298,14 +312,12 @@ const ConfiguracionAdm = () => {
           .single();
         if (errFetch) throw errFetch;
 
-        // 2) Borrar de 'sensores'
         const { error: errDelSens } = await supabase
           .from("sensores")
           .delete()
           .eq("id_sensor", id);
         if (errDelSens) throw errDelSens;
 
-        // 3) Borrar de 'catalogo_sensores' usando id_tipo_sensor
         const { error: errDelCat } = await supabase
           .from("catalogo_sensores")
           .delete()
@@ -313,6 +325,7 @@ const ConfiguracionAdm = () => {
         if (errDelCat) throw errDelCat;
 
         await fetchSensores();
+        notify("Sensor eliminado correctamente.", { type: "success" });
       } else if (tipo === "nivel") {
         const { data: eventos } = await supabase
           .from("eventos_desbordamiento")
@@ -330,9 +343,11 @@ const ConfiguracionAdm = () => {
           .delete()
           .eq("id_nivel", id);
         fetchNiveles();
+        notify("Nivel eliminado correctamente.", { type: "success" });
       }
     } catch (error) {
       console.error("Error al eliminar:", error);
+      notify("Error al eliminar: " + error.message, { type: "error" });
     }
   };
 
@@ -570,7 +585,7 @@ const ConfiguracionAdm = () => {
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {n.nombre}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
+                    <td className="px-4 py-2 text-sm text-gray-700 text-justify">
                       {n.descripcion}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
@@ -611,7 +626,7 @@ const ConfiguracionAdm = () => {
             </table>
           </div>
 
-          {/* --- Sección Sensores --- */}
+          {/* Sección Sensores */}
           <div className="flex items-center justify-center space-x-4 mb-4 mt-8">
             <h2 className="text-2xl font-semibold text-gray-800">SENSORES</h2>
             <div className="relative">

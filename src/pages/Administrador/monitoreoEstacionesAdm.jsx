@@ -10,6 +10,8 @@ import { CiFilter } from "react-icons/ci";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import ModalInfo from "../../components/ModalInfo";
+import { useNotificacion } from "../../components/NotificacionContext";
+import { useAlerta } from "../../components/AlertaContext";
 
 const MonitoreoSensoresAdm = () => {
   const [estaciones, setEstaciones] = useState([]);
@@ -27,6 +29,8 @@ const MonitoreoSensoresAdm = () => {
     ubicacion: "",
     id_puente: "",
   });
+  const { confirmar } = useAlerta();
+  const { notify } = useNotificacion();
 
   useEffect(() => {
     fetchEstaciones();
@@ -62,13 +66,22 @@ const MonitoreoSensoresAdm = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Eliminar esta estación?")) return;
+    const ok = await confirmar(`la estación con ID ${id}`);
+    if (!ok) {
+      notify("Operación cancelada.", { type: "success" });
+      return;
+    }
     const { error } = await supabase
       .from("catalogo_estaciones")
       .delete()
       .eq("id_estaciones", id);
-    if (error) console.error("Error borrando:", error);
-    else fetchEstaciones();
+
+    if (error) {
+      notify("Error al eliminar estación: " + error.message, { type: "error" });
+    } else {
+      notify("Estación eliminada.", { type: "success" });
+      fetchEstaciones();
+    }
   };
 
   const handleInfo = async (est) => {
@@ -108,16 +121,22 @@ const MonitoreoSensoresAdm = () => {
   };
 
   const saveChanges = async () => {
-    const { id_estaciones, nombre, tipo_estacion, ubicacion, id_puente } =
-      editingEstacion;
-    const { error } = await supabase
-      .from("catalogo_estaciones")
-      .update({ nombre, tipo_estacion, ubicacion, id_puente })
-      .eq("id_estaciones", id_estaciones);
-    if (error) console.error("Error guardando:", error);
-    else {
+    try {
+      const { id_estaciones, nombre, tipo_estacion, ubicacion, id_puente } =
+        editingEstacion;
+      const { error } = await supabase
+        .from("catalogo_estaciones")
+        .update({ nombre, tipo_estacion, ubicacion, id_puente })
+        .eq("id_estaciones", id_estaciones);
+
+      if (error) throw error;
+
       closeEditModal();
       fetchEstaciones();
+      notify("Estación actualizada con éxito.", { type: "success" });
+    } catch (err) {
+      console.error(err);
+      notify("Error al guardar cambios: " + err.message, { type: "error" });
     }
   };
 
@@ -152,15 +171,15 @@ const MonitoreoSensoresAdm = () => {
 
     if (errLast) {
       console.error("Error al obtener último ID:", errLast);
-      alert("No se pudo generar el ID de la estación.");
-      return;
+      return notify("No se pudo generar el ID de la estación.", {
+        type: "error",
+      });
     }
     const nextId = (last?.id_estaciones || 0) + 1;
 
     const { nombre, tipo_estacion, ubicacion, id_puente } = newEstacion;
     if (!nombre || !tipo_estacion || !ubicacion || !id_puente) {
-      alert("Debes completar todos los campos.");
-      return;
+      return notify("Debes completar todos los campos.", { type: "error" });
     }
 
     const { data: sensorData, error: errSensor } = await supabase
@@ -170,15 +189,14 @@ const MonitoreoSensoresAdm = () => {
       .limit(1)
       .single();
 
-    if (errSensor) {
+    if (errSensor || !sensorData?.id_sensor) {
       console.error("Error al buscar sensor para el puente:", errSensor);
-      alert("No se pudo vincular un sensor al puente seleccionado.");
-      return;
-    }
-    const id_sensor = sensorData?.id_sensor;
-    if (!id_sensor) {
-      alert("Este puente no tiene ningún sensor asignado aún.");
-      return;
+      return notify(
+        errSensor
+          ? "No se pudo vincular un sensor al puente seleccionado."
+          : "Este puente no tiene ningún sensor asignado aún.",
+        { type: "error" }
+      );
     }
 
     const { error } = await supabase.from("catalogo_estaciones").insert([
@@ -188,16 +206,17 @@ const MonitoreoSensoresAdm = () => {
         tipo_estacion,
         ubicacion,
         id_puente: Number(id_puente),
-        id_sensor: id_sensor,
+        id_sensor: sensorData.id_sensor,
       },
     ]);
 
     if (error) {
       console.error("Error al agregar estación:", error);
-      alert("No se pudo crear la estación.");
+      notify("Error al crear la estación: " + error.message, { type: "error" });
     } else {
       closeAddModal();
       fetchEstaciones();
+      notify("Estación creada con éxito.", { type: "success" });
     }
   };
 

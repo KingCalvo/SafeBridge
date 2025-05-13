@@ -5,11 +5,13 @@ import { CiMail } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import bcrypt from "bcryptjs";
 import { supabase } from "../supabase/client.js";
+import { useNotificacion } from "./NotificacionContext.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { notify } = useNotificacion();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -26,38 +28,41 @@ const Login = () => {
 
       if (fetchError) {
         console.error(fetchError);
-        alert("Error al consultar la base de datos.");
+        notify("Error al consultar la base de datos.", { type: "error" });
         return;
       }
 
       if (!user) {
-        alert("Usuario no encontrado o correo incorrecto.");
+        notify("Usuario no encontrado o correo incorrecto.", { type: "error" });
         return;
       }
 
       //Comparar contraseña con el hash
       const match = await bcrypt.compare(password, user.pass || "");
       if (!match) {
-        alert("Correo o contraseña incorrectos.");
+        notify("Correo o contraseña incorrectos.", { type: "error" });
         return;
       }
 
       switch (user.id_rol) {
         case 1:
+          notify("¡Has iniciado sesión correctamente!", { type: "success" });
           navigate("/inicioAdm");
           break;
         case 2:
+          notify("¡Has iniciado sesión correctamente!", { type: "success" });
           navigate("/inicioOpe");
           break;
         case 3:
+          notify("¡Has iniciado sesión correctamente!", { type: "success" });
           navigate("/inicioPC");
           break;
         default:
-          alert("Rol no válido.");
+          notify("Rol no válido.", { type: "error" });
       }
     } catch (err) {
       console.error(err);
-      alert("Ocurrió un error inesperado.");
+      notify("Ocurrió un error inesperado.", { type: "error" });
     }
   };
 

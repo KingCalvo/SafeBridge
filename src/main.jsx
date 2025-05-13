@@ -4,10 +4,14 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./components/App.jsx";
 
+import { NotificacionContext } from "./components/NotificacionContext.jsx";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <NotificacionContext>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </NotificacionContext>
   </StrictMode>
 );

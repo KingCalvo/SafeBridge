@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaUserGroup } from "react-icons/fa6";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { CiMail } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
-import bcrypt from "bcryptjs";
 import { supabase } from "../supabase/client.js";
 import { useNotificacion } from "./NotificacionContext.jsx";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { user, rol } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { notify } = useNotificacion();
@@ -19,32 +20,33 @@ const Login = () => {
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      //Traer hash de contraseña e id_rol de la tabla usuario
-      const { data: user, error: fetchError } = await supabase
-        .from("usuario")
-        .select("pass, id_rol")
-        .ilike("correo", normalizedEmail)
-        .maybeSingle();
+      // Login con Supabase Auth
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: password,
+      });
 
-      if (fetchError) {
-        console.error(fetchError);
-        notify("Error al consultar la base de datos.", { type: "error" });
-        return;
-      }
-
-      if (!user) {
-        notify("Usuario no encontrado o correo incorrecto.", { type: "error" });
-        return;
-      }
-
-      //Comparar contraseña con el hash
-      const match = await bcrypt.compare(password, user.pass || "");
-      if (!match) {
+      if (error) {
         notify("Correo o contraseña incorrectos.", { type: "error" });
         return;
       }
 
-      switch (user.id_rol) {
+      const userId = data.user.id;
+
+      // Obtener rol desde la tabla usuario
+      const { data: userData, error: fetchError } = await supabase
+        .from("usuario")
+        .select("id_rol")
+        .eq("user_id", userId)
+        .single();
+
+      if (fetchError || !userData) {
+        notify("No se encontró el perfil del usuario.", { type: "error" });
+        return;
+      }
+
+      // Redirección según rol
+      switch (userData.id_rol) {
         case 1:
           notify("¡Has iniciado sesión correctamente!", { type: "success" });
           navigate("/inicioAdm");
@@ -65,6 +67,30 @@ const Login = () => {
       notify("Ocurrió un error inesperado.", { type: "error" });
     }
   };
+
+  useEffect(() => {
+    if (user && rol) {
+      const lastRoute = localStorage.getItem("lastRoute");
+
+      if (lastRoute) {
+        navigate(lastRoute);
+        return;
+      }
+
+      // fallback por rol
+      switch (rol.id_rol) {
+        case 1:
+          navigate("/inicioAdm");
+          break;
+        case 2:
+          navigate("/inicioOpe");
+          break;
+        case 3:
+          navigate("/inicioPC");
+          break;
+      }
+    }
+  }, [user, rol]);
 
   const handleGuestAccess = () => {
     navigate("/graficosInv");

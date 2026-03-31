@@ -166,9 +166,9 @@ const MonitoreoSensoresOpe = () => {
                     <td className="px-4 py-2 text-sm text-gray-700 text-center">
                       {d.catalogo_puentes?.ubicacion || "Desconocida"}
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center space-x-3">
+                    <td className="px-2 py-2 text-sm text-gray-700 text-center space-x-2">
                       <span
-                        className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
+                        className={`px-2 py-1 rounded-full text-white text-xs font-bold ${
                           d.status === "Activo" ? "bg-green-500" : "bg-red-500"
                         }`}
                       >
@@ -176,7 +176,7 @@ const MonitoreoSensoresOpe = () => {
                       </span>
                       <button
                         onClick={() => handleInfo(d)}
-                        className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                        className="inline-flex items-center px-1 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
                       >
                         <FaInfoCircle className="mr-1" /> Info
                       </button>

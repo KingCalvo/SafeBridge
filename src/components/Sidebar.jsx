@@ -11,10 +11,11 @@ import { HiOutlineSignal } from "react-icons/hi2";
 import { IoIosLogOut } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = ({ userRole }) => {
   const navigate = useNavigate();
-
+  const { rol } = useAuth();
   // Mapeo de roles a texto
   const roleNames = {
     1: "Administrador",
@@ -69,13 +70,11 @@ const Sidebar = ({ userRole }) => {
   const menuItems = menuItemsByRole[userRole] || [];
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Error al cerrar sesión:", error);
-      alert("Ocurrió un error al cerrar sesión");
-    } else {
-      navigate("/");
-    }
+    await supabase.auth.signOut();
+
+    localStorage.removeItem("lastRoute");
+
+    navigate("/", { replace: true });
   };
 
   return (
@@ -91,7 +90,7 @@ const Sidebar = ({ userRole }) => {
       <div className="px-6 mb-8 flex items-center justify-between">
         <div>
           <p className="text-xl font-semibold text-black-700">
-            {roleNames[userRole]}
+            {rol?.nombre || roleNames[userRole]}
           </p>
           <p className="text-xl text-gray-900">Menú</p>
         </div>

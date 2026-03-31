@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./Login.jsx";
 import SignUp from "./SignUp.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
+import RouteTracker from "./RouteTracker";
 //Rutas del Admin:
 import InicioAdm from "../pages/Administrador/inicioAdm.jsx";
 import GestionUserAdm from "../pages/Administrador/gestionUserAdm.jsx";
@@ -23,32 +25,120 @@ import ReportePDF from "../pages/Operador/reportePDF.jsx";
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/signup" element={<SignUp />} />
-      {/* Rutas del Administrador */}
-      <Route path="/inicioAdm" element={<InicioAdm />} />
-      <Route path="/gestionUserAdm" element={<GestionUserAdm />} />
-      <Route
-        path="/monitoreoEstacionesAdm"
-        element={<MonitoreoEstacionesAdm />}
-      />
-      <Route path="/alertasEventosAdm" element={<AlertasEventosAdm />} />
-      <Route path="/configuracionAdm" element={<ConfiguracionAdm />} />
-      <Route path="/reportesPuentesPDF" element={<ReportesPuentesPDF />} />
+    <>
+      <RouteTracker />
 
-      {/* Rutas del Invitado */}
-      <Route path="/alertasInv" element={<AlertasInv />} />
-      <Route path="/graficosInv" element={<GraficosInv />} />
-      <Route path="/puentesInv" element={<PuentesInv />} />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
 
-      {/* Rutas del Operador */}
-      <Route path="/eventosOpe" element={<EventosOpe />} />
-      <Route path="/inicioOpe" element={<InicioOpe />} />
-      <Route path="/monitoreoSensoresOpe" element={<MonitoreoSensoresOpe />} />
-      <Route path="/reportesOpe" element={<ReportesOpe />} />
-      <Route path="/reportePDF" element={<ReportePDF />} />
-    </Routes>
+        {/* Rutas del Administrador */}
+        <Route
+          path="/inicioAdm"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <InicioAdm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/gestionUserAdm"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <GestionUserAdm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/monitoreoEstacionesAdm"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <MonitoreoEstacionesAdm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/alertasEventosAdm"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <AlertasEventosAdm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/configuracionAdm"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <ConfiguracionAdm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reportesPuentesPDF"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <ReportesPuentesPDF />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Invitado */}
+        <Route path="/alertasInv" element={<AlertasInv />} />
+        <Route path="/graficosInv" element={<GraficosInv />} />
+        <Route path="/puentesInv" element={<PuentesInv />} />
+
+        {/* Operador */}
+        <Route
+          path="/inicioOpe"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <InicioOpe />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/eventosOpe"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <EventosOpe />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/monitoreoSensoresOpe"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <MonitoreoSensoresOpe />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reportesOpe"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <ReportesOpe />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reportePDF"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <ReportePDF />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
   );
 };
 

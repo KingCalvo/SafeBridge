@@ -7,14 +7,18 @@ import App from "./components/App.jsx";
 import { NotificacionContext } from "./components/NotificacionContext.jsx";
 import { AlertaProvider } from "./components/AlertaContext";
 
+import { AuthProvider } from "./context/AuthContext";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <NotificacionContext>
-      <AlertaProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AlertaProvider>
-    </NotificacionContext>
-  </StrictMode>
+    <AuthProvider>
+      <NotificacionContext>
+        <AlertaProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AlertaProvider>
+      </NotificacionContext>
+    </AuthProvider>
+  </StrictMode>,
 );

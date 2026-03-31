@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import bcrypt from "bcryptjs";
 import { supabase } from "../supabase/client.js";
 import { useNotificacion } from "../components/NotificacionContext.jsx";
 
@@ -28,15 +27,14 @@ const SignUp = () => {
     setError("");
 
     if (!form.correo.includes("@")) {
-      setError("El correo debe contener '@'.");
       return notify("El correo debe contener '@'.", { type: "error" });
     }
+
     if (form.password !== form.confirm) {
-      setError("Las contraseñas no coinciden.");
       return notify("Las contraseñas no coinciden.", { type: "error" });
     }
+
     if (form.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres.");
       return notify("La contraseña debe tener al menos 6 caracteres.", {
         type: "error",
       });
@@ -46,34 +44,39 @@ const SignUp = () => {
     const curpClean = form.curp.trim().toUpperCase();
 
     try {
-      // Para cifrar la contraseña
-      const hashedPassword = await bcrypt.hash(form.password, 10);
+      // Crear usuario en Supabase Auth
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: emailClean,
+        password: form.password,
+      });
 
+      if (authError) throw authError;
+
+      const userId = data.user.id;
+
+      // Guardar en la tabla usuario
       const { error: perfilErr } = await supabase.from("usuario").insert([
         {
+          user_id: userId,
           nombre: form.nombre.trim(),
           apellido_paterno: form.apellido_paterno.trim(),
           apellido_materno: form.apellido_materno.trim(),
           curp: curpClean,
           tel: form.tel.trim(),
           correo: emailClean,
-          pass: hashedPassword,
+          id_rol: 3, // invitado por defecto
         },
       ]);
 
-      if (perfilErr) {
-        throw new Error("Error al guardar la cuenta: " + perfilErr.message);
-      }
+      if (perfilErr) throw perfilErr;
+
       notify("Usuario creado con éxito", { type: "success" });
       setStage("success");
     } catch (err) {
-      notify(err.message || "Error desconocido al crear la cuenta.", {
-        type: "error",
-      });
-      setError(err.message || "Error desconocido al crear la cuenta.");
+      console.error(err);
+      notify(err.message || "Error al crear la cuenta", { type: "error" });
     }
   };
-
   if (stage === "success") {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">

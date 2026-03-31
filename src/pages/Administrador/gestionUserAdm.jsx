@@ -6,7 +6,6 @@ import { FaUserEdit, FaUserTimes } from "react-icons/fa";
 import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
 import Sidebar from "../../components/Sidebar";
-import bcrypt from "bcryptjs";
 import { useNotificacion } from "../../components/NotificacionContext";
 import { useAlerta } from "../../components/AlertaContext";
 
@@ -50,8 +49,8 @@ const GestionUserAdm = () => {
     const { data, error } = await supabase
       .from("usuario")
       .select(
-        `id_usuario, id_rol, nombre, apellido_paterno, apellido_materno, curp, tel, correo, 
-         catalogo_roles ( nombre, status )`
+        `id_usuario, user_id, id_rol, nombre, apellido_paterno, apellido_materno, curp, tel, correo, 
+         catalogo_roles ( nombre, status )`,
       )
       .order("id_usuario", { ascending: true });
     if (!error) {
@@ -71,28 +70,29 @@ const GestionUserAdm = () => {
           u.nombre.toLowerCase().includes(term) ||
           u.apellido_paterno.toLowerCase().includes(term) ||
           u.apellido_materno.toLowerCase().includes(term) ||
-          u.correo.toLowerCase().includes(term)
+          u.correo.toLowerCase().includes(term),
       );
     }
     setFilteredUsers(temp);
   }, [searchTerm, filterRole, users]);
 
-  const handleDelete = async (id) => {
-    const ok = await confirmar(`el usuario con ID ${id}`);
-    if (!ok) {
-      notify("Operación cancelada.", { type: "success" });
-      return;
-    }
-    const { error } = await supabase
-      .from("usuario")
-      .delete()
-      .eq("id_usuario", id);
+  const handleDelete = async (user) => {
+    const ok = await confirmar(`el usuario con ID ${user.id_usuario}`);
+    if (!ok) return;
 
-    if (error) {
-      notify("Error al eliminar usuario: " + error.message, { type: "error" });
-    } else {
-      notify("Usuario eliminado.", { type: "success" });
+    try {
+      const { error } = await supabase.functions.invoke("delete-user", {
+        body: {
+          user_id: user.user_id,
+        },
+      });
+
+      if (error) throw error;
+
+      notify("Usuario eliminado correctamente.", { type: "success" });
       fetchUsers();
+    } catch (err) {
+      notify("Error al eliminar usuario: " + err.message, { type: "error" });
     }
   };
 
@@ -136,7 +136,7 @@ const GestionUserAdm = () => {
       return;
     }
 
-    // Validaciones de contraseña
+    // Validaciones de contraseña (solo al crear)
     if (!editingUser) {
       if (formData.password.length < 6) {
         setModalError("La contraseña debe tener al menos 6 caracteres.");
@@ -159,35 +159,53 @@ const GestionUserAdm = () => {
         correo: formData.correo.trim().toLowerCase(),
       };
 
-      //Solo al agregar: cifrar contraseña y añadir pass
+      let error;
+
+      // CREAR USUARIO (Auth + DB)
       if (!editingUser) {
-        const hashed = await bcrypt.hash(formData.password, 10);
-        payload.pass = hashed;
+        const { error: createError } = await supabase.functions.invoke(
+          "create-user",
+          {
+            body: {
+              email: payload.correo,
+              password: formData.password,
+              nombre: payload.nombre,
+              apellido_paterno: payload.apellido_paterno,
+              apellido_materno: payload.apellido_materno,
+              curp: payload.curp,
+              tel: payload.tel,
+              id_rol: payload.id_rol,
+            },
+          },
+        );
+
+        if (createError) throw createError;
       }
 
-      //Insertar o actualizar
-      let error;
-      if (editingUser) {
+      // EDITAR USUARIO (solo tabla usuario)
+      else {
         ({ error } = await supabase
           .from("usuario")
           .update(payload)
           .eq("id_usuario", editingUser));
-      } else {
-        ({ error } = await supabase.from("usuario").insert([payload]));
-      }
 
-      if (error) throw error;
+        if (error) throw error;
+      }
 
       setShowModal(false);
       fetchUsers();
-      if (editingUser) {
-        notify("Usuario editado con éxito.", { type: "success" });
-      } else {
-        notify("Usuario agregado con éxito.", { type: "success" });
-      }
+
+      notify(
+        editingUser
+          ? "Usuario editado con éxito."
+          : "Usuario creado con éxito.",
+        { type: "success" },
+      );
     } catch (err) {
       console.error(err);
-      notify("Error al guardar usuario: " + err.message, { type: "error" });
+      notify("Error al guardar usuario: " + err.message, {
+        type: "error",
+      });
     }
   };
 
@@ -279,13 +297,13 @@ const GestionUserAdm = () => {
                     rol === "Administrador"
                       ? "#e28000"
                       : rol === "Operador"
-                      ? "#ffc340"
-                      : rol === "Proteccion Civil"
-                      ? "#ffff9a"
-                      : "#ccc";
+                        ? "#ffc340"
+                        : rol === "Proteccion Civil"
+                          ? "#ffff9a"
+                          : "#ccc";
 
                   const statusActivo = roles.find(
-                    (r) => r.id_rol === user.id_rol
+                    (r) => r.id_rol === user.id_rol,
                   )?.status;
 
                   return (
@@ -336,7 +354,7 @@ const GestionUserAdm = () => {
                           <FaUserEdit className="text-2xl" />
                         </button>
                         <button
-                          onClick={() => handleDelete(user.id_usuario)}
+                          onClick={() => handleDelete(user)}
                           className="p-1 text-red-500 hover:text-red-700 cursor-pointer"
                         >
                           <FaUserTimes className="text-2xl" />

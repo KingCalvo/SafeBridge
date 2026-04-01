@@ -15,6 +15,8 @@ const AlertasEventosAdm = () => {
   const [tipoAlertaFilter, setTipoAlertaFilter] = useState("");
   const [nivelRiesgoFilter, setNivelRiesgoFilter] = useState("");
   const { notify } = useNotificacion();
+  const [loadingAlertas, setLoadingAlertas] = useState(true);
+  const [loadingEventos, setLoadingEventos] = useState(true);
 
   useEffect(() => {
     fetchAlertas();
@@ -37,11 +39,13 @@ const AlertasEventosAdm = () => {
       catalogo_puentes (
         ubicacion
       )
-    `
+    `,
       )
       .order("id_alertas", { ascending: true });
     if (error) console.error("Error cargando alertas:", error);
     else setAlertas(data);
+
+    setTimeout(() => setLoadingAlertas(false), 100);
   };
 
   const fetchEventos = async () => {
@@ -55,6 +59,8 @@ const AlertasEventosAdm = () => {
       `);
     if (error) console.error("Error cargando eventos:", error);
     else setEventos(data);
+
+    setTimeout(() => setLoadingEventos(false), 100);
   };
 
   const handleToggle = async (id, currentStatus) => {
@@ -62,8 +68,8 @@ const AlertasEventosAdm = () => {
 
     setAlertas((prevAlertas) =>
       prevAlertas.map((alerta) =>
-        alerta.id_alertas === id ? { ...alerta, status: nuevoStatus } : alerta
-      )
+        alerta.id_alertas === id ? { ...alerta, status: nuevoStatus } : alerta,
+      ),
     );
 
     const { error } = await supabase
@@ -76,8 +82,8 @@ const AlertasEventosAdm = () => {
         prevAlertas.map((alerta) =>
           alerta.id_alertas === id
             ? { ...alerta, status: currentStatus }
-            : alerta
-        )
+            : alerta,
+        ),
       );
       notify("Error al actualizar alerta: " + error.message, { type: "error" });
     } else {
@@ -101,7 +107,7 @@ const AlertasEventosAdm = () => {
       );
     })
     .filter((a) =>
-      tipoAlertaFilter ? a.tipo_alerta === tipoAlertaFilter : true
+      tipoAlertaFilter ? a.tipo_alerta === tipoAlertaFilter : true,
     );
 
   const filteredEventos = eventos
@@ -113,7 +119,7 @@ const AlertasEventosAdm = () => {
     .filter((e) =>
       nivelRiesgoFilter
         ? e.catalogo_niveles_riesgo?.status === nivelRiesgoFilter
-        : true
+        : true,
     );
 
   return (
@@ -189,45 +195,61 @@ const AlertasEventosAdm = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredAlertas.map((alerta) => (
-                  <tr key={alerta.id_alertas}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.id_alertas}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {alerta.eventos_desbordamiento?.descripcion || "N/A"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.catalogo_puentes?.ubicacion || "Desconocida"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.fecha_hora}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.tipo_alerta}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      <span
-                        className={`px-2 py-1 rounded-full text-white font-bold  ${
-                          alerta.status === "Activa"
-                            ? "bg-green-500"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {alerta.status}
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-2 text-center">
-                      <Toggle
-                        isOn={alerta.status === "Activa"}
-                        onToggle={() =>
-                          handleToggle(alerta.id_alertas, alerta.status)
-                        }
-                      />
+                {loadingAlertas ? (
+                  <tr>
+                    <td colSpan="7" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredAlertas.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="text-center py-6 text-gray-500">
+                      No hay alertas
+                    </td>
+                  </tr>
+                ) : (
+                  filteredAlertas.map((alerta) => (
+                    <tr key={alerta.id_alertas}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.id_alertas}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {alerta.eventos_desbordamiento?.descripcion || "N/A"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.catalogo_puentes?.ubicacion || "Desconocida"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.tipo_alerta}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        <span
+                          className={`px-2 py-1 rounded-full text-white font-bold  ${
+                            alerta.status === "Activa"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {alerta.status}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-2 text-center">
+                        <Toggle
+                          isOn={alerta.status === "Activa"}
+                          onToggle={() =>
+                            handleToggle(alerta.id_alertas, alerta.status)
+                          }
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -269,35 +291,51 @@ const AlertasEventosAdm = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredEventos.map((evento) => (
-                  <tr key={evento.id_evento}>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {evento.descripcion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {evento.id_puente}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {evento.fecha_hora}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
-                          evento.catalogo_niveles_riesgo?.status === "Alto"
-                            ? "bg-red-500"
-                            : "bg-green-500"
-                        }`}
-                      >
-                        {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
-                          <GoAlert className="mr-1" />
-                        ) : (
-                          <FaCheck className="mr-1" />
-                        )}
-                        {evento.catalogo_niveles_riesgo?.status || "—"}
-                      </span>
+                {loadingEventos ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredEventos.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6 text-gray-500">
+                      No hay eventos
+                    </td>
+                  </tr>
+                ) : (
+                  filteredEventos.map((evento) => (
+                    <tr key={evento.id_evento}>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {evento.descripcion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {evento.id_puente}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {evento.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                            evento.catalogo_niveles_riesgo?.status === "Alto"
+                              ? "bg-red-500"
+                              : "bg-green-500"
+                          }`}
+                        >
+                          {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
+                            <GoAlert className="mr-1" />
+                          ) : (
+                            <FaCheck className="mr-1" />
+                          )}
+                          {evento.catalogo_niveles_riesgo?.status || "—"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

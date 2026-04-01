@@ -31,6 +31,7 @@ const GestionUserAdm = () => {
   });
   const { confirmar } = useAlerta();
   const { notify } = useNotificacion();
+  const [loadingUsers, setLoadingUsers] = useState(true);
 
   useEffect(() => {
     fetchRoles();
@@ -57,6 +58,8 @@ const GestionUserAdm = () => {
       setUsers(data);
       setFilteredUsers(data);
     }
+
+    setTimeout(() => setLoadingUsers(false), 100);
   };
 
   useEffect(() => {
@@ -305,78 +308,94 @@ const GestionUserAdm = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredUsers.map((user) => {
-                  const rol = user.catalogo_roles?.nombre;
-                  const rolColor =
-                    rol === "Administrador"
-                      ? "#e28000"
-                      : rol === "Operador"
-                        ? "#ffc340"
-                        : rol === "Proteccion Civil"
-                          ? "#ffff9a"
-                          : "#ccc";
+                {loadingUsers ? (
+                  <tr>
+                    <td colSpan="10" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan="10" className="text-center py-6 text-gray-500">
+                      No hay usuarios
+                    </td>
+                  </tr>
+                ) : (
+                  filteredUsers.map((user) => {
+                    const rol = user.catalogo_roles?.nombre;
+                    const rolColor =
+                      rol === "Administrador"
+                        ? "#e28000"
+                        : rol === "Operador"
+                          ? "#ffc340"
+                          : rol === "Proteccion Civil"
+                            ? "#ffff9a"
+                            : "#ccc";
 
-                  const statusActivo = roles.find(
-                    (r) => r.id_rol === user.id_rol,
-                  )?.status;
+                    const statusActivo = roles.find(
+                      (r) => r.id_rol === user.id_rol,
+                    )?.status;
 
-                  return (
-                    <tr key={user.id_usuario}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {user.id_usuario}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        <span
-                          className="px-2 py-1 rounded-full font-semibold"
-                          style={{ backgroundColor: rolColor }}
-                        >
-                          {rol || "—"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {user.nombre}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {user.apellido_paterno}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {user.apellido_materno}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {user.curp}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {user.tel}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {user.correo}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-center">
-                        <span
-                          className={`px-2 py-1 rounded-full font-semibold text-white ${
-                            statusActivo ? "bg-green-500" : "bg-red-500"
-                          }`}
-                        >
-                          {statusActivo ? "Activo" : "Inactivo"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 text-center space-x-2 flex justify-center">
-                        <button
-                          onClick={() => openEditModal(user)}
-                          className="p-1 text-green-500 hover:text-green-700 cursor-pointer"
-                        >
-                          <FaUserEdit className="text-2xl" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user)}
-                          className="p-1 text-red-500 hover:text-red-700 cursor-pointer"
-                        >
-                          <FaUserTimes className="text-2xl" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                    return (
+                      <tr key={user.id_usuario}>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {user.id_usuario}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          <span
+                            className="px-2 py-1 rounded-full font-semibold"
+                            style={{ backgroundColor: rolColor }}
+                          >
+                            {rol || "—"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {user.nombre}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {user.apellido_paterno}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {user.apellido_materno}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {user.curp}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {user.tel}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {user.correo}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-center">
+                          <span
+                            className={`px-2 py-1 rounded-full font-semibold text-white ${
+                              statusActivo ? "bg-green-500" : "bg-red-500"
+                            }`}
+                          >
+                            {statusActivo ? "Activo" : "Inactivo"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 text-center space-x-2 flex justify-center">
+                          <button
+                            onClick={() => openEditModal(user)}
+                            className="p-1 text-green-500 hover:text-green-700 cursor-pointer"
+                          >
+                            <FaUserEdit className="text-2xl" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user)}
+                            className="p-1 text-red-500 hover:text-red-700 cursor-pointer"
+                          >
+                            <FaUserTimes className="text-2xl" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>

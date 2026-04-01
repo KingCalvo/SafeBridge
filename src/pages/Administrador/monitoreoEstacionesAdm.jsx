@@ -31,6 +31,7 @@ const MonitoreoSensoresAdm = () => {
   });
   const { confirmar } = useAlerta();
   const { notify } = useNotificacion();
+  const [loadingEstaciones, setLoadingEstaciones] = useState(true);
 
   useEffect(() => {
     fetchEstaciones();
@@ -38,7 +39,10 @@ const MonitoreoSensoresAdm = () => {
   }, []);
 
   const fetchEstaciones = async () => {
-    const { data, error } = await supabase.from("catalogo_estaciones").select(`
+    const { data, error } = await supabase
+      .from("catalogo_estaciones")
+      .select(
+        `
       id_estaciones,
       nombre,
       tipo_estacion,
@@ -47,9 +51,14 @@ const MonitoreoSensoresAdm = () => {
       id_sensor,
       catalogo_puentes ( nombre ),
       sensores ( status )
-    `);
+    `,
+      )
+      .order("id_estaciones", { ascending: true });
+
     if (error) console.error("Error al cargar estaciones:", error);
     else setEstaciones(data);
+
+    setTimeout(() => setLoadingEstaciones(false), 100);
   };
 
   const fetchPuentes = async () => {
@@ -145,7 +154,7 @@ const MonitoreoSensoresAdm = () => {
     .filter((est) =>
       searchTerm
         ? est.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-        : true
+        : true,
     );
 
   const openAddModal = () => {
@@ -195,7 +204,7 @@ const MonitoreoSensoresAdm = () => {
         errSensor
           ? "No se pudo vincular un sensor al puente seleccionado."
           : "Este puente no tiene ningún sensor asignado aún.",
-        { type: "error" }
+        { type: "error" },
       );
     }
 
@@ -303,59 +312,75 @@ const MonitoreoSensoresAdm = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredEstaciones.map((est) => (
-                  <tr key={est.id_estaciones}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {est.id_estaciones}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {est.catalogo_puentes?.nombre || "Sin asignar"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {est.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {est.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {est.tipo_estacion}
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      <button
-                        onClick={() => handleInfo(est)}
-                        className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
-                      >
-                        <FaInfoCircle className="mr-1" /> Info
-                      </button>
-                    </td>
-                    <td className="px-4 py-2 text-sm text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white font-bold ${
-                          est.sensores?.status === "Activo"
-                            ? "bg-green-500"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {est.sensores?.status || "Desconocido"}
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-2 text-center space-x-2">
-                      <button
-                        onClick={() => handleEdit(est)}
-                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                      >
-                        <FaRegEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(est.id_estaciones)}
-                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                      >
-                        <FaDeleteLeft />
-                      </button>
+                {loadingEstaciones ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredEstaciones.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-6 text-gray-500">
+                      No hay estaciones
+                    </td>
+                  </tr>
+                ) : (
+                  filteredEstaciones.map((est) => (
+                    <tr key={est.id_estaciones}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {est.id_estaciones}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {est.catalogo_puentes?.nombre || "Sin asignar"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {est.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {est.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {est.tipo_estacion}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <button
+                          onClick={() => handleInfo(est)}
+                          className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                        >
+                          <FaInfoCircle className="mr-1" /> Info
+                        </button>
+                      </td>
+                      <td className="px-4 py-2 text-sm text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white font-bold ${
+                            est.sensores?.status === "Activo"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {est.sensores?.status || "Desconocido"}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-2 text-center space-x-2">
+                        <button
+                          onClick={() => handleEdit(est)}
+                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(est.id_estaciones)}
+                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                        >
+                          <FaDeleteLeft />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

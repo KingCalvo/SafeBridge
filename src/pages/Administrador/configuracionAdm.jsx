@@ -32,6 +32,9 @@ const ConfiguracionAdm = () => {
   const [selectedInfo, setSelectedInfo] = useState({ status: "", info: "" });
   const { confirmar } = useAlerta();
   const { notify } = useNotificacion();
+  const [loadingPuentes, setLoadingPuentes] = useState(true);
+  const [loadingNiveles, setLoadingNiveles] = useState(true);
+  const [loadingSensores, setLoadingSensores] = useState(true);
 
   useEffect(() => {
     fetchPuentes();
@@ -46,6 +49,7 @@ const ConfiguracionAdm = () => {
       .order("id_puente", { ascending: true });
     if (error) console.error(error);
     else setPuentes(data);
+    setTimeout(() => setLoadingPuentes(false), 150);
   };
 
   // Fetch Niveles
@@ -56,6 +60,7 @@ const ConfiguracionAdm = () => {
       .order("id_nivel", { ascending: true });
     if (error) console.error(error);
     else setNiveles(data);
+    setTimeout(() => setLoadingNiveles(false), 150);
   };
 
   const fetchSensores = async () => {
@@ -69,11 +74,12 @@ const ConfiguracionAdm = () => {
       id_puente,
       catalogo_sensores ( nombre, tipo, marca, modelo, info ),
       catalogo_puentes ( nombre, ubicacion )
-    `
+    `,
       )
       .order("id_sensor", { ascending: true });
     if (error) console.error(error);
     else setSensores(data);
+    setTimeout(() => setLoadingSensores(false), 150);
   };
 
   // Handlers modal
@@ -357,10 +363,10 @@ const ConfiguracionAdm = () => {
         ? p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((p) =>
-      filterPuenteStatus ? p.status === filterPuenteStatus : true
+      filterPuenteStatus ? p.status === filterPuenteStatus : true,
     );
 
   const tiposRiesgo = [...new Set(niveles.map((n) => n.tipo_riesgo))];
@@ -370,10 +376,10 @@ const ConfiguracionAdm = () => {
         ? n.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
           n.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
           n.tipo_riesgo.toLowerCase().includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((n) =>
-      filterNivelTipo ? n.tipo_riesgo === filterNivelTipo : true
+      filterNivelTipo ? n.tipo_riesgo === filterNivelTipo : true,
     );
 
   const filteredSensores = sensores
@@ -382,10 +388,10 @@ const ConfiguracionAdm = () => {
         ? s.catalogo_sensores.nombre
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((s) =>
-      filterSensorStatus ? s.status === filterSensorStatus : true
+      filterSensorStatus ? s.status === filterSensorStatus : true,
     );
 
   const handleInfo = (sensor) => {
@@ -476,50 +482,66 @@ const ConfiguracionAdm = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredPuentes.map((p) => (
-                  <tr key={p.id_puente}>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {p.id_puente}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {p.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {p.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {p.info}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white font-bold ${
-                          p.status === "Activo"
-                            ? "bg-green-500"
-                            : p.status === "Inactivo"
-                            ? "bg-red-500"
-                            : "bg-yellow-500"
-                        }`}
-                      >
-                        {p.status}
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-2 text-center space-x-2">
-                      <button
-                        onClick={() => openEditModal(p, "puente")}
-                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                      >
-                        <FaRegEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(p.id_puente, "puente")}
-                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                      >
-                        <FaDeleteLeft />
-                      </button>
+                {loadingPuentes ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredPuentes.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6 text-gray-500">
+                      No hay puentes
+                    </td>
+                  </tr>
+                ) : (
+                  filteredPuentes.map((p) => (
+                    <tr key={p.id_puente}>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {p.id_puente}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {p.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {p.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {p.info}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white font-bold ${
+                            p.status === "Activo"
+                              ? "bg-green-500"
+                              : p.status === "Inactivo"
+                                ? "bg-red-500"
+                                : "bg-yellow-500"
+                          }`}
+                        >
+                          {p.status}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-2 text-center space-x-2">
+                        <button
+                          onClick={() => openEditModal(p, "puente")}
+                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(p.id_puente, "puente")}
+                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                        >
+                          <FaDeleteLeft />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -577,51 +599,67 @@ const ConfiguracionAdm = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredNiveles.map((n) => (
-                  <tr key={n.id_nivel}>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {n.id_nivel}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {n.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-justify">
-                      {n.descripcion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {n.tipo_riesgo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
-                          n.status === "Alto" ? "bg-red-500" : "bg-green-500"
-                        }`}
-                      >
-                        {n.status === "Alto" ? (
-                          <GoAlert className="mr-1" />
-                        ) : (
-                          <FaCheck className="mr-1" />
-                        )}
-                        {n.status || "—"}
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-2 text-center space-x-2">
-                      <button
-                        onClick={() => openEditModal(n, "nivel")}
-                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                      >
-                        <FaRegEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(n.id_nivel, "nivel")}
-                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                      >
-                        <FaDeleteLeft />
-                      </button>
+                {loadingNiveles ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredNiveles.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6 text-gray-500">
+                      No hay niveles
+                    </td>
+                  </tr>
+                ) : (
+                  filteredNiveles.map((n) => (
+                    <tr key={n.id_nivel}>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {n.id_nivel}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {n.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-justify">
+                        {n.descripcion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {n.tipo_riesgo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                            n.status === "Alto" ? "bg-red-500" : "bg-green-500"
+                          }`}
+                        >
+                          {n.status === "Alto" ? (
+                            <GoAlert className="mr-1" />
+                          ) : (
+                            <FaCheck className="mr-1" />
+                          )}
+                          {n.status || "—"}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-2 text-center space-x-2">
+                        <button
+                          onClick={() => openEditModal(n, "nivel")}
+                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(n.id_nivel, "nivel")}
+                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                        >
+                          <FaDeleteLeft />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -683,60 +721,78 @@ const ConfiguracionAdm = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredSensores.map((s) => (
-                  <tr key={s.id_sensor}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.id_sensor}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores.tipo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores.marca}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_puentes.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_sensores.modelo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {s.catalogo_puentes.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center flex items-center justify-center space-x-3">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white ${
-                          s.status === "Activo" ? "bg-green-500" : "bg-red-500"
-                        }`}
-                      >
-                        {s.status}
-                      </span>
-                      <button
-                        onClick={() => handleInfo(s)}
-                        className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
-                      >
-                        <FaInfoCircle className="mr-1" /> Info
-                      </button>
-                    </td>
-                    <td className="px-2 py-2 text-center space-x-2">
-                      <button
-                        onClick={() => openEditModal(s, "sensor")}
-                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                      >
-                        <FaRegEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(s.id_sensor, "sensor")}
-                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                      >
-                        <FaDeleteLeft />
-                      </button>
+                {loadingSensores ? (
+                  <tr>
+                    <td colSpan="9" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredSensores.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="text-center py-6 text-gray-500">
+                      No hay sensores
+                    </td>
+                  </tr>
+                ) : (
+                  filteredSensores.map((s) => (
+                    <tr key={s.id_sensor}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.id_sensor}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores.tipo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores.marca}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_puentes.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_sensores.modelo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {s.catalogo_puentes.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center flex items-center justify-center space-x-3">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white ${
+                            s.status === "Activo"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {s.status}
+                        </span>
+                        <button
+                          onClick={() => handleInfo(s)}
+                          className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                        >
+                          <FaInfoCircle className="mr-1" /> Info
+                        </button>
+                      </td>
+                      <td className="px-2 py-2 text-center space-x-2">
+                        <button
+                          onClick={() => openEditModal(s, "sensor")}
+                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(s.id_sensor, "sensor")}
+                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                        >
+                          <FaDeleteLeft />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

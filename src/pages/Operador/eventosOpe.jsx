@@ -50,7 +50,7 @@ const EventosOpe = () => {
         descripcion,
         catalogo_puentes ( nombre, ubicacion ),
         catalogo_niveles_riesgo ( status )
-      `
+      `,
       )
       .order("id_evento", { ascending: false });
 
@@ -68,7 +68,7 @@ const EventosOpe = () => {
       id_puente,
       eventos_desbordamiento ( descripcion ),
       catalogo_puentes ( ubicacion )
-    `
+    `,
       )
       .order("id_alertas", { ascending: true });
 
@@ -97,7 +97,7 @@ const EventosOpe = () => {
 
     const actualId = formData.id_nivel_riesgo;
     const actualStatus = nivelesRiesgo.find(
-      (n) => n.id_nivel === actualId
+      (n) => n.id_nivel === actualId,
     )?.status;
     const contrario = actualStatus === "Alto" ? "Bajo" : "Alto";
 
@@ -224,17 +224,36 @@ const EventosOpe = () => {
       );
     })
     .filter((e) =>
-      filterNivel ? e.catalogo_niveles_riesgo?.status === filterNivel : true
+      filterNivel ? e.catalogo_niveles_riesgo?.status === filterNivel : true,
     );
 
   const desactivarAlerta = async (id) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("alertas")
       .update({ status: "Inactiva" })
-      .eq("id_alertas", id);
+      .eq("id_alertas", id)
+      .select();
 
-    if (!error) fetchAlertas();
+    if (error) {
+      console.error("Error real:", error);
+      notify("Error al desactivar alerta: " + error.message, {
+        type: "error",
+      });
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      notify("No se pudo actualizar (posible problema de permisos RLS)", {
+        type: "error",
+      });
+      return;
+    }
+
+    fetchAlertas();
     notify("Alerta desactivada con éxito.", { type: "success" });
+    setAlertas((prev) =>
+      prev.map((a) => (a.id_alertas === id ? { ...a, status: "Inactiva" } : a)),
+    );
   };
 
   return (
@@ -423,10 +442,10 @@ const EventosOpe = () => {
                   .filter((a) =>
                     a.tipo_alerta
                       .toLowerCase()
-                      .includes(searchTerm.toLowerCase())
+                      .includes(searchTerm.toLowerCase()),
                   )
                   .filter((a) =>
-                    filtroRiesgoAlerta ? a.status === filtroRiesgoAlerta : true
+                    filtroRiesgoAlerta ? a.status === filtroRiesgoAlerta : true,
                   )
 
                   .map((a) => (

@@ -25,21 +25,7 @@ const ReportePDF = () => {
   const { notify } = useNotificacion();
 
   useEffect(() => {
-    const inicializar = async () => {
-      const { data: ultimo } = await supabase
-        .from("informes")
-        .select("id_Informes")
-        .order("id_Informes", { ascending: false })
-        .limit(1)
-        .single();
-
-      const nuevoId = (ultimo?.id_Informes || 0) + 1;
-      setIdInforme(nuevoId);
-
-      await fetchDatos();
-    };
-
-    inicializar();
+    fetchDatos();
   }, []);
 
   const fetchDatos = async () => {
@@ -59,7 +45,7 @@ const ReportePDF = () => {
         id_puente,
         catalogo_sensores (nombre, tipo, marca, modelo),
         catalogo_puentes (nombre, ubicacion)
-      `
+      `,
       )
       .eq("id_puente", idPuenteSeleccionado);
     setSensores(sensoresData || []);
@@ -74,7 +60,7 @@ const ReportePDF = () => {
         status,
         eventos_desbordamiento (descripcion),
         catalogo_puentes (ubicacion)
-      `
+      `,
       )
       .eq("id_puente", idPuenteSeleccionado);
     setAlertas(alertasData || []);
@@ -88,7 +74,7 @@ const ReportePDF = () => {
         fecha_hora,
         descripcion,
         catalogo_niveles_riesgo (status)
-      `
+      `,
       )
       .eq("id_puente", idPuenteSeleccionado);
     setEventos(eventosData || []);
@@ -104,7 +90,7 @@ const ReportePDF = () => {
   };
 
   const sensoresActivos = sensores.filter(
-    (s) => s.catalogo_sensores?.status === "Activo"
+    (s) => s.catalogo_sensores?.status === "Activo",
   ).length;
 
   const statusAlerta =
@@ -116,27 +102,40 @@ const ReportePDF = () => {
       : "Sin eventos registrados";
 
   const handleGuardarInforme = async () => {
-    const { error } = await supabase.from("informes").insert([
-      {
-        id_Informes: idInforme,
-        id_puente: Number(idPuenteSeleccionado),
-        id_estaciones: Number(idEstacion),
-        id_sensor: Number(idSensor),
-        id_evento: Number(idEvento),
-        fecha_hora: fechaActual,
-        descripcion: descripcion,
-      },
-    ]);
+    const { data, error } = await supabase
+      .from("informes")
+      .insert([
+        {
+          id_puente: Number(idPuenteSeleccionado),
+          id_estaciones: Number(idEstacion),
+          id_sensor: idSensor ? Number(idSensor) : null,
+          id_evento: idEvento ? Number(idEvento) : null,
+          fecha_hora: fechaActual,
+          descripcion: descripcion,
+        },
+      ])
+      .select();
 
     if (error) {
       console.error("Error guardando informe:", error);
       notify("Error al guardar el informe " + error.message, { type: "error" });
-    } else {
-      notify("Informe guardado correctamente.", { type: "success" });
+      return;
     }
+
+    // el ID real
+    const nuevoInforme = data[0];
+    setIdInforme(nuevoInforme.id_Informes);
+
+    notify("Informe guardado correctamente.", { type: "success" });
   };
 
   const handleDescargar = async () => {
+    if (!idInforme) {
+      notify("Primero guarda el informe antes de descargar.", {
+        type: "warning",
+      });
+      return;
+    }
     await supabase
       .from("informes")
       .update({ descripcion, fecha_hora: fechaActual })
@@ -162,7 +161,7 @@ const ReportePDF = () => {
     doc.text(
       `Estación de atención: ${puenteInfo?.nombre || "Sin estación"}`,
       300,
-      y
+      y,
     );
     y += 20;
     doc.text(`Número de alertas emitidas: ${alertas.length}`, 40, y);
@@ -295,7 +294,7 @@ const ReportePDF = () => {
           <div className="bg-white rounded-lg shadow-lg p-10 w-full max-w-5xl space-y-8">
             <div className="text-center">
               <h1 className="text-3xl font-bold uppercase text-center mb-8">
-                REPORTE {idInforme}
+                REPORTE {idInforme ? idInforme : "Nuevo"}
               </h1>
               <p className="text-sm text-gray-500">
                 {dayjs().format("DD/MM/YYYY HH:mm")}
@@ -499,7 +498,10 @@ const ReportePDF = () => {
               {/* Botón Descargar */}
               <button
                 onClick={handleDescargar}
-                className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
+                disabled={!idInforme}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg transition 
+    ${!idInforme ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:bg-gray-800 text-white"}
+  `}
               >
                 <FaFileDownload /> DESCARGAR
               </button>

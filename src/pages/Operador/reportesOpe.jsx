@@ -59,7 +59,7 @@ const ReportesOpe = () => {
     // Unir datos manualmente
     const puentesConEstaciones = puentesData.map((puente) => {
       const estacion = estacionesData.find(
-        (e) => e.id_puente === puente.id_puente
+        (e) => e.id_puente === puente.id_puente,
       );
       return {
         ...puente,
@@ -85,7 +85,7 @@ const ReportesOpe = () => {
         eventos_desbordamiento (
           catalogo_niveles_riesgo (status)
         )
-      `
+      `,
       )
       .order("id_Informes", { ascending: true });
 
@@ -118,7 +118,7 @@ const ReportesOpe = () => {
         ? p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.ubicacion.toLowerCase().includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((p) => (statusFilter ? p.status === statusFilter : true));
 
@@ -135,13 +135,13 @@ const ReportesOpe = () => {
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
           (i.fecha_hora || "").toLowerCase().includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((i) =>
       nivelRiesgoFilter
         ? i.eventos_desbordamiento?.catalogo_niveles_riesgo?.status ===
           nivelRiesgoFilter
-        : true
+        : true,
     );
 
   const openEditModal = (informe) => {
@@ -172,12 +172,17 @@ const ReportesOpe = () => {
         descripcion: formData.descripcion,
       };
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("informes")
         .update(payload)
-        .eq("id_Informes", editingInforme);
+        .eq("id_Informes", editingInforme)
+        .select();
 
       if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("RLS bloqueando actualización");
+      }
 
       notify("Reporte actualizado con éxito.", { type: "success" });
       fetchInformes();
@@ -195,18 +200,27 @@ const ReportesOpe = () => {
       return;
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("informes")
       .delete()
-      .eq("id_Informes", idInforme);
+      .eq("id_Informes", idInforme)
+      .select();
 
     if (error) {
       console.error("Error al eliminar informe:", error);
       notify("Error al eliminar reporte: " + error.message, { type: "error" });
-    } else {
-      notify("Reporte eliminado con éxito.", { type: "success" });
-      fetchInformes();
+      return;
     }
+
+    if (!data || data.length === 0) {
+      notify("No se pudo eliminar (RLS bloqueando acción)", {
+        type: "error",
+      });
+      return;
+    }
+
+    notify("Reporte eliminado con éxito.", { type: "success" });
+    fetchInformes();
   };
 
   return (
@@ -300,8 +314,8 @@ const ReportesOpe = () => {
                           puente.status === "Activo"
                             ? "bg-green-500"
                             : puente.status === "Inactivo"
-                            ? "bg-red-500"
-                            : "bg-yellow-500"
+                              ? "bg-red-500"
+                              : "bg-yellow-500"
                         }`}
                       >
                         {puente.status}

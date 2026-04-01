@@ -93,7 +93,7 @@ const ApexChartPuentes = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow">
+    <div className="bg-white p-4 rounded">
       <ReactApexChart
         options={options}
         series={[{ name: "Estado", data: seriesData }]}

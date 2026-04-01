@@ -9,6 +9,7 @@ const PuentesInv = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [puentes, setPuentes] = useState([]);
+  const [loadingPuentes, setLoadingPuentes] = useState(true);
 
   useEffect(() => {
     fetchPuentes();
@@ -18,6 +19,8 @@ const PuentesInv = () => {
     const { data, error } = await supabase.from("catalogo_puentes").select("*");
     if (error) console.error("Error al obtener puentes:", error);
     else setPuentes(data);
+
+    setTimeout(() => setLoadingPuentes(false), 100);
   };
 
   const filteredPuentes = puentes.filter((p) => {
@@ -88,32 +91,48 @@ const PuentesInv = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredPuentes.map((p) => (
-                  <tr key={p.id_puente}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {p.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {p.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {p.info}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white font-bold ${
-                          p.status === "Activo"
-                            ? "bg-green-500"
-                            : p.status === "Inactivo"
-                            ? "bg-red-500"
-                            : "bg-yellow-500"
-                        }`}
-                      >
-                        {p.status}
-                      </span>
+                {loadingPuentes ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredPuentes.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6 text-gray-500">
+                      No hay puentes
+                    </td>
+                  </tr>
+                ) : (
+                  filteredPuentes.map((p) => (
+                    <tr key={p.id_puente}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {p.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {p.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {p.info}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white font-bold ${
+                            p.status === "Activo"
+                              ? "bg-green-500"
+                              : p.status === "Inactivo"
+                                ? "bg-red-500"
+                                : "bg-yellow-500"
+                          }`}
+                        >
+                          {p.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

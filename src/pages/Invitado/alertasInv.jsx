@@ -10,6 +10,8 @@ const AlertasInv = () => {
   const [tipoEstacionFilter, setTipoEstacionFilter] = useState("");
   const [alertas, setAlertas] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
+  const [loadingAlertas, setLoadingAlertas] = useState(true);
+  const [loadingEstaciones, setLoadingEstaciones] = useState(true);
 
   useEffect(() => {
     fetchAlertas();
@@ -20,9 +22,11 @@ const AlertasInv = () => {
     const { data, error } = await supabase
       .from("alertas")
       .select(
-        `id_alertas, tipo_alerta, fecha_hora, status, id_puente, eventos_desbordamiento ( descripcion ), catalogo_puentes ( ubicacion )`
+        `id_alertas, tipo_alerta, fecha_hora, status, id_puente, eventos_desbordamiento ( descripcion ), catalogo_puentes ( ubicacion )`,
       );
     if (!error) setAlertas(data || []);
+
+    setTimeout(() => setLoadingAlertas(false), 150);
   };
 
   const fetchEstaciones = async () => {
@@ -30,6 +34,8 @@ const AlertasInv = () => {
       .from("catalogo_estaciones")
       .select("id_estaciones, nombre, tipo_estacion, ubicacion");
     if (!error) setEstaciones(data || []);
+
+    setTimeout(() => setLoadingEstaciones(false), 150);
   };
 
   const filteredAlertas = alertas.filter((a) => {
@@ -123,31 +129,49 @@ const AlertasInv = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredAlertas.map((a) => (
-                  <tr key={a.id_alertas}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.eventos_desbordamiento?.descripcion || "—"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.catalogo_puentes?.ubicacion || "—"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.fecha_hora}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {a.tipo_alerta}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white font-bold ${
-                          a.status === "Activa" ? "bg-green-500" : "bg-red-500"
-                        }`}
-                      >
-                        {a.status}
-                      </span>
+                {loadingAlertas ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredAlertas.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-6 text-gray-500">
+                      No hay alertas
+                    </td>
+                  </tr>
+                ) : (
+                  filteredAlertas.map((a) => (
+                    <tr key={a.id_alertas}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.eventos_desbordamiento?.descripcion || "—"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.catalogo_puentes?.ubicacion || "—"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {a.tipo_alerta}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white font-bold ${
+                            a.status === "Activa"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {a.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -170,7 +194,7 @@ const AlertasInv = () => {
                     <option key={tipo} value={tipo}>
                       {tipo}
                     </option>
-                  )
+                  ),
                 )}
               </select>
             </div>
@@ -193,19 +217,36 @@ const AlertasInv = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredEstaciones.map((e) => (
-                  <tr key={e.id_estaciones}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {e.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {e.tipo_estacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {e.ubicacion}
+                {loadingEstaciones ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredEstaciones.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-6 text-gray-500">
+                      No hay estaciones
+                    </td>
+                  </tr>
+                ) : (
+                  filteredEstaciones.map((e) => (
+                    <tr key={e.id_estaciones}>
+                      {" "}
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {e.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {e.tipo_estacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {e.ubicacion}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

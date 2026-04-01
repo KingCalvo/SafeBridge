@@ -81,9 +81,16 @@ const GestionUserAdm = () => {
     if (!ok) return;
 
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       const { error } = await supabase.functions.invoke("delete-user", {
         body: {
           user_id: user.user_id,
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
         },
       });
 
@@ -163,6 +170,10 @@ const GestionUserAdm = () => {
 
       // CREAR USUARIO (Auth + DB)
       if (!editingUser) {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         const { error: createError } = await supabase.functions.invoke(
           "create-user",
           {
@@ -175,6 +186,9 @@ const GestionUserAdm = () => {
               curp: payload.curp,
               tel: payload.tel,
               id_rol: payload.id_rol,
+            },
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
             },
           },
         );

@@ -15,7 +15,9 @@ const InicioOpe = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [nivelRiesgoFilter, setNivelRiesgoFilter] = useState("");
   const [tipoAlertaFilter, setTipoAlertaFilter] = useState("");
-
+  const [loadingSensores, setLoadingSensores] = useState(true);
+  const [loadingEventos, setLoadingEventos] = useState(true);
+  const [loadingAlertas, setLoadingAlertas] = useState(true);
   useEffect(() => {
     fetchSensores();
     fetchEventos();
@@ -31,11 +33,13 @@ const InicioOpe = () => {
         status,
         catalogo_sensores ( nombre, tipo, modelo ),
         catalogo_puentes ( nombre )
-      `
+      `,
       )
       .order("id_sensor", { ascending: true });
     if (!error) setSensores(data);
     else console.error(error);
+
+    setTimeout(() => setLoadingSensores(false), 150);
   };
 
   const fetchEventos = async () => {
@@ -48,11 +52,13 @@ const InicioOpe = () => {
         descripcion,
         catalogo_niveles_riesgo ( status ),
         catalogo_puentes ( nombre )
-      `
+      `,
       )
       .order("id_evento", { ascending: true });
     if (!error) setEventos(data);
     else console.error(error);
+
+    setTimeout(() => setLoadingEventos(false), 150);
   };
 
   const fetchAlertas = async () => {
@@ -66,6 +72,8 @@ const InicioOpe = () => {
       `);
     if (!error) setAlertas(data);
     else console.error(error);
+
+    setTimeout(() => setLoadingAlertas(false), 150);
   };
 
   // Filtros combinados
@@ -81,7 +89,7 @@ const InicioOpe = () => {
           s.catalogo_sensores?.tipo
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((s) => (statusFilter ? s.status === statusFilter : true))
     .sort((a, b) => a.id_sensor - b.id_sensor);
@@ -90,12 +98,12 @@ const InicioOpe = () => {
     .filter((e) =>
       searchTerm
         ? e.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((e) =>
       nivelRiesgoFilter
         ? e.catalogo_niveles_riesgo?.status === nivelRiesgoFilter
-        : true
+        : true,
     )
     .sort((a, b) => a.id_evento - b.id_evento);
 
@@ -109,10 +117,10 @@ const InicioOpe = () => {
           a.catalogo_puentes?.ubicacion
             ?.toLowerCase()
             .includes(searchTerm.toLowerCase())
-        : true
+        : true,
     )
     .filter((a) =>
-      tipoAlertaFilter ? a.tipo_alerta === tipoAlertaFilter : true
+      tipoAlertaFilter ? a.tipo_alerta === tipoAlertaFilter : true,
     )
     .sort((a, b) => a.id_alertas - b.id_alertas);
 
@@ -173,36 +181,52 @@ const InicioOpe = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredSensores.map((sensor) => (
-                  <tr key={sensor.id_sensor}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {sensor.id_sensor}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {sensor.catalogo_puentes?.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {sensor.catalogo_sensores?.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {sensor.catalogo_sensores?.tipo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {sensor.catalogo_sensores?.modelo}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
-                          sensor.status === "Activo"
-                            ? "bg-green-500"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {sensor.status}
-                      </span>
+                {loadingSensores ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredSensores.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6 text-gray-500">
+                      No hay sensores
+                    </td>
+                  </tr>
+                ) : (
+                  filteredSensores.map((sensor) => (
+                    <tr key={sensor.id_sensor}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {sensor.id_sensor}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {sensor.catalogo_puentes?.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {sensor.catalogo_sensores?.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {sensor.catalogo_sensores?.tipo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {sensor.catalogo_sensores?.modelo}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
+                            sensor.status === "Activo"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {sensor.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -238,35 +262,51 @@ const InicioOpe = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredEventos.map((evento) => (
-                  <tr key={evento.id_evento}>
-                    <td className="px-4 py-2 text-sm text-gray-700">
-                      {evento.descripcion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {evento.catalogo_puentes?.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {evento.fecha_hora}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
-                          evento.catalogo_niveles_riesgo?.status === "Alto"
-                            ? "bg-red-500"
-                            : "bg-green-500"
-                        }`}
-                      >
-                        {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
-                          <GoAlert className="mr-1" />
-                        ) : (
-                          <FaCheck className="mr-1" />
-                        )}
-                        {evento.catalogo_niveles_riesgo?.status || "—"}
-                      </span>
+                {loadingEventos ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredEventos.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6 text-gray-500">
+                      No hay eventos
+                    </td>
+                  </tr>
+                ) : (
+                  filteredEventos.map((evento) => (
+                    <tr key={evento.id_evento}>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {evento.descripcion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {evento.catalogo_puentes?.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {evento.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                            evento.catalogo_niveles_riesgo?.status === "Alto"
+                              ? "bg-red-500"
+                              : "bg-green-500"
+                          }`}
+                        >
+                          {evento.catalogo_niveles_riesgo?.status === "Alto" ? (
+                            <GoAlert className="mr-1" />
+                          ) : (
+                            <FaCheck className="mr-1" />
+                          )}
+                          {evento.catalogo_niveles_riesgo?.status || "—"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -306,36 +346,52 @@ const InicioOpe = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredAlertas.map((alerta) => (
-                  <tr key={alerta.id_alertas}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.id_alertas}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.eventos_desbordamiento?.descripcion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.catalogo_puentes?.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.fecha_hora}
-                    </td>
-                    <td className="ppx-4 py-2 text-sm text-gray-700 text-center">
-                      {alerta.tipo_alerta}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
-                          alerta.status === "Activa"
-                            ? "bg-green-500"
-                            : "bg-red-500"
-                        }`}
-                      >
-                        {alerta.status}
-                      </span>
+                {loadingAlertas ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredAlertas.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6 text-gray-500">
+                      No hay alertas
+                    </td>
+                  </tr>
+                ) : (
+                  filteredAlertas.map((alerta) => (
+                    <tr key={alerta.id_alertas}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.id_alertas}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.eventos_desbordamiento?.descripcion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.catalogo_puentes?.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.fecha_hora}
+                      </td>
+                      <td className="ppx-4 py-2 text-sm text-gray-700 text-center">
+                        {alerta.tipo_alerta}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
+                            alerta.status === "Activa"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {alerta.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

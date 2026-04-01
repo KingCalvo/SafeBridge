@@ -30,6 +30,8 @@ const EventosOpe = () => {
   });
   const { confirmar } = useAlerta();
   const { notify } = useNotificacion();
+  const [loadingEventos, setLoadingEventos] = useState(true);
+  const [loadingAlertas, setLoadingAlertas] = useState(true);
 
   useEffect(() => {
     fetchEventos();
@@ -55,6 +57,8 @@ const EventosOpe = () => {
       .order("id_evento", { ascending: false });
 
     if (!error) setEventos(data || []);
+
+    setTimeout(() => setLoadingEventos(false), 150);
   };
   const fetchAlertas = async () => {
     const { data, error } = await supabase
@@ -74,6 +78,8 @@ const EventosOpe = () => {
 
     if (!error) setAlertas(data || []);
     else console.error("Error cargando alertas:", error);
+
+    setTimeout(() => setLoadingAlertas(false), 150);
   };
 
   // Armo un map { Alto: algúnId, Bajo: algúnId }
@@ -342,52 +348,71 @@ const EventosOpe = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredEventos.map((e) => (
-                    <tr key={e.id_evento}>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {e.descripcion}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {e.catalogo_puentes?.nombre || "—"}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {e.fecha_hora}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {e.catalogo_puentes?.ubicacion || "—"}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
-                            e.catalogo_niveles_riesgo?.status === "Alto"
-                              ? "bg-red-500"
-                              : "bg-green-500"
-                          }`}
-                        >
-                          {e.catalogo_niveles_riesgo?.status === "Alto" ? (
-                            <GoAlert className="mr-1" />
-                          ) : (
-                            <FaCheck className="mr-1" />
-                          )}
-                          {e.catalogo_niveles_riesgo?.status || "—"}
-                        </span>
-                      </td>
-                      <td className="px-2 py-2 text-center space-x-2">
-                        <button
-                          onClick={() => openEditModal(e)}
-                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(e.id_evento)}
-                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                        >
-                          <FaDeleteLeft />
-                        </button>
+                  {loadingEventos ? (
+                    <tr>
+                      <td colSpan="6" className="text-center py-6">
+                        <div className="flex justify-center items-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : filteredEventos.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="text-center py-6 text-gray-500"
+                      >
+                        No hay eventos registrados.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredEventos.map((e) => (
+                      <tr key={e.id_evento}>
+                        <td className="px-4 py-2 text-sm text-gray-700">
+                          {e.descripcion}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {e.catalogo_puentes?.nombre || "—"}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {e.fecha_hora}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {e.catalogo_puentes?.ubicacion || "—"}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
+                              e.catalogo_niveles_riesgo?.status === "Alto"
+                                ? "bg-red-500"
+                                : "bg-green-500"
+                            }`}
+                          >
+                            {e.catalogo_niveles_riesgo?.status === "Alto" ? (
+                              <GoAlert className="mr-1" />
+                            ) : (
+                              <FaCheck className="mr-1" />
+                            )}
+                            {e.catalogo_niveles_riesgo?.status || "—"}
+                          </span>
+                        </td>
+                        <td className="px-2 py-2 text-center space-x-2">
+                          <button
+                            onClick={() => openEditModal(e)}
+                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          >
+                            <FaRegEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(e.id_evento)}
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                          >
+                            <FaDeleteLeft />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             )}
@@ -438,56 +463,83 @@ const EventosOpe = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {alertas
-                  .filter((a) =>
-                    a.tipo_alerta
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase()),
-                  )
-                  .filter((a) =>
-                    filtroRiesgoAlerta ? a.status === filtroRiesgoAlerta : true,
-                  )
-
-                  .map((a) => (
-                    <tr key={a.id_alertas}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.id_alertas}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.eventos_desbordamiento?.descripcion || "—"}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.catalogo_puentes?.ubicacion || "—"}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.fecha_hora}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.tipo_alerta}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        <span
-                          className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
-                            a.status === "Activa"
-                              ? "bg-green-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {a.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 text-center">
-                        {a.status === "Activa" && (
-                          <button
-                            onClick={() => desactivarAlerta(a.id_alertas)}
-                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer"
+                {loadingAlertas ? (
+                  <tr>
+                    <td colSpan="7" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : alertas
+                    .filter((a) =>
+                      a.tipo_alerta
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase()),
+                    )
+                    .filter((a) =>
+                      filtroRiesgoAlerta
+                        ? a.status === filtroRiesgoAlerta
+                        : true,
+                    ).length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="text-center py-6 text-gray-500">
+                      No hay alertas
+                    </td>
+                  </tr>
+                ) : (
+                  alertas
+                    .filter((a) =>
+                      a.tipo_alerta
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase()),
+                    )
+                    .filter((a) =>
+                      filtroRiesgoAlerta
+                        ? a.status === filtroRiesgoAlerta
+                        : true,
+                    )
+                    .map((a) => (
+                      <tr key={a.id_alertas}>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.id_alertas}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.eventos_desbordamiento?.descripcion || "—"}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.catalogo_puentes?.ubicacion || "—"}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.fecha_hora}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.tipo_alerta}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          <span
+                            className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
+                              a.status === "Activa"
+                                ? "bg-green-500"
+                                : "bg-red-500"
+                            }`}
                           >
-                            <IoIosFlashOff />
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                            {a.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 text-center">
+                          {a.status === "Activa" && (
+                            <button
+                              onClick={() => desactivarAlerta(a.id_alertas)}
+                              className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer"
+                            >
+                              <IoIosFlashOff />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                )}
               </tbody>
             </table>
           </div>

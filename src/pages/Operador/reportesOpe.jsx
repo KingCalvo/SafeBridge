@@ -31,6 +31,8 @@ const ReportesOpe = () => {
   });
   const { confirmar } = useAlerta();
   const { notify } = useNotificacion();
+  const [loadingPuentes, setLoadingPuentes] = useState(true);
+  const [loadingInformes, setLoadingInformes] = useState(true);
 
   useEffect(() => {
     fetchPuentes();
@@ -68,6 +70,8 @@ const ReportesOpe = () => {
     });
 
     setPuentes(puentesConEstaciones);
+
+    setTimeout(() => setLoadingPuentes(false), 150);
   };
 
   const fetchInformes = async () => {
@@ -91,6 +95,8 @@ const ReportesOpe = () => {
 
     if (error) console.error(error);
     else setInformes(data);
+
+    setTimeout(() => setLoadingInformes(false), 150);
   };
 
   const fetchEstaciones = async () => {
@@ -294,43 +300,59 @@ const ReportesOpe = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredPuentes.map((puente) => (
-                  <tr key={puente.id_puente}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {puente.id_puente}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {puente.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-7002 text-center">
-                      {puente.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {puente.estacion_nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
-                          puente.status === "Activo"
-                            ? "bg-green-500"
-                            : puente.status === "Inactivo"
-                              ? "bg-red-500"
-                              : "bg-yellow-500"
-                        }`}
-                      >
-                        {puente.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 text-center">
-                      <button
-                        onClick={() => handleGenerarReporte(puente.id_puente)}
-                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                      >
-                        <FaFileMedical />
-                      </button>
+                {loadingPuentes ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredPuentes.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6 text-gray-500">
+                      No hay puentes
+                    </td>
+                  </tr>
+                ) : (
+                  filteredPuentes.map((puente) => (
+                    <tr key={puente.id_puente}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {puente.id_puente}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {puente.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-7002 text-center">
+                        {puente.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {puente.estacion_nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
+                            puente.status === "Activo"
+                              ? "bg-green-500"
+                              : puente.status === "Inactivo"
+                                ? "bg-red-500"
+                                : "bg-yellow-500"
+                          }`}
+                        >
+                          {puente.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        <button
+                          onClick={() => handleGenerarReporte(puente.id_puente)}
+                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                        >
+                          <FaFileMedical />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -388,54 +410,70 @@ const ReportesOpe = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredInformes.map((info) => (
-                  <tr key={info.id_Informes}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {info.id_Informes}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {info.catalogo_puentes?.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {info.catalogo_puentes?.ubicacion}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {info.catalogo_estaciones?.nombre}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {info.eventos_desbordamiento?.catalogo_niveles_riesgo
-                        ?.status === "Alto" ? (
-                        <span className="flex items-center justify-center gap-1 bg-red-500 text-white font-bold px-3 py-1 rounded-full text-xs">
-                          <GoAlert /> Alto
-                        </span>
-                      ) : (
-                        <span className="flex items-center justify-center gap-1 bg-green-500 text-white font-bold px-3 py-1 rounded-full text-xs">
-                          <FaCheck /> Bajo
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {info.fecha_hora}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {info.descripcion}
-                    </td>
-                    <td className="px-2 py-2 text-center space-x-2">
-                      <button
-                        onClick={() => openEditModal(info)}
-                        className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                      >
-                        <FaRegEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteInforme(info.id_Informes)}
-                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                      >
-                        <FaDeleteLeft />
-                      </button>
+                {loadingInformes ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredInformes.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-6 text-gray-500">
+                      No hay reportes
+                    </td>
+                  </tr>
+                ) : (
+                  filteredInformes.map((info) => (
+                    <tr key={info.id_Informes}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {info.id_Informes}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {info.catalogo_puentes?.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {info.catalogo_puentes?.ubicacion}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {info.catalogo_estaciones?.nombre}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {info.eventos_desbordamiento?.catalogo_niveles_riesgo
+                          ?.status === "Alto" ? (
+                          <span className="flex items-center justify-center gap-1 bg-red-500 text-white font-bold px-3 py-1 rounded-full text-xs">
+                            <GoAlert /> Alto
+                          </span>
+                        ) : (
+                          <span className="flex items-center justify-center gap-1 bg-green-500 text-white font-bold px-3 py-1 rounded-full text-xs">
+                            <FaCheck /> Bajo
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {info.fecha_hora}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {info.descripcion}
+                      </td>
+                      <td className="px-2 py-2 text-center space-x-2">
+                        <button
+                          onClick={() => openEditModal(info)}
+                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteInforme(info.id_Informes)}
+                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                        >
+                          <FaDeleteLeft />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

@@ -13,6 +13,7 @@ const MonitoreoSensoresOpe = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [selectedInfo, setSelectedInfo] = useState({ status: "", info: "" });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDetallesSensores();
@@ -37,11 +38,13 @@ const MonitoreoSensoresOpe = () => {
           nombre,
           ubicacion
         )
-      `
+      `,
       )
       .order("id_sensor", { ascending: true });
     if (error) console.error("Error cargando detalles:", error);
     else setDetalles(data);
+
+    setTimeout(() => setLoading(false), 100);
   };
 
   const filteredDetalles = detalles
@@ -143,46 +146,64 @@ const MonitoreoSensoresOpe = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredDetalles.map((d) => (
-                  <tr key={d.id_sensor}>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {d.id_sensor}
-                    </td>
-                    <td className="ppx-4 py-2 text-sm text-gray-700 text-center">
-                      {d.catalogo_sensores?.nombre || "N/A"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {d.catalogo_sensores?.tipo || "N/A"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {d.catalogo_sensores?.marca || "N/A"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {d.catalogo_puentes?.nombre || "Sin Puente"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {d.catalogo_sensores?.modelo || "N/A"}
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                      {d.catalogo_puentes?.ubicacion || "Desconocida"}
-                    </td>
-                    <td className="px-2 py-2 text-sm text-gray-700 text-center space-x-2">
-                      <span
-                        className={`px-2 py-1 rounded-full text-white text-xs font-bold ${
-                          d.status === "Activo" ? "bg-green-500" : "bg-red-500"
-                        }`}
-                      >
-                        {d.status}
-                      </span>
-                      <button
-                        onClick={() => handleInfo(d)}
-                        className="inline-flex items-center px-1 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
-                      >
-                        <FaInfoCircle className="mr-1" /> Info
-                      </button>
+                {loading ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-6">
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredDetalles.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-6 text-gray-500">
+                      No hay sensores
+                    </td>
+                  </tr>
+                ) : (
+                  filteredDetalles.map((d) => (
+                    <tr key={d.id_sensor}>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {d.id_sensor}
+                      </td>
+                      <td className="ppx-4 py-2 text-sm text-gray-700 text-center">
+                        {d.catalogo_sensores?.nombre || "N/A"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {d.catalogo_sensores?.tipo || "N/A"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {d.catalogo_sensores?.marca || "N/A"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {d.catalogo_puentes?.nombre || "Sin Puente"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {d.catalogo_sensores?.modelo || "N/A"}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        {d.catalogo_puentes?.ubicacion || "Desconocida"}
+                      </td>
+                      <td className="px-2 py-2 text-sm text-gray-700 text-center space-x-2">
+                        <span
+                          className={`px-2 py-1 rounded-full text-white text-xs font-bold ${
+                            d.status === "Activo"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {d.status}
+                        </span>
+                        <button
+                          onClick={() => handleInfo(d)}
+                          className="inline-flex items-center px-1 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                        >
+                          <FaInfoCircle className="mr-1" /> Info
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

@@ -24,6 +24,8 @@ const AlertasEventosAdm = () => {
   }, []);
 
   const fetchAlertas = async () => {
+    setLoadingAlertas(true);
+
     const { data, error } = await supabase
       .from("alertas")
       .select(
@@ -49,6 +51,8 @@ const AlertasEventosAdm = () => {
   };
 
   const fetchEventos = async () => {
+    setLoadingEventos(true);
+
     const { data, error } = await supabase.from("eventos_desbordamiento")
       .select(`
         id_evento,

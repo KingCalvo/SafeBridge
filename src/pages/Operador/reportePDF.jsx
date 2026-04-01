@@ -32,6 +32,10 @@ const ReportePDF = () => {
   }, []);
 
   const fetchDatos = async () => {
+    setLoadingSensores(true);
+    setLoadingAlertas(true);
+    setLoadingEventos(true);
+
     const { data: puenteData } = await supabase
       .from("catalogo_puentes")
       .select("*")

@@ -19,6 +19,7 @@ const AlertasInv = () => {
   }, []);
 
   const fetchAlertas = async () => {
+    setLoadingAlertas(true);
     const { data, error } = await supabase
       .from("alertas")
       .select(
@@ -30,6 +31,7 @@ const AlertasInv = () => {
   };
 
   const fetchEstaciones = async () => {
+    setLoadingEstaciones(true);
     const { data, error } = await supabase
       .from("catalogo_estaciones")
       .select("id_estaciones, nombre, tipo_estacion, ubicacion");

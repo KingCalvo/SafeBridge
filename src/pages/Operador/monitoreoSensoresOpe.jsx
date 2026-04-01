@@ -20,6 +20,8 @@ const MonitoreoSensoresOpe = () => {
   }, []);
 
   const fetchDetallesSensores = async () => {
+    setLoading(true);
+
     const { data, error } = await supabase
       .from("sensores")
       .select(

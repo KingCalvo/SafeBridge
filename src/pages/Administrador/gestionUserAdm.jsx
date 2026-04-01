@@ -47,6 +47,8 @@ const GestionUserAdm = () => {
   };
 
   const fetchUsers = async () => {
+    setLoadingUsers(true);
+
     const { data, error } = await supabase
       .from("usuario")
       .select(

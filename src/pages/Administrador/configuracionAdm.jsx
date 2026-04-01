@@ -43,6 +43,8 @@ const ConfiguracionAdm = () => {
   }, []);
 
   const fetchPuentes = async () => {
+    setLoadingPuentes(true);
+
     const { data, error } = await supabase
       .from("catalogo_puentes")
       .select("*")
@@ -54,6 +56,8 @@ const ConfiguracionAdm = () => {
 
   // Fetch Niveles
   const fetchNiveles = async () => {
+    setLoadingNiveles(true);
+
     const { data, error } = await supabase
       .from("catalogo_niveles_riesgo")
       .select("*")
@@ -64,6 +68,8 @@ const ConfiguracionAdm = () => {
   };
 
   const fetchSensores = async () => {
+    setLoadingSensores(true);
+
     const { data, error } = await supabase
       .from("sensores")
       .select(

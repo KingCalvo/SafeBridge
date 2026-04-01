@@ -25,6 +25,8 @@ const InicioOpe = () => {
   }, []);
 
   const fetchSensores = async () => {
+    setLoadingSensores(true);
+
     const { data, error } = await supabase
       .from("sensores")
       .select(
@@ -43,6 +45,8 @@ const InicioOpe = () => {
   };
 
   const fetchEventos = async () => {
+    setLoadingEventos(true);
+
     const { data, error } = await supabase
       .from("eventos_desbordamiento")
       .select(
@@ -62,6 +66,8 @@ const InicioOpe = () => {
   };
 
   const fetchAlertas = async () => {
+    setLoadingAlertas(true);
+
     const { data, error } = await supabase.from("alertas").select(`
         id_alertas,
         fecha_hora,

@@ -14,16 +14,25 @@ const ReportesPuentesPDF = () => {
   const [alertas, setAlertas] = useState([]);
   const [eventos, setEventos] = useState([]);
   const navigate = useNavigate();
+  const [loadingPuentes, setLoadingPuentes] = useState(true);
+  const [loadingSensores, setLoadingSensores] = useState(true);
+  const [loadingAlertas, setLoadingAlertas] = useState(true);
+  const [loadingEventos, setLoadingEventos] = useState(true);
 
   useEffect(() => {
     fetchAll();
   }, []);
 
   const fetchAll = async () => {
+    setLoadingPuentes(true);
+    setLoadingSensores(true);
+    setLoadingAlertas(true);
+    setLoadingEventos(true);
     const { data: puentesData } = await supabase
       .from("catalogo_puentes")
       .select("*");
     setPuentes(puentesData || []);
+    setTimeout(() => setLoadingPuentes(false), 150);
 
     const { data: sensoresData } = await supabase
       .from("sensores")
@@ -33,10 +42,11 @@ const ReportesPuentesPDF = () => {
         status,
         catalogo_sensores (nombre, tipo, marca, modelo),
         catalogo_puentes (nombre, ubicacion)
-      `
+      `,
       )
       .order("id_sensor", { ascending: true });
     setSensores(sensoresData || []);
+    setTimeout(() => setLoadingSensores(false), 150);
 
     const { data: alertasData } = await supabase
       .from("alertas")
@@ -48,10 +58,11 @@ const ReportesPuentesPDF = () => {
         status,
         eventos_desbordamiento (descripcion),
         catalogo_puentes (ubicacion)
-      `
+      `,
       )
       .order("id_alertas", { ascending: true });
     setAlertas(alertasData || []);
+    setTimeout(() => setLoadingAlertas(false), 150);
 
     const { data: eventosData } = await supabase.from("eventos_desbordamiento")
       .select(`
@@ -61,6 +72,7 @@ const ReportesPuentesPDF = () => {
         catalogo_niveles_riesgo (status)
       `);
     setEventos(eventosData || []);
+    setTimeout(() => setLoadingEventos(false), 150);
   };
 
   const handleDescargarPDF = () => {
@@ -216,25 +228,44 @@ const ReportesPuentesPDF = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {puentes.map((p) => (
-                    <tr key={p.id_puente}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {p.id_puente}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {p.nombre}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {p.ubicacion}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {p.info}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {p.status}
+                  {loadingPuentes ? (
+                    <tr>
+                      <td colSpan="5" className="text-center py-6">
+                        <div className="flex justify-center items-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : puentes.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        className="text-center py-6 text-gray-500"
+                      >
+                        No hay puentes
+                      </td>
+                    </tr>
+                  ) : (
+                    puentes.map((p) => (
+                      <tr key={p.id_puente}>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {p.id_puente}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {p.nombre}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {p.ubicacion}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {p.info}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {p.status}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -274,34 +305,53 @@ const ReportesPuentesPDF = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {sensores.map((s) => (
-                    <tr key={s.id_sensor}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.id_sensor}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.catalogo_sensores?.nombre}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.catalogo_sensores?.tipo}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.catalogo_sensores?.marca}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.catalogo_puentes?.nombre}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.catalogo_sensores?.modelo}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.catalogo_puentes?.ubicacion}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {s.status}
+                  {loadingSensores ? (
+                    <tr>
+                      <td colSpan="8" className="text-center py-6">
+                        <div className="flex justify-center items-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : sensores.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="8"
+                        className="text-center py-6 text-gray-500"
+                      >
+                        No hay sensores
+                      </td>
+                    </tr>
+                  ) : (
+                    sensores.map((s) => (
+                      <tr key={s.id_sensor}>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.id_sensor}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.catalogo_sensores?.nombre}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.catalogo_sensores?.tipo}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.catalogo_sensores?.marca}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.catalogo_puentes?.nombre}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.catalogo_sensores?.modelo}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.catalogo_puentes?.ubicacion}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {s.status}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -335,28 +385,47 @@ const ReportesPuentesPDF = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {alertas.map((a) => (
-                    <tr key={a.id_alertas}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.id_alertas}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.eventos_desbordamiento?.descripcion}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.catalogo_puentes?.ubicacion}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.fecha_hora}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.tipo_alerta}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {a.status}
+                  {loadingAlertas ? (
+                    <tr>
+                      <td colSpan="6" className="text-center py-6">
+                        <div className="flex justify-center items-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : alertas.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="text-center py-6 text-gray-500"
+                      >
+                        No hay alertas
+                      </td>
+                    </tr>
+                  ) : (
+                    alertas.map((a) => (
+                      <tr key={a.id_alertas}>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.id_alertas}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.eventos_desbordamiento?.descripcion}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.catalogo_puentes?.ubicacion}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.fecha_hora}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.tipo_alerta}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {a.status}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -384,22 +453,41 @@ const ReportesPuentesPDF = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {eventos.map((e, i) => (
-                    <tr key={i}>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {e.descripcion}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {e.catalogo_puentes?.nombre}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {e.fecha_hora}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
-                        {e.catalogo_niveles_riesgo?.status}
+                  {loadingEventos ? (
+                    <tr>
+                      <td colSpan="4" className="text-center py-6">
+                        <div className="flex justify-center items-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : eventos.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="4"
+                        className="text-center py-6 text-gray-500"
+                      >
+                        No hay eventos
+                      </td>
+                    </tr>
+                  ) : (
+                    eventos.map((e, i) => (
+                      <tr key={i}>
+                        <td className="px-4 py-2 text-sm text-gray-700">
+                          {e.descripcion}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {e.catalogo_puentes?.nombre}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {e.fecha_hora}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                          {e.catalogo_niveles_riesgo?.status}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

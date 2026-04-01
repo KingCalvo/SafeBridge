@@ -41,6 +41,8 @@ const EventosOpe = () => {
   }, []);
 
   const fetchEventos = async () => {
+    setLoadingEventos(true);
+
     const { data, error } = await supabase
       .from("eventos_desbordamiento")
       .select(
@@ -61,6 +63,8 @@ const EventosOpe = () => {
     setTimeout(() => setLoadingEventos(false), 150);
   };
   const fetchAlertas = async () => {
+    setLoadingAlertas(true);
+
     const { data, error } = await supabase
       .from("alertas")
       .select(

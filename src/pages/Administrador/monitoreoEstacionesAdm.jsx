@@ -39,6 +39,8 @@ const MonitoreoSensoresAdm = () => {
   }, []);
 
   const fetchEstaciones = async () => {
+    setLoadingEstaciones(true);
+
     const { data, error } = await supabase
       .from("catalogo_estaciones")
       .select(

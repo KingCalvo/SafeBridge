@@ -16,6 +16,8 @@ const PuentesInv = () => {
   }, []);
 
   const fetchPuentes = async () => {
+    setLoadingPuentes(true);
+
     const { data, error } = await supabase.from("catalogo_puentes").select("*");
     if (error) console.error("Error al obtener puentes:", error);
     else setPuentes(data);

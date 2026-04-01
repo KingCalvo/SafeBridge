@@ -42,6 +42,8 @@ const ReportesOpe = () => {
   }, []);
 
   const fetchPuentes = async () => {
+    setLoadingPuentes(true);
+
     // Traer puentes
     const { data: puentesData, error: errorPuentes } = await supabase
       .from("catalogo_puentes")
@@ -55,6 +57,7 @@ const ReportesOpe = () => {
 
     if (errorPuentes || errorEstaciones) {
       console.error("Error en fetchPuentes:", errorPuentes || errorEstaciones);
+      setLoadingPuentes(false);
       return;
     }
 
@@ -75,6 +78,8 @@ const ReportesOpe = () => {
   };
 
   const fetchInformes = async () => {
+    setLoadingInformes(true);
+
     const { data, error } = await supabase
       .from("informes")
       .select(

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Login.jsx";
 import SignUp from "./SignUp.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
@@ -88,9 +88,32 @@ const App = () => {
         />
 
         {/* Invitado */}
-        <Route path="/alertasInv" element={<AlertasInv />} />
-        <Route path="/graficosInv" element={<GraficosInv />} />
-        <Route path="/puentesInv" element={<PuentesInv />} />
+        <Route
+          path="/graficosInv"
+          element={
+            <ProtectedRoute allowedRoles={[3]} allowPublic={true}>
+              <GraficosInv />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/puentesInv"
+          element={
+            <ProtectedRoute allowedRoles={[3]} allowPublic={true}>
+              <PuentesInv />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/alertasInv"
+          element={
+            <ProtectedRoute allowedRoles={[3]} allowPublic={true}>
+              <AlertasInv />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Operador */}
         <Route
@@ -137,6 +160,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
   );

@@ -5,6 +5,7 @@ import { SiSoundcharts } from "react-icons/si";
 import { FaUserClock } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../supabase/client";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -19,8 +20,12 @@ const Sidebar = () => {
     },
   ];
 
-  const handleReturnToLogin = () => {
-    navigate("/"); // Redirige a la página de login
+  const handleReturnToLogin = async () => {
+    await supabase.auth.signOut();
+
+    localStorage.removeItem("lastRoute");
+
+    navigate("/", { replace: true });
   };
 
   return (

@@ -12,7 +12,7 @@ const RouteTracker = () => {
       "/puentesInv",
       "/alertasInv",
     ];
-
+    if (location.pathname === "/inicioPC") return;
     // NO guardar rutas públicas
     if (!publicRoutes.includes(location.pathname)) {
       localStorage.setItem("lastRoute", location.pathname);

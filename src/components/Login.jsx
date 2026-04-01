@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
 import { useNotificacion } from "./NotificacionContext.jsx";
 import { useAuth } from "../context/AuthContext";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ const Login = () => {
           break;
         case 3:
           notify("¡Has iniciado sesión correctamente!", { type: "success" });
-          navigate("/inicioPC");
+          navigate("/graficosInv");
           break;
         default:
           notify("Rol no válido.", { type: "error" });
@@ -68,29 +69,47 @@ const Login = () => {
     }
   };
 
+  const location = useLocation();
+
   useEffect(() => {
-    if (user && rol) {
-      const lastRoute = localStorage.getItem("lastRoute");
+    if (location.pathname !== "/" || !user || !rol) return;
 
-      if (lastRoute) {
-        navigate(lastRoute);
-        return;
-      }
+    const lastRoute = localStorage.getItem("lastRoute");
 
-      // fallback por rol
-      switch (rol.id_rol) {
-        case 1:
-          navigate("/inicioAdm");
-          break;
-        case 2:
-          navigate("/inicioOpe");
-          break;
-        case 3:
-          navigate("/inicioPC");
-          break;
-      }
+    const validRoutes = [
+      "/inicioAdm",
+      "/gestionUserAdm",
+      "/monitoreoEstacionesAdm",
+      "/alertasEventosAdm",
+      "/configuracionAdm",
+      "/reportesPuentesPDF",
+      "/inicioOpe",
+      "/eventosOpe",
+      "/monitoreoSensoresOpe",
+      "/reportesOpe",
+      "/reportePDF",
+      "/graficosInv",
+      "/puentesInv",
+      "/alertasInv",
+    ];
+
+    if (lastRoute && validRoutes.includes(lastRoute)) {
+      navigate(lastRoute, { replace: true });
+      return;
     }
-  }, [user, rol]);
+
+    switch (rol.id_rol) {
+      case 1:
+        navigate("/inicioAdm", { replace: true });
+        break;
+      case 2:
+        navigate("/inicioOpe", { replace: true });
+        break;
+      case 3:
+        navigate("/graficosInv", { replace: true });
+        break;
+    }
+  }, [user, rol, location.pathname]);
 
   const handleGuestAccess = () => {
     navigate("/graficosInv");

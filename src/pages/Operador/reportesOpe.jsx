@@ -237,16 +237,16 @@ const ReportesOpe = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={2} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
           {/* Titulo principal */}
-          <h1 className="text-3xl font-bold uppercase text-gray-800 mb-6 text-center">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-800 mb-6 text-center">
             Generar reportes
           </h1>
 
           {/* Buscador */}
           <div className="flex justify-center mb-8">
-            <div className="relative w-96">
+            <div className="relative w-full sm:w-96">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
               </span>
@@ -280,8 +280,8 @@ const ReportesOpe = () => {
             </div>
           </div>
 
-          <div className="overflow-auto bg-white rounded-lg shadow mb-8 max-h-[300px]">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow mb-8 max-h-[300px] overflow-y-auto">
+            <table className="min-w-[700px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -322,19 +322,19 @@ const ReportesOpe = () => {
                 ) : (
                   filteredPuentes.map((puente) => (
                     <tr key={puente.id_puente}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {puente.id_puente}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {puente.nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-7002 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {puente.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {puente.estacion_nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         <span
                           className={`px-3 py-1 rounded-full text-white font-bold text-xs ${
                             puente.status === "Activo"
@@ -350,7 +350,7 @@ const ReportesOpe = () => {
                       <td className="px-4 py-2 text-center">
                         <button
                           onClick={() => handleGenerarReporte(puente.id_puente)}
-                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          className="p-2 sm:px-3 sm:py-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
                         >
                           <FaFileMedical />
                         </button>
@@ -369,23 +369,20 @@ const ReportesOpe = () => {
             </h2>
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
-              <div className="relative">
-                <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
-                <select
-                  className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
-                  value={nivelRiesgoFilter}
-                  onChange={(e) => setNivelRiesgoFilter(e.target.value)}
-                >
-                  <option value="">Todos los riesgos</option>
-                  <option value="Alto">Alto</option>
-                  <option value="Bajo">Bajo</option>
-                </select>
-              </div>
+              <select
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                value={nivelRiesgoFilter}
+                onChange={(e) => setNivelRiesgoFilter(e.target.value)}
+              >
+                <option value="">Todos los riesgos</option>
+                <option value="Alto">Alto</option>
+                <option value="Bajo">Bajo</option>
+              </select>
             </div>
           </div>
 
-          <div className="overflow-auto bg-white rounded-lg shadow max-h-[300px]">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow max-h-[300px] overflow-y-auto">
+            <table className="min-w-[1000px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -432,19 +429,19 @@ const ReportesOpe = () => {
                 ) : (
                   filteredInformes.map((info) => (
                     <tr key={info.id_Informes}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {info.id_Informes}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {info.catalogo_puentes?.nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {info.catalogo_puentes?.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {info.catalogo_estaciones?.nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {info.eventos_desbordamiento?.catalogo_niveles_riesgo
                           ?.status === "Alto" ? (
                           <span className="flex items-center justify-center gap-1 bg-red-500 text-white font-bold px-3 py-1 rounded-full text-xs">
@@ -456,25 +453,29 @@ const ReportesOpe = () => {
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {info.fecha_hora}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {info.descripcion}
                       </td>
-                      <td className="px-2 py-2 text-center space-x-2">
-                        <button
-                          onClick={() => openEditModal(info)}
-                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteInforme(info.id_Informes)}
-                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                        >
-                          <FaDeleteLeft />
-                        </button>
+                      <td className="px-2 py-2 text-center">
+                        <div className="flex justify-center gap-2 flex-wrap">
+                          <button
+                            onClick={() => openEditModal(info)}
+                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          >
+                            <FaRegEdit />
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDeleteInforme(info.id_Informes)
+                            }
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                          >
+                            <FaDeleteLeft />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

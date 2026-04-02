@@ -74,16 +74,16 @@ const MonitoreoSensoresOpe = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={2} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
           {/* Título principal */}
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6 uppercase">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-6 uppercase">
             Monitoreo de Sensores
           </h1>
 
           {/* Buscador */}
-          <div className="flex justify-center mb-6">
-            <div className="relative w-96">
+          <div className="flex justify-center mb-6 px-2 sm:px-0">
+            <div className="relative w-full sm:w-96">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
               </span>
@@ -98,7 +98,7 @@ const MonitoreoSensoresOpe = () => {
           </div>
 
           {/* Título tabla y filtro */}
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 mb-4">
             <h2 className="text-2xl font-bold text-gray-800 uppercase">
               información de los Sensores
             </h2>
@@ -117,8 +117,8 @@ const MonitoreoSensoresOpe = () => {
           </div>
 
           {/* Tabla */}
-          <div className="overflow-auto max-h-[400px] bg-white rounded-lg shadow">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto max-h-[400px] bg-white rounded-lg shadow">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -165,43 +165,46 @@ const MonitoreoSensoresOpe = () => {
                 ) : (
                   filteredDetalles.map((d) => (
                     <tr key={d.id_sensor}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {d.id_sensor}
                       </td>
-                      <td className="ppx-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {d.catalogo_sensores?.nombre || "N/A"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {d.catalogo_sensores?.tipo || "N/A"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {d.catalogo_sensores?.marca || "N/A"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {d.catalogo_puentes?.nombre || "Sin Puente"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {d.catalogo_sensores?.modelo || "N/A"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {d.catalogo_puentes?.ubicacion || "Desconocida"}
                       </td>
-                      <td className="px-2 py-2 text-sm text-gray-700 text-center space-x-2">
-                        <span
-                          className={`px-2 py-1 rounded-full text-white text-xs font-bold ${
-                            d.status === "Activo"
-                              ? "bg-green-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {d.status}
-                        </span>
-                        <button
-                          onClick={() => handleInfo(d)}
-                          className="inline-flex items-center px-1 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
-                        >
-                          <FaInfoCircle className="mr-1" /> Info
-                        </button>
+                      <td className="px-2 sm:px-4 py-2 text-sm text-gray-700 text-center">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-white text-xs font-bold ${
+                              d.status === "Activo"
+                                ? "bg-green-500"
+                                : "bg-red-500"
+                            }`}
+                          >
+                            {d.status}
+                          </span>
+
+                          <button
+                            onClick={() => handleInfo(d)}
+                            className="inline-flex items-center px-2 py-1 text-xs sm:text-sm bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                          >
+                            <FaInfoCircle className="mr-1" /> Info
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -211,7 +214,7 @@ const MonitoreoSensoresOpe = () => {
           </div>
 
           {/* Gráfica de Estado de Sensores */}
-          <div className="mt-8 bg-white p-6 rounded-2xl shadow">
+          <div className="mt-8 bg-white p-4 sm:p-6 rounded-2xl shadow">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
               Estado de Sensores
             </h2>

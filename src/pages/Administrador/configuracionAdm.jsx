@@ -411,14 +411,14 @@ const ConfiguracionAdm = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={1} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-6">
             CONFIGURACIÓN
           </h1>
           {/* Buscador */}
           <div className="flex justify-center mb-8">
-            <div className="relative w-96">
+            <div className="relative w-full sm:w-96">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
               </span>
@@ -433,12 +433,12 @@ const ConfiguracionAdm = () => {
           </div>
 
           {/* Tabla Puentes */}
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 mb-4">
             <h2 className="text-2xl font-semibold text-gray-800">PUENTES</h2>
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
                 value={filterPuenteStatus}
                 onChange={(e) => setFilterPuenteStatus(e.target.value)}
               >
@@ -450,21 +450,21 @@ const ConfiguracionAdm = () => {
             </div>
             <button
               onClick={() => openAddModal("puente")}
-              className="flex items-center font-bold space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+              className=" sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
             >
               <IoIosAddCircleOutline className="text-2xl" />
               <span>Agregar</span>
             </button>
             <button
               onClick={() => navigate("/reportesPuentesPDF")}
-              className="flex items-center space-x-2 px-4 font-bold py-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
+              className=" sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
             >
               <FaFileMedical className="text-2xl font-bold" />
               <span>GENERAR REPORTE</span>
             </button>
           </div>
-          <div className="overflow-auto max-h-[300px] bg-white rounded-lg shadow mb-8">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto max-h-[300px] bg-white rounded-lg shadow mb-8">
+            <table className="min-w-[700px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -505,19 +505,19 @@ const ConfiguracionAdm = () => {
                 ) : (
                   filteredPuentes.map((p) => (
                     <tr key={p.id_puente}>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700">
                         {p.id_puente}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {p.nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {p.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {p.info}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         <span
                           className={`px-3 py-1 rounded-full text-white font-bold ${
                             p.status === "Activo"
@@ -531,19 +531,21 @@ const ConfiguracionAdm = () => {
                         </span>
                       </td>
 
-                      <td className="px-4 py-2 text-center space-x-2">
-                        <button
-                          onClick={() => openEditModal(p, "puente")}
-                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p.id_puente, "puente")}
-                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                        >
-                          <FaDeleteLeft />
-                        </button>
+                      <td className="px-2 sm:px-4 py-2 text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() => openEditModal(p, "puente")}
+                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          >
+                            <FaRegEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p.id_puente, "puente")}
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                          >
+                            <FaDeleteLeft />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -553,7 +555,7 @@ const ConfiguracionAdm = () => {
           </div>
 
           {/* Sección Niveles de Riesgo */}
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 mb-4">
             <h2 className="text-2xl font-semibold text-gray-800">
               NIVELES DE RIESGO
             </h2>
@@ -581,7 +583,7 @@ const ConfiguracionAdm = () => {
             </button>
           </div>
           <div className="overflow-auto max-h-[300px] bg-white rounded-lg shadow">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -622,19 +624,19 @@ const ConfiguracionAdm = () => {
                 ) : (
                   filteredNiveles.map((n) => (
                     <tr key={n.id_nivel}>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {n.id_nivel}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {n.nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-justify">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-justify">
                         {n.descripcion}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {n.tipo_riesgo}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         <span
                           className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
                             n.status === "Alto" ? "bg-red-500" : "bg-green-500"
@@ -694,7 +696,7 @@ const ConfiguracionAdm = () => {
             </button>
           </div>
           <div className="overflow-auto max-h-[300px] bg-white rounded-lg shadow mb-8">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-[1000px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -765,36 +767,40 @@ const ConfiguracionAdm = () => {
                       <td className="px-4 py-2 text-sm text-gray-700 text-center">
                         {s.catalogo_puentes.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center flex items-center justify-center space-x-3">
-                        <span
-                          className={`px-3 py-1 rounded-full text-white ${
-                            s.status === "Activo"
-                              ? "bg-green-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {s.status}
-                        </span>
-                        <button
-                          onClick={() => handleInfo(s)}
-                          className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
-                        >
-                          <FaInfoCircle className="mr-1" /> Info
-                        </button>
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                          <span
+                            className={`px-3 py-1 rounded-full text-white ${
+                              s.status === "Activo"
+                                ? "bg-green-500"
+                                : "bg-red-500"
+                            }`}
+                          >
+                            {s.status}
+                          </span>
+                          <button
+                            onClick={() => handleInfo(s)}
+                            className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                          >
+                            <FaInfoCircle className="mr-1" /> Info
+                          </button>
+                        </div>
                       </td>
-                      <td className="px-2 py-2 text-center space-x-2">
-                        <button
-                          onClick={() => openEditModal(s, "sensor")}
-                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(s.id_sensor, "sensor")}
-                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                        >
-                          <FaDeleteLeft />
-                        </button>
+                      <td className="px-2 sm:px-4 py-2 text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() => openEditModal(s, "sensor")}
+                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          >
+                            <FaRegEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(s.id_sensor, "sensor")}
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                          >
+                            <FaDeleteLeft />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

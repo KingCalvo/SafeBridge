@@ -234,16 +234,16 @@ const MonitoreoSensoresAdm = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={1} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
           {/* Título */}
           <div className="flex items-center justify-center mb-6">
-            <h1 className="text-3xl font-bold uppercase text-gray-800 mr-2">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-800 mr-2">
               Estaciones
             </h1>
-            <HiOutlineSignal className="text-3xl text-gray-800" />
+            <HiOutlineSignal className="text-xl sm:text-2xl lg:text-3xl text-gray-800" />
           </div>
-          <div className="flex items-center justify-center space-x-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 mb-6">
             {/* Buscador */}
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
@@ -252,14 +252,14 @@ const MonitoreoSensoresAdm = () => {
               <input
                 type="text"
                 placeholder="Buscar Estación"
-                className="w-64 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                className="w-full sm:w-64 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
             {/* Filtro */}
-            <div className="relative w-64">
+            <div className="relative w-full sm:w-64">
               <CiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
                 className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
@@ -276,15 +276,15 @@ const MonitoreoSensoresAdm = () => {
             </div>
             <button
               onClick={openAddModal}
-              className="flex items-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+              className="w-full sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
             >
               <IoIosAddCircleOutline className="text-2xl" />
               <span className="text-sm font-medium">Agregar</span>
             </button>
           </div>
           {/* Tabla de estaciones*/}
-          <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[500px] overflow-y-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow mb-6 max-h-[500px] overflow-y-auto">
+            <table className="min-w-[900px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs font-medium uppercase">
@@ -331,32 +331,32 @@ const MonitoreoSensoresAdm = () => {
                 ) : (
                   filteredEstaciones.map((est) => (
                     <tr key={est.id_estaciones}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {est.id_estaciones}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {est.catalogo_puentes?.nombre || "Sin asignar"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {est.ubicacion}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {est.nombre}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {est.tipo_estacion}
                       </td>
-                      <td className="px-4 py-2 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-center">
                         <button
                           onClick={() => handleInfo(est)}
-                          className="inline-flex items-center px-2 py-1 bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
+                          className="inline-flex items-center px-2 py-1 text-xs sm:text-sm bg-[#ffc340] rounded-lg hover:bg-[#ff9800] transition cursor-pointer"
                         >
                           <FaInfoCircle className="mr-1" /> Info
                         </button>
                       </td>
-                      <td className="px-4 py-2 text-sm text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-center">
                         <span
-                          className={`px-3 py-1 rounded-full text-white font-bold ${
+                          className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm text-white font-bold ${
                             est.sensores?.status === "Activo"
                               ? "bg-green-500"
                               : "bg-red-500"
@@ -366,19 +366,21 @@ const MonitoreoSensoresAdm = () => {
                         </span>
                       </td>
 
-                      <td className="px-4 py-2 text-center space-x-2">
-                        <button
-                          onClick={() => handleEdit(est)}
-                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(est.id_estaciones)}
-                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                        >
-                          <FaDeleteLeft />
-                        </button>
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() => handleEdit(est)}
+                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          >
+                            <FaRegEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(est.id_estaciones)}
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                          >
+                            <FaDeleteLeft />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -392,8 +394,8 @@ const MonitoreoSensoresAdm = () => {
               <h2 className="text-xl font-bold mb-4 text-center">
                 Información del sensor
               </h2>
-              <div className="overflow-y-auto max-h-80">
-                <table className="w-full table-fixed border-collapse border border-gray-500">
+              <div className="overflow-y-auto max-h-80 w-full">
+                <table className="w-full text-xs sm:text-sm table-fixed border-collapse border border-gray-500">
                   <tbody>
                     {Object.entries(sensorInfo).map(([key, value]) => (
                       <tr key={key} className="border-b">

@@ -72,17 +72,20 @@ const AdminInicio = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={1} />
-      <div className="ml-64 flex-1 p-8">
-        <h1 className="text-3xl font-bold uppercase text-gray-800 mb-8 text-center">
+
+      {/* CONTENIDO */}
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 lg:ml-64">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-800 mb-6 sm:mb-8 text-center">
           Gráficas
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
           {/* Línea de Alertas */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow w-full overflow-x-auto">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-4">
               ALERTAS GENERADAS
             </h2>
+
             <ApexCharts
               options={{
                 chart: { id: "alertas-line", zoom: { enabled: false } },
@@ -108,15 +111,16 @@ const AdminInicio = () => {
               }}
               series={alertaSeries}
               type="line"
-              height={350}
+              height={window.innerWidth < 640 ? 250 : 350}
             />
           </div>
 
           {/* Barras de Eventos */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow w-full overflow-x-auto">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-4">
               ESTADÍSTICAS DE EVENTOS DE DESBORDAMIENTO
             </h2>
+
             <ApexCharts
               options={{
                 chart: { type: "bar", id: "eventos-bar" },
@@ -138,7 +142,7 @@ const AdminInicio = () => {
                 xaxis: { categories: eventoCategories },
                 fill: { opacity: 1 },
                 colors: eventoCategories.map((cat) =>
-                  cat === "Alto" ? "#FF0000" : "#1ccd4c"
+                  cat === "Alto" ? "#FF0000" : "#1ccd4c",
                 ),
                 tooltip: {
                   y: {
@@ -148,16 +152,17 @@ const AdminInicio = () => {
               }}
               series={eventoSeries}
               type="bar"
-              height={350}
+              height={window.innerWidth < 640 ? 250 : 350}
             />
           </div>
         </div>
 
         {/* Área - Estado de los Sensores */}
-        <div className="mt-12 bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+        <div className="mt-8 lg:mt-12 bg-white p-4 sm:p-6 rounded-2xl shadow w-full overflow-x-auto">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-4 text-center">
             ESTADO DE LOS SENSORES
           </h2>
+
           <ApexChartSensores />
         </div>
       </div>

@@ -129,14 +129,14 @@ const AlertasEventosAdm = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={1} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-6">
             HISTORIAL DE ALERTAS Y EVENTOS
           </h1>
 
           {/* Buscador y Filtros */}
-          <div className="flex items-center justify-center space-x-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
@@ -144,7 +144,7 @@ const AlertasEventosAdm = () => {
               <input
                 type="text"
                 placeholder="Buscar por evento, tipo de alerta o ubicación..."
-                className="w-96 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                className="w-full sm:w-96 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -157,7 +157,7 @@ const AlertasEventosAdm = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
                 value={tipoAlertaFilter}
                 onChange={(e) => setTipoAlertaFilter(e.target.value)}
               >
@@ -171,8 +171,8 @@ const AlertasEventosAdm = () => {
           </div>
 
           {/* Tabla de Alertas */}
-          <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[400px] overflow-y-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow mb-6 max-h-[400px] overflow-y-auto">
+            <table className="min-w-[900px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -216,22 +216,22 @@ const AlertasEventosAdm = () => {
                 ) : (
                   filteredAlertas.map((alerta) => (
                     <tr key={alerta.id_alertas}>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {alerta.id_alertas}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {alerta.eventos_desbordamiento?.descripcion || "N/A"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {alerta.catalogo_puentes?.ubicacion || "Desconocida"}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {alerta.fecha_hora}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {alerta.tipo_alerta}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         <span
                           className={`px-2 py-1 rounded-full text-white font-bold  ${
                             alerta.status === "Activa"
@@ -243,7 +243,7 @@ const AlertasEventosAdm = () => {
                         </span>
                       </td>
 
-                      <td className="px-4 py-2 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         <Toggle
                           isOn={alerta.status === "Activa"}
                           onToggle={() =>
@@ -259,13 +259,13 @@ const AlertasEventosAdm = () => {
           </div>
 
           <div className="flex justify-center items-center gap-4 mb-4">
-            <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
+            <h2 className="text-xl sm:text-2xl lg:text-2xl font-bold text-center text-gray-800 uppercase">
               EVENTOS DE DESBORDAMIENTO
             </h2>
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
                 value={nivelRiesgoFilter}
                 onChange={(e) => setNivelRiesgoFilter(e.target.value)}
               >
@@ -276,8 +276,8 @@ const AlertasEventosAdm = () => {
             </div>
           </div>
 
-          <div className="overflow-auto bg-white rounded-lg shadow max-h-[400px] overflow-y-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow max-h-[400px] overflow-y-auto">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -312,16 +312,16 @@ const AlertasEventosAdm = () => {
                 ) : (
                   filteredEventos.map((evento) => (
                     <tr key={evento.id_evento}>
-                      <td className="px-4 py-2 text-sm text-gray-700">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {evento.descripcion}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {evento.id_puente}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         {evento.fecha_hora}
                       </td>
-                      <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                      <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         <span
                           className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
                             evento.catalogo_niveles_riesgo?.status === "Alto"

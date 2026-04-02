@@ -231,13 +231,13 @@ const GestionUserAdm = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={1} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
-          <h1 className="text-3xl font-bold mb-4 text-center w-full">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 text-center w-full">
             LISTA DE USUARIOS
           </h1>
 
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 mb-4">
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
@@ -245,14 +245,14 @@ const GestionUserAdm = () => {
               <input
                 type="text"
                 placeholder="Buscar Usuarios"
-                className="w-64 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                className="w-full sm:w-64 border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="relative">
               <select
-                className="border border-gray-300 rounded-lg px-6 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg px-6 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
               >
@@ -267,14 +267,14 @@ const GestionUserAdm = () => {
             </div>
             <button
               onClick={openAddModal}
-              className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
+              className="flex items-center justify-center w-3/12 sm:w-auto p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
             >
               <FaUserPlus className="text-2xl" />
             </button>
           </div>
 
-          <div className="overflow-auto bg-white rounded-lg shadow mb-6 max-h-[500px] overflow-y-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow mb-6 max-h-[500px] overflow-y-auto">
+            <table className="min-w-[900px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs font-medium uppercase">
@@ -342,10 +342,10 @@ const GestionUserAdm = () => {
 
                     return (
                       <tr key={user.id_usuario}>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {user.id_usuario}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           <span
                             className="px-2 py-1 rounded-full font-semibold"
                             style={{ backgroundColor: rolColor }}
@@ -353,25 +353,25 @@ const GestionUserAdm = () => {
                             {rol || "—"}
                           </span>
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {user.nombre}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {user.apellido_paterno}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {user.apellido_materno}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {user.curp}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {user.tel}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {user.correo}
                         </td>
-                        <td className="px-4 py-2 text-sm text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-center">
                           <span
                             className={`px-2 py-1 rounded-full font-semibold text-white ${
                               statusActivo ? "bg-green-500" : "bg-red-500"
@@ -380,19 +380,21 @@ const GestionUserAdm = () => {
                             {statusActivo ? "Activo" : "Inactivo"}
                           </span>
                         </td>
-                        <td className="px-4 py-2 text-center space-x-2 flex justify-center">
-                          <button
-                            onClick={() => openEditModal(user)}
-                            className="p-1 text-green-500 hover:text-green-700 cursor-pointer"
-                          >
-                            <FaUserEdit className="text-2xl" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user)}
-                            className="p-1 text-red-500 hover:text-red-700 cursor-pointer"
-                          >
-                            <FaUserTimes className="text-2xl" />
-                          </button>
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-center">
+                          <div className="flex justify-center gap-2">
+                            <button
+                              onClick={() => openEditModal(user)}
+                              className="p-1 text-green-500 hover:text-green-700 cursor-pointer"
+                            >
+                              <FaUserEdit className="text-2xl" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(user)}
+                              className="p-1 text-red-500 hover:text-red-700 cursor-pointer"
+                            >
+                              <FaUserTimes className="text-2xl" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );

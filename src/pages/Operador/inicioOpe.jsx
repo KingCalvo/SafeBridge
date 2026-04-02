@@ -133,16 +133,16 @@ const InicioOpe = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={2} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
           {/* Título Principal */}
-          <h1 className="text-3xl font-bold uppercase text-gray-800 mb-6 text-center">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-800 mb-6 text-center">
             Bienvenido Operador
           </h1>
 
           {/* Buscador General */}
           <div className="flex justify-center mb-8">
-            <div className="relative w-96">
+            <div className="relative w-full sm:w-96">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
               </span>
@@ -157,7 +157,7 @@ const InicioOpe = () => {
           </div>
 
           {/* Tabla Sensores */}
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 mb-4">
             <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
               Sensores
             </h2>
@@ -174,8 +174,8 @@ const InicioOpe = () => {
               </select>
             </div>
           </div>
-          <div className="overflow-auto bg-white rounded-lg shadow mb-8 max-h-[300px]">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow mb-8 max-h-[300px] overflow-y-auto">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-xs uppercase">ID</th>
@@ -238,7 +238,7 @@ const InicioOpe = () => {
           </div>
 
           {/* Tabla Eventos */}
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 mb-4">
             <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
               Eventos
             </h2>
@@ -255,8 +255,8 @@ const InicioOpe = () => {
               </select>
             </div>
           </div>
-          <div className="overflow-auto bg-white rounded-lg shadow mb-8 max-h-[300px]">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow mb-8 max-h-[300px] overflow-y-auto">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-xs uppercase">Evento</th>
@@ -318,7 +318,7 @@ const InicioOpe = () => {
           </div>
 
           {/* Tabla Alertas */}
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 mb-4">
             <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
               Alertas
             </h2>
@@ -337,8 +337,8 @@ const InicioOpe = () => {
               </select>
             </div>
           </div>
-          <div className="overflow-auto bg-white rounded-lg shadow max-h-[300px]">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto bg-white rounded-lg shadow mb-8 max-h-[300px] overflow-y-auto">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-xs uppercase">ID</th>

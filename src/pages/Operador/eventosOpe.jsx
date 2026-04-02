@@ -269,16 +269,16 @@ const EventosOpe = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={2} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 bg-gray-50">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
           {/* Título */}
-          <h1 className="text-3xl font-bold uppercase text-gray-800 mb-6 text-center">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-800 mb-6 text-center">
             Alertas y Eventos
           </h1>
 
           {/* Buscador */}
           <div className="flex justify-center mb-8">
-            <div className="relative w-96">
+            <div className="relative w-full sm:w-96">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
                 <IoSearch />
               </span>
@@ -292,7 +292,7 @@ const EventosOpe = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-center space-x-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 mb-6">
             {/* Título */}
             <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
               Eventos de desbordamiento
@@ -322,13 +322,13 @@ const EventosOpe = () => {
           </div>
 
           {/* Tabla */}
-          <div className="overflow-auto max-h-[400px] bg-white rounded-lg shadow">
+          <div className="overflow-x-auto max-h-[400px] bg-white rounded-lg shadow">
             {filteredEventos.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 No hay eventos registrados.
               </div>
             ) : (
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-[800px] w-full divide-y divide-gray-200">
                 <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                   <tr>
                     <th className="px-4 py-2 text-center text-xs uppercase">
@@ -372,19 +372,19 @@ const EventosOpe = () => {
                   ) : (
                     filteredEventos.map((e) => (
                       <tr key={e.id_evento}>
-                        <td className="px-4 py-2 text-sm text-gray-700">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700">
                           {e.descripcion}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {e.catalogo_puentes?.nombre || "—"}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {e.fecha_hora}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {e.catalogo_puentes?.ubicacion || "—"}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           <span
                             className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
                               e.catalogo_niveles_riesgo?.status === "Alto"
@@ -400,19 +400,21 @@ const EventosOpe = () => {
                             {e.catalogo_niveles_riesgo?.status || "—"}
                           </span>
                         </td>
-                        <td className="px-2 py-2 text-center space-x-2">
-                          <button
-                            onClick={() => openEditModal(e)}
-                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
-                          >
-                            <FaRegEdit />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(e.id_evento)}
-                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
-                          >
-                            <FaDeleteLeft />
-                          </button>
+                        <td className="px-2 py-2 text-center">
+                          <div className="flex justify-center gap-2">
+                            <button
+                              onClick={() => openEditModal(e)}
+                              className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                            >
+                              <FaRegEdit />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(e.id_evento)}
+                              className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                            >
+                              <FaDeleteLeft />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -422,7 +424,7 @@ const EventosOpe = () => {
             )}
           </div>
           {/*TABLA DE ALERTAS */}
-          <div className="flex items-center justify-center space-x-4 mt-12 mb-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 mt-12 mb-4">
             <h2 className="text-2xl font-bold text-gray-800 uppercase">
               Alertas
             </h2>
@@ -439,8 +441,8 @@ const EventosOpe = () => {
               </select>
             </div>
           </div>
-          <div className="overflow-auto max-h-[400px] bg-white rounded-lg shadow">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="overflow-x-auto max-h-[400px] bg-white rounded-lg shadow">
+            <table className="min-w-[900px] w-full divide-y divide-gray-200">
               <thead className="bg-[#2C2B2B] text-white sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 text-center text-xs uppercase">
@@ -505,22 +507,22 @@ const EventosOpe = () => {
                     )
                     .map((a) => (
                       <tr key={a.id_alertas}>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.id_alertas}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.eventos_desbordamiento?.descripcion || "—"}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.catalogo_puentes?.ubicacion || "—"}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.fecha_hora}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.tipo_alerta}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           <span
                             className={`px-3 py-1 rounded-full text-white text-xs font-bold ${
                               a.status === "Activa"

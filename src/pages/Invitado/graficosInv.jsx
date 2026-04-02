@@ -38,32 +38,32 @@ const GraficosInv = () => {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <div className="ml-64 flex-1 p-6 bg-white">
-        <h1 className="text-3xl font-bold mb-4 uppercase text-center">
+      <div className="flex-1 lg:ml-64 p-4 sm:p-6 bg-white">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 uppercase text-center">
           Gráficos del clima
         </h1>
 
         {/* Sección clima */}
         {weather?.current_weather && (
-          <div className="p-6 rounded-lg shadow mb-8 text-center">
+          <div className="p-4 sm:p-6 rounded-lg shadow mb-8 text-center">
             {/* Emoji y temperatura centrados */}
-            <div className="text-5xl mb-2">
+            <div className="text-3xl sm:text-4xl lg:text-5xl mb-2">
               {weather.current_weather.temperature < 15
                 ? "🌥️"
                 : weather.current_weather.temperature >= 15 &&
-                  weather.current_weather.temperature < 20
-                ? "🌤️"
-                : "☀️"}{" "}
+                    weather.current_weather.temperature < 20
+                  ? "🌤️"
+                  : "☀️"}{" "}
               {Math.round(weather.current_weather.temperature)}°C
             </div>
 
             {/* Día y hora */}
-            <div className="text-lg font-medium mb-4">
+            <div className="text-sm sm:text-base lg:text-lg font-medium mb-4">
               {new Date(weather.current_weather.time).toLocaleDateString(
                 "es-MX",
                 {
                   weekday: "long",
-                }
+                },
               )}{" "}
               {formatHour(weather.current_weather.time)}
             </div>
@@ -78,7 +78,7 @@ const GraficosInv = () => {
             </div>
 
             {/* Pronóstico 7 días */}
-            <div className="flex justify-center gap-4">
+            <div className="flex gap-3 overflow-x-auto pb-2 justify-start sm:justify-center">
               {weather.daily.time.slice(0, 7).map((day, i) => {
                 const prob = weather.daily.precipitation_probability_max[i];
                 const tempMax = weather.daily.temperature_2m_max[i];
@@ -87,12 +87,12 @@ const GraficosInv = () => {
                   tempMax < 15
                     ? "🌥️"
                     : tempMax >= 15 && tempMax < 20
-                    ? "🌤️"
-                    : "☀️";
+                      ? "🌤️"
+                      : "☀️";
                 return (
                   <div
                     key={day}
-                    className="text-center p-2 bg-white rounded shadow w-20"
+                    className="flex-shrink-0 text-center p-2 bg-white rounded shadow w-20 sm:w-24"
                   >
                     <div className="text-2xl">{emoji}</div>
                     <p className="capitalize text-sm">
@@ -113,18 +113,17 @@ const GraficosInv = () => {
         )}
 
         {/* Gráficas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="mt-28">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="mt-4 sm:mt-6 lg:mt-28">
             <ApexChartPuentes />
           </div>
 
-          <div className="bg-white shadow p-4 rounded mt-8">
-            <h2 className="text-lg font-semibold mb-2 text-center">
+          <div className="bg-white shadow p-3 sm:p-4 rounded mt-6 sm:mt-8">
+            <h2 className="text-base sm:text-lg font-semibold mb-2 text-center">
               Mapa climático de México en tiempo real
             </h2>
             <iframe
-              width="100%"
-              height="500"
+              className="w-full h-[300px] sm:h-[400px] lg:h-[500px]"
               src="https://embed.windy.com/embed2.html?lat=23.6345&lon=-102.5528&detailLat=19.4326&detailLon=-99.1332&width=650&height=450&zoom=5&level=surface&overlay=wind&menu=true&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=true&metricWind=km/h&metricTemp=°C&radarRange=-1"
               frameBorder="0"
               title="Mapa climático Windy"

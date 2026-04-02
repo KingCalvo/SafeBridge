@@ -299,11 +299,11 @@ const ReportePDF = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar userRole={2} />
-      <div className="ml-64 flex-1">
-        <main className="p-8 py-8 bg-gray-100 flex-1  flex justify-center items-start">
-          <div className="bg-white rounded-lg shadow-lg p-10 w-full max-w-5xl space-y-8">
+      <div className="flex-1 lg:ml-64">
+        <main className="p-4 sm:p-6 lg:p-8 bg-gray-100 flex-1 flex justify-center items-start">
+          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-10 w-full max-w-5xl space-y-6 sm:space-y-8">
             <div className="text-center">
-              <h1 className="text-3xl font-bold uppercase text-center mb-8">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-center mb-6 sm:mb-8">
                 REPORTE {idInforme ? idInforme : "Nuevo"}
               </h1>
               <p className="text-sm text-gray-500">
@@ -313,7 +313,7 @@ const ReportePDF = () => {
 
             {/* Información General */}
             {puenteInfo && (
-              <div className="space-y-2 text-gray-700">
+              <div className="space-y-2 text-gray-700 text-sm sm:text-base">
                 <p>
                   <strong>Puente:</strong> {puenteInfo.nombre}
                 </p>
@@ -347,8 +347,8 @@ const ReportePDF = () => {
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
               SENSORES
             </h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white text-sm text-gray-70">
+            <div className="overflow-x-auto rounded-lg">
+              <table className="min-w-[800px] w-full bg-white text-xs sm:text-sm text-gray-70">
                 <thead className="bg-[#2C2B2B] text-white sticky top-0">
                   <tr>
                     <th>ID</th>
@@ -385,28 +385,28 @@ const ReportePDF = () => {
                         key={s.id_sensor}
                         className="divide-y divide-gray-200"
                       >
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.id_sensor}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.catalogo_sensores?.nombre}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.catalogo_sensores?.tipo}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.catalogo_sensores?.marca}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.catalogo_puentes?.nombre}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.catalogo_sensores?.modelo}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.catalogo_puentes?.ubicacion}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {s.status}
                         </td>
                       </tr>
@@ -420,8 +420,8 @@ const ReportePDF = () => {
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
               ALERTAS
             </h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white text-sm text-gray-70">
+            <div className="overflow-x-auto rounded-lg">
+              <table className="min-w-[800px] w-full bg-white text-xs sm:text-sm text-gray-70">
                 <thead className="bg-[#2C2B2B] text-white sticky top-0">
                   <tr>
                     <th>ID</th>
@@ -465,22 +465,22 @@ const ReportePDF = () => {
                         key={a.id_alertas}
                         className="divide-y divide-gray-200"
                       >
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.id_alertas}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.eventos_desbordamiento?.descripcion}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.catalogo_puentes?.ubicacion}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.fecha_hora}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.tipo_alerta}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {a.status}
                         </td>
                       </tr>
@@ -494,8 +494,8 @@ const ReportePDF = () => {
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
               EVENTOS DE DESBORDAMIENTO
             </h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white text-sm text-gray-70">
+            <div className="overflow-x-auto rounded-lg">
+              <table className="min-w-[800px] w-full bg-white text-xs sm:text-sm text-gray-70">
                 <thead className="bg-[#2C2B2B] text-white sticky top-0">
                   <tr>
                     <th>Evento</th>
@@ -528,16 +528,16 @@ const ReportePDF = () => {
                         key={e.id_evento}
                         className="divide-y divide-gray-200"
                       >
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {e.descripcion}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {e.id_puente}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {e.fecha_hora}
                         </td>
-                        <td className="px-4 py-2 text-sm text-gray-700 text-center">
+                        <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                           {e.catalogo_niveles_riesgo?.status}
                         </td>
                       </tr>
@@ -554,7 +554,7 @@ const ReportePDF = () => {
               </h2>
               <div className="flex justify-center">
                 <textarea
-                  className="w-full border p-4 mt-8 rounded-lg"
+                  className="w-full border p-3 sm:p-4 mt-4 sm:mt-8 rounded-lg min-h-[120px]"
                   value={descripcion}
                   onChange={(e) => setDescripcion(e.target.value)}
                   placeholder="Escribe aquí la descripción del reporte..."

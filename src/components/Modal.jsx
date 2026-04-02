@@ -2,8 +2,8 @@ import React from "react";
 
 const Modal = ({ onClose, onSubmit, children }) => {
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white text-black rounded-2xl shadow-xl w-full max-w-md p-8 relative border-4 border-[#ffc340]">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto">
+      <div className="bg-white text-black rounded-2xl shadow-xl w-full max-w-md sm:max-w-lg mx-4 sm:mx-auto p-4 sm:p-6 lg:p-8 relative border-4 border-[#ffc340]">
         {/* Botón de cerrar */}
         <button
           onClick={onClose}
@@ -12,7 +12,7 @@ const Modal = ({ onClose, onSubmit, children }) => {
           &times;
         </button>
         <div className="mb-6 flex justify-center">
-          <div className="w-[20rem] space-y-3">{children}</div>
+          <div className="w-full space-y-3">{children}</div>
         </div>
 
         {/* Acciones */}

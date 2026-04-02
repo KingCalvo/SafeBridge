@@ -90,6 +90,10 @@ const SignUp = () => {
           <a href="mailto:enriquecalvo75@gmail.com" className="text-orange-500">
             enriquecalvo75@gmail.com
           </a>
+          <br />
+          <br />
+          Puedes iniciar sesión con tu cuenta; accederás temporalmente en modo
+          invitado mientras se asignan tus permisos.
         </p>
         <button
           onClick={() => navigate("/")}

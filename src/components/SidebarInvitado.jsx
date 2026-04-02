@@ -8,10 +8,16 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client";
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { user, rol } = useAuth();
+  const roleNames = {
+    1: "Administrador",
+    2: "Operador",
+  };
 
   const menuItems = [
     { label: "Graficos", icon: <SiSoundcharts />, path: "/graficosInv" },
@@ -67,9 +73,22 @@ const Sidebar = () => {
         {/* Rol de usuario */}
         <div className="px-6 mb-8 flex items-center justify-between">
           <div>
-            <p className="text-xl font-semibold text-black-700">Invitado</p>
-            <p className="text-xl text-gray-900">Menú</p>
+            {/* Si hay sesión */}
+            {user ? (
+              <>
+                <p className="text-xl font-semibold text-black-700">
+                  {rol?.nombre || "Usuario"}
+                </p>
+                <p className="text-start text-gray-900">
+                  {roleNames[rol?.id] || "Invitado"}
+                </p>
+              </>
+            ) : (
+              /* Si NO hay sesión */
+              <p className="text-xl font-semibold text-black-700">Invitado</p>
+            )}
           </div>
+
           <FaUserClock className="text-5xl text-black-500" />
         </div>
 

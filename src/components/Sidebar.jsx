@@ -116,10 +116,15 @@ const Sidebar = ({ userRole }) => {
         {/* Rol de usuario */}
         <div className="px-6 mb-8 flex items-center justify-between">
           <div>
+            {/* Nombre del usuario */}
             <p className="text-xl font-semibold text-black-700">
-              {rol?.nombre || roleNames[userRole]}
+              {rol?.nombre || "Usuario"}
             </p>
-            <p className="text-xl text-gray-900">Menú</p>
+
+            {/* Rol del usuario */}
+            <p className="text-start text-gray-900">
+              {roleNames[userRole] || "Invitado"}
+            </p>
           </div>
           <FaUserLock className="text-5xl text-black-500" />
         </div>

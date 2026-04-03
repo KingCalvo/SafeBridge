@@ -80,7 +80,7 @@ const SignUp = () => {
   if (stage === "success") {
     return (
       <div className="min-h-screen bg-[#214543] text-white flex flex-col items-center justify-center p-4">
-        <img src="/src/assets/logoSB.png" alt="logo" className="h-40" />
+        <img src="/src/assets/LogoSB.png" alt="logo" className="h-40" />
         <h2 className="text-xl font-semibold mb-4 text-center">
           ¡Gracias por registrarte!
         </h2>

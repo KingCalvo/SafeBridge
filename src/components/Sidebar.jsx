@@ -77,7 +77,7 @@ const Sidebar = ({ userRole }) => {
 
     localStorage.removeItem("lastRoute");
 
-    navigate("/", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -100,7 +100,7 @@ const Sidebar = ({ userRole }) => {
       ></div>
       <aside
         className={`
-    fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col z-50
+    fixed top-0 left-0 h-screen w-64 bg-[#214543] border-r border-[#214543] text-white flex flex-col z-50
     transform transition-transform duration-300
     ${isOpen ? "translate-x-0" : "-translate-x-full"}
     lg:translate-x-0
@@ -122,7 +122,7 @@ const Sidebar = ({ userRole }) => {
             </p>
 
             {/* Rol del usuario */}
-            <p className="text-start text-gray-900">
+            <p className="text-start text-white">
               {roleNames[userRole] || "Invitado"}
             </p>
           </div>
@@ -137,10 +137,11 @@ const Sidebar = ({ userRole }) => {
               to={path}
               onClick={() => setIsOpen(false)}
               className={({ isActive }) => `
-              w-full flex items-center px-4 py-2 text-gray-700 text-sm font-medium
-              rounded-lg hover:bg-gray-100 transition
-              ${isActive ? "bg-gray-100 font-semibold" : ""}
-            `}
+                w-full flex items-center px-4 py-2 text-white text-sm font-medium
+                rounded-lg transition
+                hover:bg-[#3a8075]
+                ${isActive ? "bg-[#3a8075] font-semibold" : ""}
+              `}
             >
               <span className="text-lg mr-3">{icon}</span>
               {label}
@@ -152,8 +153,8 @@ const Sidebar = ({ userRole }) => {
         <div className="p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center px-4 py-2 text-gray-700 text-sm font-medium
-            rounded-lg hover:bg-gray-100 transition cursor-pointer"
+            className="w-full flex items-center justify-center px-4 py-2 text-white text-sm font-medium
+            rounded-lg hover:bg-[#3a8075] transition cursor-pointer"
           >
             <IoIosLogOut className="text-lg mr-3" />
             CERRAR SESIÓN

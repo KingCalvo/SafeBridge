@@ -3,6 +3,10 @@ import Login from "./Login.jsx";
 import SignUp from "./SignUp.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import RouteTracker from "./RouteTracker";
+
+//Rutas de la Landing Page:
+import Inicio from "../pages/Landing/inicio.jsx";
+
 //Rutas del Admin:
 import InicioAdm from "../pages/Administrador/inicioAdm.jsx";
 import GestionUserAdm from "../pages/Administrador/gestionUserAdm.jsx";
@@ -29,7 +33,8 @@ const App = () => {
       <RouteTracker />
 
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Inicio />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
         {/* Rutas del Administrador */}

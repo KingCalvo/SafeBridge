@@ -7,12 +7,16 @@ const RouteTracker = () => {
   useEffect(() => {
     const publicRoutes = [
       "/",
+      "/servicios",
+      "/about",
+      "/login",
       "/signup",
       "/graficosInv",
       "/puentesInv",
       "/alertasInv",
     ];
     if (location.pathname === "/inicioPC") return;
+    if (location.pathname === "/login") return;
     // NO guardar rutas públicas
     if (!publicRoutes.includes(location.pathname)) {
       localStorage.setItem("lastRoute", location.pathname);

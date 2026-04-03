@@ -72,7 +72,9 @@ const Login = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname !== "/" || !user || !rol) return;
+    if (!user || !rol) return;
+
+    if (location.pathname !== "/login") return;
 
     const lastRoute = localStorage.getItem("lastRoute");
 
@@ -116,7 +118,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#214543] flex flex-col items-center justify-center p-4">
       <form
         onSubmit={handleLogin}
         className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 mt-0 space-y-6"
@@ -175,13 +177,22 @@ const Login = () => {
           </a>
         </div>
         <div className="text-center text-sm">
-          <span className="text-gray-600">¿No tengo una cuenta? </span>
+          <span className="text-gray-600">¿No tienes una cuenta? </span>
           <button
             type="button"
             onClick={() => navigate("/signup")}
-            className="text-orange-400 font-medium hover:underline focus:outline-none"
+            className="text-orange-400 font-medium hover:underline focus:outline-none cursor-pointer"
           >
             Regístrate aquí
+          </button>
+        </div>
+        <div className="text-center text-sm">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="text-orange-400 font-medium hover:underline focus:outline-none cursor-pointer"
+          >
+            Conocenos 🏠
           </button>
         </div>
 

@@ -79,16 +79,19 @@ const SignUp = () => {
   };
   if (stage === "success") {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <img src="/src/assets/logo.png" alt="logo" className="h-32 mb-6" />
+      <div className="min-h-screen bg-[#214543] text-white flex flex-col items-center justify-center p-4">
+        <img src="/src/assets/logoSB.png" alt="logo" className="h-40" />
         <h2 className="text-xl font-semibold mb-4 text-center">
           ¡Gracias por registrarte!
         </h2>
         <p className="mb-6 text-center">
           Un administrador asignará un rol a tu cuenta. <br />
           Dudas o contacto a través de{" "}
-          <a href="mailto:enriquecalvo75@gmail.com" className="text-orange-500">
-            enriquecalvo75@gmail.com
+          <a
+            href="https://mail.google.com/mail/?view=cm&to=enriquecalvo.dev@gmail.com"
+            className="text-orange-500"
+          >
+            enriquecalvo.dev@gmail.com
           </a>
           <br />
           <br />
@@ -96,17 +99,17 @@ const SignUp = () => {
           invitado mientras se asignan tus permisos.
         </p>
         <button
-          onClick={() => navigate("/")}
-          className="px-6 py-2 bg-orange-400 text-white rounded hover:bg-orange-500"
+          onClick={() => navigate("/graficosInv")}
+          className="px-6 py-2 bg-orange-400 text-white rounded hover:bg-orange-500 cursor-pointer"
         >
-          Volver al Login
+          Iniciar
         </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#214543] flex flex-col items-center justify-center p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8 space-y-4"
@@ -118,7 +121,7 @@ const SignUp = () => {
             className="h-32 w-auto"
           />
         </div>
-        <h1 className="text-2xl font-bold uppercase text-center">
+        <h1 className="text-2xl text-gray-600 font-bold uppercase text-center">
           Crear Cuenta
         </h1>
 
@@ -264,7 +267,7 @@ const SignUp = () => {
           <span className="text-gray-600">¿Ya tienes una cuenta? </span>
           <button
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
             className="text-orange-400 font-medium hover:underline"
           >
             Ingresa aquí

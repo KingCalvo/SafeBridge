@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [rol, setRol] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔄 Obtener sesión actual
+  // btener sesión actual
   const fetchUserData = async (sessionUser) => {
     if (!sessionUser) {
       setUser(null);
@@ -31,13 +31,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // 🔥 1. Sesión actual (al recargar)
+    // Sesión actual (al recargar)
     supabase.auth.getSession().then(({ data: { session } }) => {
       fetchUserData(session?.user);
       setLoading(false);
     });
 
-    // 🔥 2. Escuchar cambios (login/logout)
+    // Escuchar cambios (login/logout)
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         fetchUserData(session?.user);

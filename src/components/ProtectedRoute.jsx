@@ -8,10 +8,10 @@ const ProtectedRoute = ({ children, allowedRoles, allowPublic = false }) => {
 
   if (!user && allowPublic) return children;
 
-  if (!user) return <Navigate to="/" replace />;
+  if (!user) return <Navigate to="/login" replace />;
 
   if (allowedRoles && !allowedRoles.includes(rol?.id_rol)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;

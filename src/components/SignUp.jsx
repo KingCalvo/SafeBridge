@@ -57,6 +57,12 @@ const SignUp = () => {
 
       if (authError) throw authError;
 
+      // Login automático
+      await supabase.auth.signInWithPassword({
+        email: emailClean,
+        password: form.password,
+      });
+
       const userId = data.user.id;
 
       // Guardar en la tabla usuario

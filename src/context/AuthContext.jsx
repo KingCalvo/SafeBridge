@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [rol, setRol] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // btener sesión actual
+  // Obtener sesión actual
   const fetchUserData = async (sessionUser) => {
     if (!sessionUser) {
       setUser(null);

@@ -82,7 +82,7 @@ const Sidebar = ({ userRole }) => {
 
   return (
     <>
-      {/* BOTÓN HAMBURGUESA */}
+      {/* Botón Hamburguesa */}
       <button
         onClick={() => setIsOpen(true)}
         className="lg:hidden fixed top-10 left-4 z-50 bg-white p-2 rounded-md shadow-md"
@@ -90,7 +90,7 @@ const Sidebar = ({ userRole }) => {
         <FaBars className="text-xl" />
       </button>
 
-      {/* OVERLAY */}
+      {/* Overlay */}
       <div
         onClick={() => setIsOpen(false)}
         className={`

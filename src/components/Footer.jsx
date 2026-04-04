@@ -10,7 +10,6 @@ const Footer = () => {
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-[1.2fr_1fr_1fr] gap-12 items-start">
-        {/* Logo + descripción */}
         <div className="max-w-sm">
           <img src={logo} alt="SafeBridge" className="w-32 mb-4" />
 

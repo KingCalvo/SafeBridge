@@ -64,7 +64,7 @@ const Header = () => {
         </div>
       </header>
 
-      {/* MENU MÓVIL */}
+      {/* Menú movil */}
       <div
         className={`fixed inset-0 z-50 bg-[#214543] transform transition-transform duration-300 ${
           menuOpen ? "translate-x-0" : "translate-x-full"

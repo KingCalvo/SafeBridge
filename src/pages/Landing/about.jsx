@@ -4,6 +4,7 @@ import Footer from "../../components/Footer";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
 import { FaGithub, FaLinkedin, FaInstagram, FaEnvelope } from "react-icons/fa";
 import PageTitle from "../../components/PageTitle";
+import SafeFondo from "../../assets/SafeBridgeFondo.png";
 
 const About = () => {
   useScrollAnimation();
@@ -61,8 +62,8 @@ const About = () => {
           </p>
         </div>
 
-        <div className="h-80 bg-gray-200 rounded-xl flex items-center justify-center">
-          Imagen aquí
+        <div className="h-88 bg-gray-200 rounded-xl flex items-center justify-center">
+          <img src={SafeFondo} className="w-full h-full object-cover" />
         </div>
       </section>
 

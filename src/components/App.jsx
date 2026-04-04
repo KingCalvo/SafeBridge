@@ -35,6 +35,7 @@ const App = () => {
       <RouteTracker />
 
       <Routes>
+        {/* Rutas de la Landing Page: */}
         <Route path="/" element={<Inicio />} />
         <Route path="/servicios" element={<Servicios />} />
         <Route path="/about" element={<About />} />

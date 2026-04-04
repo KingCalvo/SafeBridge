@@ -174,11 +174,11 @@ const Login = () => {
         onSubmit={handleLogin}
         className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 mt-0 space-y-6"
       >
-        <div className="flex justify-center mb-3">
+        <div className="flex justify-center items-center h-40 mb-8">
           <img
-            src="/src/assets/logo.png"
+            src="/src/assets/LogoSafe.png"
             alt="SafeBridge logo"
-            className="h-52 w-auto"
+            className="h-56 object-contain"
           />
         </div>
 

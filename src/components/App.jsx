@@ -6,6 +6,8 @@ import RouteTracker from "./RouteTracker";
 
 //Rutas de la Landing Page:
 import Inicio from "../pages/Landing/inicio.jsx";
+import Servicios from "../pages/Landing/servicios.jsx";
+import About from "../pages/Landing/about.jsx";
 
 //Rutas del Admin:
 import InicioAdm from "../pages/Administrador/inicioAdm.jsx";
@@ -34,6 +36,8 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<Inicio />} />
+        <Route path="/servicios" element={<Servicios />} />
+        <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 

@@ -4,7 +4,7 @@ import Footer from "../../components/Footer";
 import puente from "../../assets/puenteR.png";
 import puenteD from "../../assets/PuenteDestruido2.webp";
 import zona from "../../assets/zonaR.png";
-import SafeFondo from "../../assets/SafeBridgeF.png";
+import SafeFondo from "../../assets/BridgeFondo.png";
 // IMÁGENES DEL CARRUSEL
 import img1 from "../../assets/SafeBridge-Login.png";
 import img2 from "../../assets/SafeBridge-InicioInv.png";

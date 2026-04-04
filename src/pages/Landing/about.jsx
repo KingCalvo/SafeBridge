@@ -4,7 +4,7 @@ import Footer from "../../components/Footer";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
 import { FaGithub, FaLinkedin, FaInstagram, FaEnvelope } from "react-icons/fa";
 import PageTitle from "../../components/PageTitle";
-import SafeFondo from "../../assets/SafeBridgeF.png";
+import SafeFondo from "../../assets/BridgeFondo.png";
 
 const About = () => {
   useScrollAnimation();

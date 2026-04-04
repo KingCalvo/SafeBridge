@@ -44,7 +44,7 @@ const About = () => {
       {/* about us */}
       <section className="pb-32 px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div className="fade-up">
-          <h2 className="text-3xl font-bold mb-6 text-[#fb923c]">
+          <h2 className="text-3xl font-bold mb-6 text-white">
             ¿Qué es SafeBridge?
           </h2>
 
@@ -62,7 +62,7 @@ const About = () => {
           </p>
         </div>
 
-        <div className="h-88 bg-gray-200 rounded-xl flex items-center justify-center">
+        <div className="h-80 bg-gray-200 rounded-xl flex items-center justify-center">
           <img src={SafeFondo} className="w-full h-full object-cover" />
         </div>
       </section>

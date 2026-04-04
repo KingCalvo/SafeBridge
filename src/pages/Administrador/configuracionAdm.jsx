@@ -438,7 +438,7 @@ const ConfiguracionAdm = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={filterPuenteStatus}
                 onChange={(e) => setFilterPuenteStatus(e.target.value)}
               >
@@ -450,14 +450,14 @@ const ConfiguracionAdm = () => {
             </div>
             <button
               onClick={() => openAddModal("puente")}
-              className=" sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+              className=" sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
             >
               <IoIosAddCircleOutline className="text-2xl" />
               <span>Agregar</span>
             </button>
             <button
               onClick={() => navigate("/reportesPuentesPDF")}
-              className=" sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+              className=" sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
             >
               <FaFileMedical className="text-2xl font-bold" />
               <span>GENERAR REPORTE</span>
@@ -521,7 +521,7 @@ const ConfiguracionAdm = () => {
                         <span
                           className={`px-3 py-1 rounded-full text-white font-bold ${
                             p.status === "Activo"
-                              ? "bg-green-500"
+                              ? "bg-green-600"
                               : p.status === "Inactivo"
                                 ? "bg-red-500"
                                 : "bg-yellow-500"
@@ -535,13 +535,13 @@ const ConfiguracionAdm = () => {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => openEditModal(p, "puente")}
-                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                            className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
                           >
                             <FaRegEdit />
                           </button>
                           <button
                             onClick={() => handleDelete(p.id_puente, "puente")}
-                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
                           >
                             <FaDeleteLeft />
                           </button>
@@ -562,7 +562,7 @@ const ConfiguracionAdm = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={filterNivelTipo}
                 onChange={(e) => setFilterNivelTipo(e.target.value)}
               >
@@ -576,7 +576,7 @@ const ConfiguracionAdm = () => {
             </div>
             <button
               onClick={() => openAddModal("nivel")}
-              className="flex items-center space-x-1 font-bold px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+              className="flex items-center space-x-1 font-bold px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
             >
               <IoIosAddCircleOutline className="text-2xl" />
               <span>Agregar</span>
@@ -639,7 +639,7 @@ const ConfiguracionAdm = () => {
                       <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-gray-700 text-center">
                         <span
                           className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
-                            n.status === "Alto" ? "bg-red-500" : "bg-green-500"
+                            n.status === "Alto" ? "bg-red-500" : "bg-green-600"
                           }`}
                         >
                           {n.status === "Alto" ? (
@@ -654,13 +654,13 @@ const ConfiguracionAdm = () => {
                       <td className="px-4 py-2 text-center space-x-2">
                         <button
                           onClick={() => openEditModal(n, "nivel")}
-                          className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
                         >
                           <FaRegEdit />
                         </button>
                         <button
                           onClick={() => handleDelete(n.id_nivel, "nivel")}
-                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
                         >
                           <FaDeleteLeft />
                         </button>
@@ -678,7 +678,7 @@ const ConfiguracionAdm = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 appearance-none"
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 appearance-none cursor-pointer"
                 value={filterSensorStatus}
                 onChange={(e) => setFilterSensorStatus(e.target.value)}
               >
@@ -689,7 +689,7 @@ const ConfiguracionAdm = () => {
             </div>
             <button
               onClick={() => openAddModal("sensor")}
-              className="flex items-center space-x-1 font-bold px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+              className="flex items-center space-x-1 font-bold px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
             >
               <IoIosAddCircleOutline className="text-2xl" />
               <span>Agregar</span>
@@ -772,7 +772,7 @@ const ConfiguracionAdm = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-white ${
                               s.status === "Activo"
-                                ? "bg-green-500"
+                                ? "bg-green-600"
                                 : "bg-red-500"
                             }`}
                           >
@@ -790,13 +790,13 @@ const ConfiguracionAdm = () => {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => openEditModal(s, "sensor")}
-                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                            className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
                           >
                             <FaRegEdit />
                           </button>
                           <button
                             onClick={() => handleDelete(s.id_sensor, "sensor")}
-                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
                           >
                             <FaDeleteLeft />
                           </button>

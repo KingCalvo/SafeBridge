@@ -157,7 +157,7 @@ const AlertasEventosAdm = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={tipoAlertaFilter}
                 onChange={(e) => setTipoAlertaFilter(e.target.value)}
               >
@@ -235,7 +235,7 @@ const AlertasEventosAdm = () => {
                         <span
                           className={`px-2 py-1 rounded-full text-white font-bold  ${
                             alerta.status === "Activa"
-                              ? "bg-green-500"
+                              ? "bg-green-600"
                               : "bg-red-500"
                           }`}
                         >
@@ -265,7 +265,7 @@ const AlertasEventosAdm = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={nivelRiesgoFilter}
                 onChange={(e) => setNivelRiesgoFilter(e.target.value)}
               >
@@ -326,7 +326,7 @@ const AlertasEventosAdm = () => {
                           className={`inline-flex items-center px-3 py-1 rounded-full text-white text-xs font-bold ${
                             evento.catalogo_niveles_riesgo?.status === "Alto"
                               ? "bg-red-500"
-                              : "bg-green-500"
+                              : "bg-green-600"
                           }`}
                         >
                           {evento.catalogo_niveles_riesgo?.status === "Alto" ? (

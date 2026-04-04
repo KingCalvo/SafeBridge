@@ -86,7 +86,6 @@ const EventosOpe = () => {
     setTimeout(() => setLoadingAlertas(false), 150);
   };
 
-  // Armo un map { Alto: algúnId, Bajo: algúnId }
   const statusMap = useMemo(() => {
     const m = {};
     nivelesRiesgo.forEach((n) => {
@@ -112,7 +111,7 @@ const EventosOpe = () => {
     const contrario = actualStatus === "Alto" ? "Bajo" : "Alto";
 
     return [
-      // opción actual: *usamos su mismo id*
+      // opción actual:
       <option key={actualId} value={actualId}>
         {actualStatus}
       </option>,
@@ -301,7 +300,7 @@ const EventosOpe = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={filterNivel}
                 onChange={(e) => setFilterNivel(e.target.value)}
               >
@@ -314,7 +313,7 @@ const EventosOpe = () => {
             {/* Botón Agregar */}
             <button
               onClick={openAddModal}
-              className="flex items-center space-x-2 px-4 font-bold py-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
+              className="flex items-center space-x-2 px-4 font-bold py-2 p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
             >
               <IoIosAddCircleOutline className="text-2xl font-bold" />
               <span>Agregar Evento</span>
@@ -404,13 +403,13 @@ const EventosOpe = () => {
                           <div className="flex justify-center gap-2">
                             <button
                               onClick={() => openEditModal(e)}
-                              className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                              className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
                             >
                               <FaRegEdit />
                             </button>
                             <button
                               onClick={() => handleDelete(e.id_evento)}
-                              className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                              className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
                             >
                               <FaDeleteLeft />
                             </button>
@@ -431,7 +430,7 @@ const EventosOpe = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={filtroRiesgoAlerta}
                 onChange={(e) => setFiltroRiesgoAlerta(e.target.value)}
               >
@@ -537,7 +536,7 @@ const EventosOpe = () => {
                           {a.status === "Activa" && (
                             <button
                               onClick={() => desactivarAlerta(a.id_alertas)}
-                              className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition cursor-pointer"
+                              className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
                             >
                               <IoIosFlashOff />
                             </button>

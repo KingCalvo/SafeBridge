@@ -111,7 +111,9 @@ const About = () => {
 
         <div className="grid md:grid-cols-3 gap-5 mb-20">
           <div className="fade-up bg-white text-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="font-bold text-lg mb-3">Monitoreo inteligente</h3>
+            <h3 className="font-bold text-lg mb-3 text-center">
+              Monitoreo inteligente
+            </h3>
             <p className="text-justify">
               Supervisamos continuamente condiciones críticas para anticipar
               riesgos y generar información confiable.
@@ -119,7 +121,9 @@ const About = () => {
           </div>
 
           <div className="fade-up bg-white text-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="font-bold text-lg mb-3">Alertas en tiempo real</h3>
+            <h3 className="font-bold text-lg mb-3 text-center">
+              Alertas en tiempo real
+            </h3>
             <p className="text-justify">
               Notificamos de forma inmediata a usuarios y autoridades para
               actuar con rapidez ante cualquier situación.
@@ -127,7 +131,9 @@ const About = () => {
           </div>
 
           <div className="fade-up bg-white text-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="font-bold text-lg mb-3">Plataforma digital</h3>
+            <h3 className="font-bold text-lg mb-3 text-center">
+              Plataforma digital
+            </h3>
             <p className="text-justify">
               Ofrecemos una plaforma intuitiva que permite visualizar datos,
               analizar la información y tomar mejores decisiones informadas.

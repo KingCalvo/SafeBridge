@@ -262,7 +262,7 @@ const MonitoreoSensoresAdm = () => {
             <div className="relative w-full sm:w-64">
               <CiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={filterStation}
                 onChange={(e) => setFilterStation(e.target.value)}
               >
@@ -276,7 +276,7 @@ const MonitoreoSensoresAdm = () => {
             </div>
             <button
               onClick={openAddModal}
-              className="w-full sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+              className="w-full sm:w-auto flex items-center justify-center space-x-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
             >
               <IoIosAddCircleOutline className="text-2xl" />
               <span className="text-sm font-medium">Agregar</span>
@@ -358,7 +358,7 @@ const MonitoreoSensoresAdm = () => {
                         <span
                           className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm text-white font-bold ${
                             est.sensores?.status === "Activo"
-                              ? "bg-green-500"
+                              ? "bg-green-600"
                               : "bg-red-500"
                           }`}
                         >
@@ -370,13 +370,13 @@ const MonitoreoSensoresAdm = () => {
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => handleEdit(est)}
-                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                            className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
                           >
                             <FaRegEdit />
                           </button>
                           <button
                             onClick={() => handleDelete(est.id_estaciones)}
-                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
                           >
                             <FaDeleteLeft />
                           </button>

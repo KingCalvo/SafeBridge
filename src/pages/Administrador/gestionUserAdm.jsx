@@ -252,7 +252,7 @@ const GestionUserAdm = () => {
             </div>
             <div className="relative">
               <select
-                className="w-full sm:w-auto border border-gray-300 rounded-lg px-6 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="w-full sm:w-auto border border-gray-300 rounded-lg px-6 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
               >
@@ -267,7 +267,7 @@ const GestionUserAdm = () => {
             </div>
             <button
               onClick={openAddModal}
-              className="flex items-center justify-center w-3/12 sm:w-auto p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition cursor-pointer"
+              className="flex items-center justify-center w-3/12 sm:w-auto p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
             >
               <FaUserPlus className="text-2xl" />
             </button>
@@ -374,7 +374,7 @@ const GestionUserAdm = () => {
                         <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-center">
                           <span
                             className={`px-2 py-1 rounded-full font-semibold text-white ${
-                              statusActivo ? "bg-green-500" : "bg-red-500"
+                              statusActivo ? "bg-green-600" : "bg-red-500"
                             }`}
                           >
                             {statusActivo ? "Activo" : "Inactivo"}
@@ -384,7 +384,7 @@ const GestionUserAdm = () => {
                           <div className="flex justify-center gap-2">
                             <button
                               onClick={() => openEditModal(user)}
-                              className="p-1 text-green-500 hover:text-green-700 cursor-pointer"
+                              className="p-1 text-green-600 hover:text-green-700 cursor-pointer"
                             >
                               <FaUserEdit className="text-2xl" />
                             </button>

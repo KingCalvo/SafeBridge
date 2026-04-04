@@ -268,7 +268,7 @@ const ReportesOpe = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -350,7 +350,7 @@ const ReportesOpe = () => {
                       <td className="px-4 py-2 text-center">
                         <button
                           onClick={() => handleGenerarReporte(puente.id_puente)}
-                          className="p-2 sm:px-3 sm:py-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                          className="p-2 sm:px-3 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
                         >
                           <FaFileMedical />
                         </button>
@@ -370,7 +370,7 @@ const ReportesOpe = () => {
             <div className="relative">
               <CiFilter className="absolute left-2 top-1/2 transform -translate-y-1/2 text-2xl text-gray-600" />
               <select
-                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none"
+                className="border border-gray-300 rounded-lg pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 appearance-none cursor-pointer"
                 value={nivelRiesgoFilter}
                 onChange={(e) => setNivelRiesgoFilter(e.target.value)}
               >
@@ -463,7 +463,7 @@ const ReportesOpe = () => {
                         <div className="flex justify-center gap-2 flex-wrap">
                           <button
                             onClick={() => openEditModal(info)}
-                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-500 transition cursor-pointer"
+                            className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition cursor-pointer"
                           >
                             <FaRegEdit />
                           </button>
@@ -471,7 +471,7 @@ const ReportesOpe = () => {
                             onClick={() =>
                               handleDeleteInforme(info.id_Informes)
                             }
-                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-500 transition cursor-pointer"
+                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer"
                           >
                             <FaDeleteLeft />
                           </button>

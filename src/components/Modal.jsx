@@ -25,7 +25,7 @@ const Modal = ({ onClose, onSubmit, children }) => {
           </button>
           <button
             onClick={onSubmit}
-            className="px-4 py-2 bg-green-500 text-black font-semibold rounded-lg hover:bg-green-700 transition cursor-pointer"
+            className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition cursor-pointer"
           >
             Guardar
           </button>

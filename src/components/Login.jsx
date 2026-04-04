@@ -8,6 +8,7 @@ import { useNotificacion } from "./NotificacionContext.jsx";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "react-router-dom";
 import PageTitle from "../components/PageTitle";
+import LogoSafe from "../assets/LogoSafeP.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -176,7 +177,7 @@ const Login = () => {
       >
         <div className="flex justify-center items-center h-40 mb-8">
           <img
-            src="/src/assets/LogoSafe.png"
+            src={LogoSafe}
             alt="SafeBridge logo"
             className="h-56 object-contain"
           />

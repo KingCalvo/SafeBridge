@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
 import { useNotificacion } from "../components/NotificacionContext.jsx";
 import PageTitle from "../components/PageTitle";
+import LogoSafe from "../assets/LogoSafeP.png";
+import LogoSB from "../assets/LogoSBP.png";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -84,7 +86,7 @@ const SignUp = () => {
     return (
       <div className="min-h-screen bg-[#214543] text-white flex flex-col items-center justify-center p-4">
         <PageTitle title="SignUp" />
-        <img src="/src/assets/LogoSB.png" alt="logo" className="h-40" />
+        <img src={LogoSB} alt="logo" className="h-40" />
         <h2 className="text-xl font-semibold mb-4 text-center">
           ¡Gracias por registrarte!
         </h2>
@@ -121,7 +123,7 @@ const SignUp = () => {
       >
         <div className="flex justify-center items-center h-40 mb-4">
           <img
-            src="/src/assets/LogoSafe.png"
+            src={LogoSafe}
             alt="SafeBridge logo"
             className="h-56 object-contain"
           />

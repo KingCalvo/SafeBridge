@@ -48,9 +48,12 @@ const Inicio = () => {
         <div className="absolute inset-0 bg-black/50"></div>
 
         <div className="relative text-center text-white px-6 max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2">
             Ciudades más seguras empiezan con{" "}
-            <span className="text-[#fb923c]">Safe</span>Bridge
+          </h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-14">
+            <span className="text-[#fb923c] text-6xl">Safe</span>
+            Bridge
           </h1>
 
           <p className="text-lg md:text-xl leading-relaxed">
@@ -103,7 +106,7 @@ const Inicio = () => {
 
           <div className="grid md:grid-cols-2 gap-16 items-center mb-24 fade-up">
             <div>
-              <span className="text-[#fb923c] font-semibold text-sm">
+              <span className="text-orange-500 font-semibold text-sm">
                 PASO 01
               </span>
 
@@ -129,7 +132,7 @@ const Inicio = () => {
             </div>
 
             <div className="order-1 md:order-2">
-              <span className="text-[#fb923c] font-semibold text-sm">
+              <span className="text-orange-500 font-semibold text-sm">
                 PASO 02
               </span>
 
@@ -147,7 +150,7 @@ const Inicio = () => {
 
           <div className="grid md:grid-cols-2 gap-16 items-center fade-up">
             <div>
-              <span className="text-[#fb923c] font-semibold text-sm">
+              <span className="text-orange-500 font-semibold text-sm">
                 PASO 03
               </span>
 

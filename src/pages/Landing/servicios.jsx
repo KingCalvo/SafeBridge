@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
+import PageTitle from "../../components/PageTitle";
 
 const Servicios = () => {
   useScrollAnimation();
@@ -20,26 +21,24 @@ const Servicios = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // VALIDADORES
+  // Validación
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // LIMPIAR MENSAJES AL ESCRIBIR
+    // Limpiar mensajes
     setError("");
     setSuccess("");
 
-    // SOLO LETRAS
     if (name === "nombre" || name === "apellidos") {
       if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(value)) return;
     }
 
-    // TELÉFONO SOLO NÚMEROS Y MAX 10
+    // Telefono solo números y max 10 dígitos
     if (name === "telefono") {
       if (!/^\d*$/.test(value)) return;
       if (value.length > 10) return;
     }
 
-    // MENSAJE MAX 700
     if (name === "mensaje") {
       if (value.length > 700) return;
     }
@@ -47,7 +46,7 @@ const Servicios = () => {
     setForm({ ...form, [name]: value });
   };
 
-  // VALIDACIÓN FINAL
+  // Validación al enviar
   const handleSubmit = () => {
     setError("");
     setSuccess("");
@@ -76,7 +75,6 @@ const Servicios = () => {
       setSuccess("");
     }, 2500);
 
-    // LIMPIAR FORM
     setForm({
       nombre: "",
       apellidos: "",
@@ -89,10 +87,9 @@ const Servicios = () => {
 
   return (
     <div className="font-landing bg-[#3a8075] text-white">
+      <PageTitle title="Servicios" />
       <Header />
-
-      {/* HERO */}
-      <section className="py-32 text-center px-6 fade-up">
+      <section className="py-28 text-center px-6 fade-up">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
           Planes de <span className="text-[#fb923c]">Safe</span>Bridge
         </h1>
@@ -103,9 +100,9 @@ const Servicios = () => {
         </p>
       </section>
 
-      {/* CARDS */}
-      <section className="pb-32 px-6 flex flex-col md:flex-row gap-10 justify-center items-center">
-        {/* GRATIS */}
+      {/* Cards*/}
+      <section className="pb-32 px-6 flex flex-col md:flex-row gap-14 justify-center items-center">
+        {/* Gratis */}
         <div className="fade-up w-80 h-[29rem] p-8 bg-white text-center rounded-3xl shadow-xl flex flex-col justify-between">
           <div>
             <h2 className="text-black font-semibold text-2xl">Invitado</h2>
@@ -132,7 +129,7 @@ const Servicios = () => {
           </a>
         </div>
 
-        {/* PREMIUM */}
+        {/* Premium */}
         <div className="fade-up w-80 h-[28rem] p-8 bg-[#214543] text-center rounded-3xl text-white shadow-xl border-2 border-[#fb923c] transform scale-105 relative flex flex-col justify-between">
           <div>
             <h2 className="font-semibold text-2xl">Profesional</h2>
@@ -167,7 +164,7 @@ const Servicios = () => {
         </div>
       </section>
 
-      {/* MODAL */}
+      {/* Modal */}
       {openModal && (
         <div
           className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4"
@@ -187,7 +184,7 @@ const Servicios = () => {
               SafeBridge en tu entorno de forma rápida y eficiente.
             </p>
 
-            {/* FORM */}
+            {/* Form */}
             <div className="space-y-4 text-left">
               <input
                 name="nombre"
@@ -229,7 +226,6 @@ const Servicios = () => {
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fb923c] focus:border-transparent"
               />
 
-              {/* TEXTAREA */}
               <textarea
                 name="mensaje"
                 value={form.mensaje}
@@ -243,7 +239,6 @@ const Servicios = () => {
               </p>
             </div>
 
-            {/* BOTONES */}
             <div className="mt-6 flex gap-4">
               <button
                 onClick={() => setOpenModal(false)}
@@ -273,7 +268,7 @@ const Servicios = () => {
 
       <Footer />
 
-      {/* ANIMACIÓN */}
+      {/* Animación */}
       <style>
         {`
           @keyframes fadeIn {

@@ -12,6 +12,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { useNotificacion } from "../../components/NotificacionContext";
 import { useAlerta } from "../../components/AlertaContext";
+import PageTitle from "../../components/PageTitle";
 
 const ReportesOpe = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -236,6 +237,7 @@ const ReportesOpe = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Generar Reportes" />
       <Sidebar userRole={2} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">

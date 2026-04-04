@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
 import { useNotificacion } from "../components/NotificacionContext.jsx";
+import PageTitle from "../components/PageTitle";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -26,8 +27,10 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
 
-    if (!form.correo.includes("@")) {
-      return notify("El correo debe contener '@'.", { type: "error" });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(form.correo.trim())) {
+      return notify("Ingresa un correo electrónico válido.", { type: "error" });
     }
 
     if (form.password !== form.confirm) {
@@ -80,6 +83,7 @@ const SignUp = () => {
   if (stage === "success") {
     return (
       <div className="min-h-screen bg-[#214543] text-white flex flex-col items-center justify-center p-4">
+        <PageTitle title="SignUp" />
         <img src="/src/assets/LogoSB.png" alt="logo" className="h-40" />
         <h2 className="text-xl font-semibold mb-4 text-center">
           ¡Gracias por registrarte!
@@ -110,6 +114,7 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen bg-[#214543] flex flex-col items-center justify-center p-4">
+      <PageTitle title="Sign Up" />
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8 space-y-4"
@@ -221,6 +226,8 @@ const SignUp = () => {
             onChange={handleChange}
             required
             maxLength="40"
+            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+            title="Ingresa un correo válido (ej: ejemplo@gmail.com)"
             className="w-full border border-gray-300 rounded-lg px-3 py-2"
           />
         </div>

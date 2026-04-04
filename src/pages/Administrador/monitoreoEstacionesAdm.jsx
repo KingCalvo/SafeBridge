@@ -12,6 +12,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import ModalInfo from "../../components/ModalInfo";
 import { useNotificacion } from "../../components/NotificacionContext";
 import { useAlerta } from "../../components/AlertaContext";
+import PageTitle from "../../components/PageTitle";
 
 const MonitoreoSensoresAdm = () => {
   const [estaciones, setEstaciones] = useState([]);
@@ -233,6 +234,7 @@ const MonitoreoSensoresAdm = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Estaciones" />
       <Sidebar userRole={1} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">

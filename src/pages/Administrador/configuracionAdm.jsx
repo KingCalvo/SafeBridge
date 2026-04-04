@@ -13,8 +13,9 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import ModalInfo from "../../components/ModalInfo";
 import { useNotificacion } from "../../components/NotificacionContext";
 import { useAlerta } from "../../components/AlertaContext";
-
+import PageTitle from "../../components/PageTitle";
 import {} from "react-icons/fa";
+
 const ConfiguracionAdm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [puentes, setPuentes] = useState([]);
@@ -132,7 +133,7 @@ const ConfiguracionAdm = () => {
 
   const saveChanges = async () => {
     try {
-      //AGREGAR PUENTE
+      //Agregar puente
       if (addingTipo === "puente") {
         const lastId = puentes[puentes.length - 1]?.id_puente || 0;
         const nuevoPuente = {
@@ -150,7 +151,7 @@ const ConfiguracionAdm = () => {
         notify("Puente agregado correctamente.", { type: "success" });
       }
 
-      //AGREGAR NIVEL
+      //Agregar nivel
       else if (addingTipo === "nivel") {
         const lastId = niveles[niveles.length - 1]?.id_nivel || 0;
         const nuevoNivel = {
@@ -168,7 +169,7 @@ const ConfiguracionAdm = () => {
         notify("Nivel de riesgo editado correctamente.", { type: "success" });
       }
 
-      //AGREGAR SENSOR
+      //Agregar sensor
       else if (addingTipo === "sensor") {
         const { data: lastCat, error: errLastCat } = await supabase
           .from("catalogo_sensores")
@@ -213,7 +214,7 @@ const ConfiguracionAdm = () => {
         notify("Sensor agregado correctamente.", { type: "success" });
       }
 
-      //EDITAR PUENTE
+      //Editar puente
       else if (editingTipo === "puente") {
         const { id_puente, nombre, ubicacion, info, status } = editingItem;
         const { error } = await supabase
@@ -225,7 +226,7 @@ const ConfiguracionAdm = () => {
         notify("Puente editado correctamente.", { type: "success" });
       }
 
-      //EDITAR NIVEL
+      //Eeditar nivel
       else if (editingTipo === "nivel") {
         const { id_nivel, nombre, descripcion, tipo_riesgo, status } =
           editingItem;
@@ -238,7 +239,7 @@ const ConfiguracionAdm = () => {
         notify("Nivel de riesgo editado correctamente.", { type: "success" });
       }
 
-      //EDITAR SENSOR
+      //Editar sensor
       else if (editingTipo === "sensor") {
         const {
           catalogo_sensores,
@@ -316,7 +317,7 @@ const ConfiguracionAdm = () => {
         fetchPuentes();
         notify("Puente eliminado correctamente.", { type: "success" });
       } else if (tipo === "sensor") {
-        // --- ELIMINACIÓN PARA SENSORES ---
+        //Eliminación de sensores
         const { data: rec, error: errFetch } = await supabase
           .from("sensores")
           .select("id_tipo_sensor")
@@ -410,6 +411,7 @@ const ConfiguracionAdm = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Configuración" />
       <Sidebar userRole={1} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">

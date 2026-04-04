@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import { IoMdReturnLeft } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useNotificacion } from "../../components/NotificacionContext";
+import PageTitle from "../../components/PageTitle";
 
 const ReportePDF = () => {
   const [sensores, setSensores] = useState([]);
@@ -204,7 +205,7 @@ const ReportePDF = () => {
       },
     };
 
-    // SENSORES
+    // Sensores
     doc.setFontSize(14);
     doc.text("SENSORES", pageWidth / 2, y, { align: "center" });
     y += 20;
@@ -236,7 +237,7 @@ const ReportePDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // ALERTAS
+    // Alertas
     doc.setFontSize(14);
     doc.text("ALERTAS", pageWidth / 2, y, { align: "center" });
     y += 20;
@@ -264,7 +265,7 @@ const ReportePDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // EVENTOS
+    // Eventos
     doc.setFontSize(14);
     doc.text("EVENTOS DE DESBORDAMIENTO", pageWidth / 2, y, {
       align: "center",
@@ -298,6 +299,7 @@ const ReportePDF = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Nuevo Reporte" />
       <Sidebar userRole={2} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-100 flex-1 flex justify-center items-start">

@@ -7,6 +7,7 @@ import { supabase } from "../../supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import dayjs from "dayjs";
+import PageTitle from "../../components/PageTitle";
 
 const ReportesPuentesPDF = () => {
   const [puentes, setPuentes] = useState([]);
@@ -85,7 +86,7 @@ const ReportesPuentesPDF = () => {
     doc.text(dayjs().format("DD/MM/YYYY HH:mm"), 450, 45);
     let y = 70;
 
-    // — PUENTES —
+    // Puentes
     doc.setFontSize(16);
     doc.text("PUENTES", 40, y);
     y += 20;
@@ -104,7 +105,7 @@ const ReportesPuentesPDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // — SENSORES —
+    // Sensores
     doc.setFontSize(16);
     doc.text("SENSORES", 40, y);
     y += 20;
@@ -137,7 +138,7 @@ const ReportesPuentesPDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // — ALERTAS —
+    // Alertas
     doc.setFontSize(16);
     doc.text("ALERTAS", 40, y);
     y += 20;
@@ -166,7 +167,7 @@ const ReportesPuentesPDF = () => {
     });
     y = doc.lastAutoTable.finalY + 30;
 
-    // — EVENTOS DE DESBORDAMIENTO —
+    // Eventos desbordamientos
     doc.setFontSize(16);
     doc.text("EVENTOS DE DESBORDAMIENTO", 40, y);
     y += 20;
@@ -189,6 +190,7 @@ const ReportesPuentesPDF = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Reporte PDF" />
       <Sidebar userRole={1} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-100 flex justify-center items-start">

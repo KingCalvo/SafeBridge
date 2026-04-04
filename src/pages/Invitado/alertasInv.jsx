@@ -3,6 +3,7 @@ import Sidebar from "../../components/SidebarInvitado";
 import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
+import PageTitle from "../../components/PageTitle";
 
 const AlertasInv = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,6 +64,7 @@ const AlertasInv = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Alertas y Estaciones" />
       <Sidebar />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8">

@@ -7,6 +7,7 @@ import Toggle from "../../components/Toggle";
 import { GoAlert } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
 import { useNotificacion } from "../../components/NotificacionContext";
+import PageTitle from "../../components/PageTitle";
 
 const AlertasEventosAdm = () => {
   const [alertas, setAlertas] = useState([]);
@@ -128,6 +129,7 @@ const AlertasEventosAdm = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Alertas y Eventos" />
       <Sidebar userRole={1} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">

@@ -8,6 +8,7 @@ import Modal from "../../components/Modal";
 import Sidebar from "../../components/Sidebar";
 import { useNotificacion } from "../../components/NotificacionContext";
 import { useAlerta } from "../../components/AlertaContext";
+import PageTitle from "../../components/PageTitle";
 
 const GestionUserAdm = () => {
   const [users, setUsers] = useState([]);
@@ -32,6 +33,19 @@ const GestionUserAdm = () => {
   const { confirmar } = useAlerta();
   const { notify } = useNotificacion();
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) setCurrentUserId(user.id);
+    };
+
+    getUser();
+  }, []);
 
   useEffect(() => {
     fetchRoles();
@@ -82,6 +96,18 @@ const GestionUserAdm = () => {
   }, [searchTerm, filterRole, users]);
 
   const handleDelete = async (user) => {
+    // No permitir eliminarse a sí mismo
+    if (user.user_id === currentUserId) {
+      return notify("No puedes eliminarte a ti mismo.", { type: "error" });
+    }
+
+    // No permitir eliminar administradores
+    if (user.id_rol === 1) {
+      return notify("No puedes eliminar a otro administrador.", {
+        type: "error",
+      });
+    }
+
     const ok = await confirmar(`el usuario con ID ${user.id_usuario}`);
     if (!ok) return;
 
@@ -173,7 +199,7 @@ const GestionUserAdm = () => {
 
       let error;
 
-      // CREAR USUARIO (Auth + DB)
+      // Crear usuario (Auth + DB)
       if (!editingUser) {
         const {
           data: { session },
@@ -201,7 +227,7 @@ const GestionUserAdm = () => {
         if (createError) throw createError;
       }
 
-      // EDITAR USUARIO (solo tabla usuario)
+      // Editar usuario (solo tabla usuario)
       else {
         ({ error } = await supabase
           .from("usuario")
@@ -230,6 +256,7 @@ const GestionUserAdm = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Panel de Gestión" />
       <Sidebar userRole={1} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">
@@ -327,6 +354,8 @@ const GestionUserAdm = () => {
                 ) : (
                   filteredUsers.map((user) => {
                     const rol = user.catalogo_roles?.nombre;
+                    const isAdmin = user.id_rol === 1;
+                    const disableEdit = isAdmin;
                     const rolColor =
                       rol === "Administrador"
                         ? "#e28000"
@@ -383,14 +412,31 @@ const GestionUserAdm = () => {
                         <td className="px-2 sm:px-4 py-2 text-xs sm:text-sm text-center">
                           <div className="flex justify-center gap-2">
                             <button
-                              onClick={() => openEditModal(user)}
-                              className="p-1 text-green-600 hover:text-green-700 cursor-pointer"
+                              onClick={() => {
+                                if (disableEdit) return;
+                                openEditModal(user);
+                              }}
+                              disabled={disableEdit || !currentUserId}
+                              className={`p-1 ${
+                                disableEdit || !currentUserId
+                                  ? "text-gray-400 cursor-not-allowed opacity-40"
+                                  : "text-green-600 hover:text-green-700"
+                              }`}
                             >
                               <FaUserEdit className="text-2xl" />
                             </button>
                             <button
                               onClick={() => handleDelete(user)}
-                              className="p-1 text-red-500 hover:text-red-700 cursor-pointer"
+                              disabled={
+                                user.id_rol === 1 ||
+                                user.user_id === currentUserId
+                              }
+                              className={`p-1 text-red-500 cursor-pointer ${
+                                user.id_rol === 1 ||
+                                user.user_id === currentUserId
+                                  ? "opacity-30 cursor-not-allowed"
+                                  : "hover:text-red-700"
+                              }`}
                             >
                               <FaUserTimes className="text-2xl" />
                             </button>

@@ -3,6 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import ApexCharts from "react-apexcharts";
 import { supabase } from "../../supabase/client";
 import ApexChartSensores from "../../components/ApexChartSensores";
+import PageTitle from "../../components/PageTitle";
 
 const AdminInicio = () => {
   const [alertaSeries, setAlertaSeries] = useState([]);
@@ -71,9 +72,9 @@ const AdminInicio = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Inicio Administrador" />
       <Sidebar userRole={1} />
 
-      {/* CONTENIDO */}
       <div className="flex-1 p-4 sm:p-6 lg:p-8 lg:ml-64">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-800 mb-6 sm:mb-8 text-center">
           Gráficas

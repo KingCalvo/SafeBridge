@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/SidebarInvitado";
 import axios from "axios";
 import ApexChartPuentes from "../../components/ApexChartPuentes";
+import PageTitle from "../../components/PageTitle";
 
 const GraficosInv = () => {
   const [weather, setWeather] = useState(null);
@@ -37,6 +38,7 @@ const GraficosInv = () => {
 
   return (
     <div className="flex min-h-screen">
+      <PageTitle title="Inicio Invitado" />
       <Sidebar />
       <div className="flex-1 lg:ml-64 p-4 sm:p-6 bg-white">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 uppercase text-center">

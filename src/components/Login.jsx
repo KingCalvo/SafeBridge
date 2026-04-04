@@ -7,6 +7,7 @@ import { supabase } from "../supabase/client.js";
 import { useNotificacion } from "./NotificacionContext.jsx";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "react-router-dom";
+import PageTitle from "../components/PageTitle";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +15,15 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { notify } = useNotificacion();
+  const [openModal, setOpenModal] = useState(false);
+
+  const [recoveryForm, setRecoveryForm] = useState({
+    nombre: "",
+    correo: "",
+  });
+
+  const [errorRecovery, setErrorRecovery] = useState("");
+  const [successRecovery, setSuccessRecovery] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -68,6 +78,46 @@ const Login = () => {
       notify("Ocurrió un error inesperado.", { type: "error" });
     }
   };
+  const handleRecoveryChange = (e) => {
+    const { name, value } = e.target;
+
+    setErrorRecovery("");
+    setSuccessRecovery("");
+
+    if (name === "nombre") {
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(value)) return;
+    }
+
+    setRecoveryForm({ ...recoveryForm, [name]: value });
+  };
+
+  const handleRecoverySubmit = () => {
+    setErrorRecovery("");
+    setSuccessRecovery("");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!recoveryForm.nombre.trim())
+      return setErrorRecovery("El nombre completo es obligatorio.");
+
+    if (!emailRegex.test(recoveryForm.correo))
+      return setErrorRecovery("Ingresa un correo electrónico válido.");
+
+    // TODO BIEN
+    setSuccessRecovery(
+      "Solicitud enviada. El administrador se pondrá en contacto contigo.",
+    );
+
+    setRecoveryForm({
+      nombre: "",
+      correo: "",
+    });
+
+    setTimeout(() => {
+      setOpenModal(false);
+      setSuccessRecovery("");
+    }, 2500);
+  };
 
   const location = useLocation();
 
@@ -119,6 +169,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-[#214543] flex flex-col items-center justify-center p-4">
+      <PageTitle title="Login" />
       <form
         onSubmit={handleLogin}
         className="bg-white rounded-2xl shadow-lg w-full max-w-sm p-8 mt-0 space-y-6"
@@ -172,9 +223,13 @@ const Login = () => {
 
         {/* Auxiliares */}
         <div className="flex justify-end text-sm">
-          <a href="#" className="text-gray-500 hover:underline">
+          <button
+            type="button"
+            onClick={() => setOpenModal(true)}
+            className="text-gray-500 hover:underline cursor-pointer"
+          >
             ¿Olvidaste tu contraseña?
-          </a>
+          </button>
         </div>
         <div className="text-center text-sm">
           <span className="text-gray-600">¿No tienes una cuenta? </span>
@@ -192,7 +247,7 @@ const Login = () => {
             onClick={() => navigate("/")}
             className="text-orange-400 font-medium hover:underline focus:outline-none cursor-pointer"
           >
-            Conocenos 🏠
+            Conoce SafeBridge →
           </button>
         </div>
 
@@ -208,6 +263,90 @@ const Login = () => {
           </span>
         </button>
       </form>
+
+      {openModal && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4"
+          onClick={() => setOpenModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full animate-fadeIn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold mb-3 text-[#214543] text-center">
+              ¿Olvidaste tu contraseña?
+            </h2>
+
+            <p className="text-gray-600 mb-6 text-justify">
+              No te preocupes, contacta con el administrador ingresando tus
+              datos y te ayudaremos a recuperar el acceso.
+            </p>
+
+            {/* FORM */}
+            <div className="space-y-4">
+              <input
+                name="nombre"
+                value={recoveryForm.nombre}
+                onChange={handleRecoveryChange}
+                placeholder="Nombre completo"
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent"
+              />
+
+              <input
+                name="correo"
+                value={recoveryForm.correo}
+                onChange={(e) =>
+                  setRecoveryForm({ ...recoveryForm, correo: e.target.value })
+                }
+                placeholder="Correo electrónico"
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent"
+              />
+            </div>
+
+            {/* BOTONES */}
+            <div className="mt-6 flex gap-4">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="w-full bg-gray-200 py-3 rounded-xl font-medium hover:bg-gray-300 transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={handleRecoverySubmit}
+                className="w-full bg-[#fb923c] text-white py-3 rounded-xl font-semibold hover:bg-[#f97316] transition-all duration-300 hover:scale-105 cursor-pointer"
+              >
+                Enviar
+              </button>
+            </div>
+
+            {/* MENSAJES */}
+            {errorRecovery && (
+              <p className="text-red-500 text-sm mt-4 text-center">
+                {errorRecovery}
+              </p>
+            )}
+
+            {successRecovery && (
+              <p className="text-[#3a8075] text-sm mt-4 text-center font-medium">
+                {successRecovery}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <style>
+        {`
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.25s ease;
+    }
+  `}
+      </style>
     </div>
   );
 };

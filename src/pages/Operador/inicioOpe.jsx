@@ -5,6 +5,7 @@ import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
 import { GoAlert } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
+import PageTitle from "../../components/PageTitle";
 
 const InicioOpe = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -132,6 +133,7 @@ const InicioOpe = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Inicio Operador" />
       <Sidebar userRole={2} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">

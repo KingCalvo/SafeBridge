@@ -10,6 +10,7 @@ import { supabase } from "../../supabase/client";
 import Modal from "../../components/Modal";
 import { useNotificacion } from "../../components/NotificacionContext";
 import { useAlerta } from "../../components/AlertaContext";
+import PageTitle from "../../components/PageTitle";
 
 const EventosOpe = () => {
   const [eventos, setEventos] = useState([]);
@@ -267,6 +268,7 @@ const EventosOpe = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Alertas y Eventos" />
       <Sidebar userRole={2} />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8 bg-gray-50">

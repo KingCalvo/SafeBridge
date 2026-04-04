@@ -7,7 +7,7 @@ import img1 from "../../assets/camino.png";
 import img2 from "../../assets/puente.png";
 import img3 from "../../assets/puente2.png";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
-
+import PageTitle from "../../components/PageTitle";
 import { useState, useEffect } from "react";
 
 const Inicio = () => {
@@ -36,9 +36,8 @@ const Inicio = () => {
 
   return (
     <div className="font-landing bg-[#3a8075] text-gray-800">
+      <PageTitle title="Inicio" />
       <Header />
-
-      {/* HERO */}
       <section className="relative h-screen flex items-center justify-center">
         <img
           src={puente}
@@ -48,11 +47,11 @@ const Inicio = () => {
         <div className="absolute inset-0 bg-black/50"></div>
 
         <div className="relative text-center text-white px-6 max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">
+          <h1 className="text-4xl md:text-6xl font-bold mb-2">
             Ciudades más seguras empiezan con{" "}
           </h1>
-          <h1 className="text-4xl md:text-6xl font-bold mb-14">
-            <span className="text-[#fb923c] text-6xl">Safe</span>
+          <h1 className="text-5xl md:text-7xl font-bold mb-14">
+            <span className="text-[#fb923c] text-5xl md:text-7xl">Safe</span>
             Bridge
           </h1>
 
@@ -64,10 +63,10 @@ const Inicio = () => {
         </div>
       </section>
 
-      {/* SECCIÓN: PROBLEMA */}
+      {/* Sección: Problema */}
       <section className="py-32 items-center px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
         <div className="fade-up max-w-7xl mx-auto w-full">
-          <h2 className="text-3xl font-bold mb-6 text-[#fb923c]">
+          <h2 className="text-3xl font-bold mb-6 text-[#fb923c] text-center md:text-left">
             El problema que resolvemos
           </h2>
 
@@ -85,7 +84,6 @@ const Inicio = () => {
           </p>
         </div>
 
-        {/* ESPACIO PARA IMAGEN */}
         <div className="h-80 bg-gray-200 rounded-xl flex items-center justify-center">
           <span className="text-gray-500">Imagen aquí</span>
         </div>
@@ -172,7 +170,7 @@ const Inicio = () => {
         </div>
       </section>
 
-      {/* SECCIÓN WEBAPP */}
+      {/* Sección webapp */}
       <section className="py-32 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white">
@@ -242,7 +240,7 @@ const Inicio = () => {
         </div>
       </section>
 
-      {/* SECCIÓN BENEFICIOS */}
+      {/* Sección beneficios */}
       <section className="py-32 flex items-center bg-[#add6bc] px-6">
         <div className="fade-up max-w-7xl w-full mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div className="h-80 bg-gray-200 rounded-xl flex items-center justify-center">

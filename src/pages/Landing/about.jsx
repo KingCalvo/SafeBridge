@@ -3,12 +3,14 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
 import { FaGithub, FaLinkedin, FaInstagram, FaEnvelope } from "react-icons/fa";
+import PageTitle from "../../components/PageTitle";
 
 const About = () => {
   useScrollAnimation();
 
   return (
     <div className="font-landing bg-[#3a8075] text-white">
+      <PageTitle title="Acerca de" />
       <Header />
       <section className="py-32 px-6 flex justify-center fade-up">
         <div className="relative max-w-4xl w-full text-center">
@@ -38,7 +40,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* QUIÉNES SOMOS */}
+      {/* about us */}
       <section className="pb-32 px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div className="fade-up">
           <h2 className="text-3xl font-bold mb-6 text-[#fb923c]">
@@ -64,7 +66,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* MISIÓN Y VISIÓN */}
+      {/* Misión y Visión */}
       <section className="py-32 bg-[#add6bc] px-6">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
           <div className="fade-up bg-white p-8 rounded-3xl shadow-xl relative overflow-hidden">
@@ -97,7 +99,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* QUÉ HACEMOS */}
+      {/* Qué hacemos */}
       <section className="py-32 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-20 fade-up">
           <h2 className="text-4xl font-bold mb-6">¿Qué hacemos?</h2>

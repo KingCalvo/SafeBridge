@@ -4,6 +4,7 @@ import { IoSearch } from "react-icons/io5";
 import { CiFilter } from "react-icons/ci";
 import { supabase } from "../../supabase/client";
 import ApexChartPuentes from "../../components/ApexChartPuentes";
+import PageTitle from "../../components/PageTitle";
 
 const PuentesInv = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +38,7 @@ const PuentesInv = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <PageTitle title="Puentes" />
       <Sidebar />
       <div className="flex-1 lg:ml-64">
         <main className="p-4 sm:p-6 lg:p-8">

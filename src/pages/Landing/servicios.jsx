@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useScrollAnimation } from "../../hooks/useScrollAnimation";
 import PageTitle from "../../components/PageTitle";
+import { Link } from "react-router-dom";
 
 const Servicios = () => {
   useScrollAnimation();
@@ -121,12 +122,12 @@ const Servicios = () => {
             </div>
           </div>
 
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="block w-full py-3 bg-[#fb923c] mt-6 rounded-xl text-white font-medium hover:bg-[#f97316] transition-all duration-300 hover:scale-105"
           >
             Acceder gratis
-          </a>
+          </Link>
         </div>
 
         {/* Premium */}

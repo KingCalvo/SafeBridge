@@ -39,7 +39,7 @@ const Header = () => {
               Servicios
             </Link>
             <Link to="/login" className="hover:text-[#fb923c] transition">
-              WebApp
+              Plataforma
             </Link>
             <Link to="/about" className="hover:text-[#fb923c] transition">
               Acerca de

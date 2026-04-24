@@ -54,7 +54,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/login" className="hover:text-white">
-                  WebApp
+                  Plataforma
                 </Link>
               </li>
             </ul>

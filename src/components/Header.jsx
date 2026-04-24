@@ -96,7 +96,7 @@ const Header = () => {
               Servicios
             </Link>
             <Link to="/login" onClick={() => setMenuOpen(false)}>
-              WebApp
+              Plataforma
             </Link>
             <Link to="/about" onClick={() => setMenuOpen(false)}>
               Acerca de

@@ -322,22 +322,35 @@ const Inicio = () => {
           onClick={() => setOpenViewer(false)}
         >
           <div
-            className="relative w-full h-full flex items-center justify-center px-6"
+            className="relative w-full h-full flex items-center justify-center px-4 sm:px-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative max-w-7xl w-full">
               <img
                 src={images[current]}
-                className="w-full max-w-[95vw] object-contain rounded-xl shadow-2xl"
+                className="
+                  w-full 
+                  max-w-[95vw] 
+                  max-h-[80vh] 
+                  object-contain 
+                  rounded-xl 
+                  shadow-2xl
+                "
               />
 
               {/* Botón cerrar */}
               <button
                 onClick={() => setOpenViewer(false)}
-                className="absolute -top-14 -right-14 
-              bg-[#f10202] text-white 
-                w-14 h-14 rounded-full flex items-center justify-center
-                shadow-lg hover:scale-110 transition-all duration-300 cursor-pointer"
+                className="
+                  absolute 
+                  top-1 right-1 
+                  sm:top-6 sm:right-6
+                  bg-[#f10202] text-white 
+                  w-10 h-10 sm:w-12 sm:h-12
+                  rounded-full flex items-center justify-center
+                  shadow-lg hover:scale-110 transition-all duration-300
+                  z-50 cursor-pointer
+                "
               >
                 <span className="text-lg font-bold">×</span>
               </button>
@@ -345,22 +358,28 @@ const Inicio = () => {
 
             <button
               onClick={prev}
-              className="absolute left-52 top-1/2 -translate-y-1/2 
-            bg-white/10 backdrop-blur-md border border-white/20
-            hover:bg-[#fb923c] text-white 
-              w-14 h-14 rounded-full flex items-center justify-center
-              transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer"
+              className="
+                absolute left-2 sm:left-10 top-1/2 -translate-y-1/2
+                bg-white/10 backdrop-blur-md border border-white/20
+                hover:bg-[#fb923c] text-white 
+                w-10 h-10 sm:w-14 sm:h-14
+                rounded-full flex items-center justify-center
+                transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer
+              "
             >
               <span className="text-xl font-bold">‹</span>
             </button>
 
             <button
               onClick={next}
-              className="absolute right-52 top-1/2 -translate-y-1/2 
-            bg-white/10 backdrop-blur-md border border-white/20
-            hover:bg-[#fb923c] text-white 
-              w-14 h-14 rounded-full flex items-center justify-center
-              transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer"
+              className="
+                absolute right-2 sm:right-10 top-1/2 -translate-y-1/2
+                bg-white/10 backdrop-blur-md border border-white/20
+                hover:bg-[#fb923c] text-white 
+                w-10 h-10 sm:w-14 sm:h-14
+                rounded-full flex items-center justify-center
+                transition-all duration-300 hover:scale-110 shadow-lg cursor-pointer
+              "
             >
               <span className="text-xl font-bold">›</span>
             </button>
